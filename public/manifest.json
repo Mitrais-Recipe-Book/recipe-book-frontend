@@ -1,0 +1,35 @@
+{
+	"name": "Interactive Recipe Book",
+	"short_name": "Recipe Book",
+	"description": "Your one app to find recipes, ingredients, and more!",
+	"icons": [
+		{
+			"src": "/images/bibimbap192x192.png",
+			"type": "image/png",
+			"sizes": "192x192"
+		},
+		{
+			"src": "/images/bibimbap512x512.png",
+			"type": "image/png",
+			"sizes": "512x512"
+		},
+		{
+			"src": "/images/bibimbap192x192.png",
+			"type": "image/png",
+			"sizes": "192x192",
+			"purpose": "maskable"
+		},
+		{
+			"src": "/images/bibimbap512x512.png",
+			"type": "image/png",
+			"sizes": "512x512",
+			"purpose": "maskable"
+		}
+	],
+	"start_url": "/?source=pwa",
+	"background_color": "#1d2020",
+	"orientation": "portrait",
+	"display": "standalone",
+	"scope": "/",
+	"theme_color": "#1d2020"
+}
