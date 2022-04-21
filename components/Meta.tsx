@@ -3,7 +3,7 @@ import Head from "next/head";
 export default function Meta() {
   return (
     <Head>
-      <meta name="application-name" content="PWA App" />
+      {/* <meta name="application-name" content="PWA App" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       <meta name="apple-mobile-web-app-title" content="PWA App" />
@@ -43,7 +43,7 @@ export default function Meta() {
         type="image/png"
         sizes="16x16"
         href="/icons/favicon-16x16.png"
-      />
+      /> 
       <link rel="manifest" href="/manifest.json" />
       <link
         rel="mask-icon"
@@ -51,7 +51,7 @@ export default function Meta() {
         color="#5bbad5"
       />
       <link rel="shortcut icon" href="/favicon.ico" />
-      <link
+      {/* <link
         rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
       />
@@ -75,7 +75,7 @@ export default function Meta() {
         content="https://yourdomain.com/icons/apple-touch-icon.png"
       />
 
-      {/* <!-- apple splash screen images -->
+       <!-- apple splash screen images -->
 <!--
 <link rel='apple-touch-startup-image' href='/images/apple_splash_2048.png' sizes='2048x2732' />
 <link rel='apple-touch-startup-image' href='/images/apple_splash_1668.png' sizes='1668x2224' />
