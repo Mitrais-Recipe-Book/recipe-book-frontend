@@ -1,8 +1,40 @@
 import Image from "next/image";
+// import Collapse from "./Collapse";
 
 export default function Navbar() {
+  // set the target element that will be collapsed or expanded (eg. navbar menu)
+  const targetEl = document.getElementById("mobile-menu-3") as null | undefined;
+
+  // optionally set a trigger element (eg. a button, hamburger icon)
+  const triggerEl = document.getElementById("triggerEl");
+
+  // optional options with default values and callback functions
+  const options = {
+    triggerEl: triggerEl,
+    onCollapse: () => {
+      console.log("element has been collapsed");
+    },
+    onExpand: () => {
+      console.log("element has been expanded");
+    },
+    onToggle: () => {
+      console.log("element has been toggled");
+    },
+  };
+
+  // const collapse = new Collapse(targetEl, options);
+
+  // show the target element
+  // collapse.expand();
+
+  // hide the target element
+  // collapse.collapse();
+
+  // toggle the visibility of the target element
+  // collapse.toggle();
+
   return (
-    <nav className="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-800">
+    <nav className="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-800">
       <div className="container flex flex-wrap justify-between items-center mx-auto">
         <a href="./" className="flex items-center">
           <Image
@@ -16,7 +48,7 @@ export default function Navbar() {
             RecipyBook
           </span>
         </a>
-        <div className="flex md:order-2">
+        <div className="flex md:order-2 mb-[-10px]">
           <div className="hidden relative mr-3 md:mr-0 md:block">
             <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
               <svg
@@ -36,10 +68,11 @@ export default function Navbar() {
               type="text"
               id="email-adress-icon"
               className="block p-2 pl-10 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Search..."
+              placeholder="Search Recipe..."
             />
           </div>
           <button
+            id="triggerEl"
             data-collapse-toggle="mobile-menu-3"
             type="button"
             className="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
@@ -72,9 +105,19 @@ export default function Navbar() {
               ></path>
             </svg>
           </button>
+          <div className="hidden md:block md:ml-4 md:mr-4 md:items-center md:w-auto">
+            <Image
+              className="w-8 h-8 rounded-full"
+              src="/images/user-profile.png"
+              alt="RecipyBook"
+              width={40}
+              height={40}
+              objectFit="cover"
+            />
+          </div>
         </div>
         <div
-          className="hidden justify-between items-center w-full md:flex md:w-auto md:order-1"
+          className="hidden justify-between items-center w-full md:flex md:w-auto md:order-1 "
           id="mobile-menu-3"
         >
           <ul className="flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium">
