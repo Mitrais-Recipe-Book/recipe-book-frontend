@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import { useRef } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Navbar from "../components/Navbar";
@@ -10,15 +11,16 @@ import TagsPill from "../components/TagsPill";
 // Import Swiper React components
 import { Swiper, SwiperSlide, } from 'swiper/react';
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper';
+import SwiperCore, { Autoplay } from 'swiper';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
-import { url } from "inspector";
 
 
 const Home: NextPage = () => {
+  SwiperCore.use([Autoplay]);
   return (
     <div>
       <Head>
@@ -31,13 +33,47 @@ const Home: NextPage = () => {
         />
         <link rel="icon" href="/images/bibimbap192x192.png" />
       </Head>
+      
+      <style>
+        {`
+          .swiper-button-prev,
+          .swiper-button-next {
+              background-color: #fff;
+              color: rgb(39 39 42);
+              width: 48px;
+              height: 48px;
+              border-radius: 50%;
+              box-shadow: 0px 1px 24px rgba(0, 0, 0, 0.1);
+              transition: 0.2s ease-in-out;
+          }
+          
+          .swiper-button-prev:hover,
+          .swiper-button-next:hover {
+              background-color: rgb(39 39 42);
+              color: #fff;
+              transition: 0.2s ease-in-out;
+          }
+          
+          .swiper-button-next:after,
+          .swiper-button-prev:after {
+              font-size: 16px;
+              font-weight: 600;
+          }          
+        `}
+      </style>
+
       <Navbar />
       <main className="container mx-auto pt-1">
         <div className="container md:px-[50px] lg:px-[100px] xl:px-[150px]">
           {/* Carousel */}
           <section className="my-5 ">
             <Swiper
-              modules={[Navigation, Pagination, Scrollbar, A11y]}
+              modules={[Navigation, Pagination, Scrollbar, A11y,Autoplay]}
+              autoplay={{
+                delay: 3000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }}
               spaceBetween={50}
               slidesPerView={1}
               navigation={true}
