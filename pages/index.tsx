@@ -4,7 +4,19 @@ import Image from "next/image";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import RecipeCard from "../components/RecipeCard";
+import RecipeCardFull from "../components/RecipeCardFull";
 import TagsPill from "../components/TagsPill";
+
+// Import Swiper React components
+import { Swiper, SwiperSlide, } from 'swiper/react';
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper';
+
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
+import { url } from "inspector";
+
 
 const Home: NextPage = () => {
   return (
@@ -21,11 +33,120 @@ const Home: NextPage = () => {
       </Head>
       <Navbar />
       <main className="container mx-auto pt-1">
-        <div className="container md:px-[50px] lg:px-[150px]">
+        <div className="container md:px-[50px] lg:px-[100px] xl:px-[150px]">
           {/* Carousel */}
-          <section></section>
+          <section className="my-5 ">
+            <Swiper
+              modules={[Navigation, Pagination, Scrollbar, A11y]}
+              spaceBetween={50}
+              slidesPerView={1}
+              navigation={true}
+              pagination={{ clickable: true }}
+            >
+              <SwiperSlide>
+                {/* <Image
+                  layout="responsive"
+                  className="w-full rounded-md cursor-pointer"
+                  src="/images/bibimbap-image.webp"
+                  alt="RecipyBook"
+                  width={100}
+                  height={35}
+                  objectFit="cover"
+                /> */}
+                <div 
+                  className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent" 
+                  style={{
+                    backgroundImage : `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url('/images/bibimbap-image.webp')`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                    backgroundSize: 'cover',
+                  }} >
+                    <div className="m-auto">
+                      <h1 className="text-2xl md:text-5xl font-bold text-white ">Bibimbap</h1>
+                    </div>
+                </div>
+              </SwiperSlide>
+              <SwiperSlide>
+                <div 
+                  className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent" 
+                  style={{
+                    backgroundImage : `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url('/images/bibimbap-image.webp')`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                    backgroundSize: 'cover',
+                  }} >
+                    <div className="m-auto">
+                      <h1 className="text-2xl md:text-5xl font-bold text-white ">Bibimbap 2</h1>
+                    </div>
+                </div>
+              </SwiperSlide>
+              <SwiperSlide>
+                <div 
+                    className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent" 
+                    style={{
+                      backgroundImage : `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url('/images/bibimbap-image.webp')`,
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'center',
+                      backgroundSize: 'cover',
+                    }} >
+                      <div className="m-auto">
+                        <h1 className="text-2xl md:text-5xl font-bold text-white ">Bibimbap 3</h1>
+                      </div>
+                  </div>
+              </SwiperSlide>
+              <SwiperSlide>
+                <div 
+                    className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent" 
+                    style={{
+                      backgroundImage : `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url('/images/bibimbap-image.webp')`,
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'center',
+                      backgroundSize: 'cover',
+                    }} >
+                      <div className="m-auto">
+                        <h1 className="text-2xl md:text-5xl font-bold text-white ">Bibimbap 4</h1>
+                      </div>
+                  </div>
+              </SwiperSlide>
+            </Swiper>
+          </section>
+          
+          {/* Recipes of the day */}
+          <section className="my-5">
+            <h1 className="text-4xl text-center mb-3 font-bold">Recipes of the day</h1>
+            <Swiper
+              modules={[Navigation, A11y]}
+              spaceBetween={30}
+              navigation={true}
+              breakpoints={{
+                320:{
+                  slidesPerView:1
+                },
+                768:{
+                  slidesPerView:2
+                },
+                1024:{
+                  slidesPerView:3
+                },
+              }}
+            >
+              <SwiperSlide>
+                <RecipeCardFull />
+              </SwiperSlide>
+              <SwiperSlide>
+                <RecipeCardFull />
+              </SwiperSlide>
+              <SwiperSlide>
+                <RecipeCardFull />
+              </SwiperSlide>
+              <SwiperSlide>
+                <RecipeCardFull />
+              </SwiperSlide>
+            </Swiper>
+          </section>
+
           {/* Tags */}
-          <section className="my-2 py-3 rounded-md bg-white drop-shadow-lg">
+          <section className="my-5 py-3 rounded-md bg-white drop-shadow-lg">
             <h1 className="text-4xl text-center mb-3 font-bold">Tags</h1>
             <div className="flex flex-wrap w-full md:w-3/4 mx-auto justify-center pb-3">
               <TagsPill />
