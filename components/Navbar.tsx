@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Router from "next/router";
 // import Collapse from "./Collapse";
 
 export default function Navbar() {
@@ -66,9 +67,18 @@ export default function Navbar() {
             </div>
             <input
               type="text"
-              id="email-adress-icon"
+              id="search-bar"
               className="block p-2 pl-10 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search Recipe..."
+              onKeyUp={(e) => {
+                if(e.key === "Enter") {
+                  //@ts-ignore
+                  console.log(document.getElementById("search-bar")?.value);
+                  //@ts-ignore
+                  Router.push(`/search/${document.getElementById("search-bar")?.value}`);
+                
+              }
+              }}
             />
           </div>
           <button
@@ -148,7 +158,7 @@ export default function Navbar() {
             </li>
             <li>
               <a
-                href="admin"
+                href="/admin"
                 className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >
                 Admin Page
