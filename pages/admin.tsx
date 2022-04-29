@@ -1,9 +1,9 @@
 import React from "react";
-import TagsTable from "../../components/Admin/TagsTable";
-import Footer from "../../components/Footer";
-import Navbar from "../../components/Navbar";
+import TagsTable from "../components/Admin/TagsTable";
+import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
 
-export default function Index() {
+export default function Admin() {
   return (
     <div>
       <Navbar />
