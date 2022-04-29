@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function Login() {
+export default function SignIn() {
   return (
     <div className="min-h-screen flex items-stretch text-white">
       <div
@@ -17,7 +17,7 @@ export default function Login() {
               height={50}
               objectFit="cover"
             />
-            <h1 className="text-5xl font-bold text-left tracking-wide font-logo">
+            <h1 className="text-5xl ml-4 font-bold text-left tracking-wide font-logo">
               Recipy Book
             </h1>
           </div>
@@ -65,12 +65,12 @@ export default function Login() {
                 name="email"
                 id="email"
                 placeholder="Email/Username"
-                className="block w-full p-4 text-lg rounded-sm bg-black"
+                className="block w-full p-4 text-lg rounded-sm bg-slate"
               />
             </div>
             <div className="pb-2 pt-4">
               <input
-                className="block w-full p-4 text-lg rounded-sm bg-black"
+                className="block w-full p-4 text-lg rounded-sm bg-slate"
                 type="password"
                 name="password"
                 id="password"
@@ -78,7 +78,7 @@ export default function Login() {
               />
             </div>
             <div className="text-right text-gray-400 hover:underline hover:text-gray-100">
-              <a href="#">Sign up here</a>
+              <a href="/sign-up">Sign up here</a>
             </div>
             <div className="px-4 pb-2 pt-4">
               <button className="uppercase block w-full p-4 text-lg rounded-full bg-orange-400 hover:bg-orange-500 focus:outline-none">
