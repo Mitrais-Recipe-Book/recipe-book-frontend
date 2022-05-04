@@ -38,8 +38,10 @@ const Home: NextPage = () => {
         "https://recipyb-dev.herokuapp.com/api/v1/recipe/list?size=1&page=0&author="
       )
       .then((res) => {
-        console.log(res.data);
-        setRecipes(res.data);
+        //@ts-ignore
+        console.log(res.data.payload.content);
+        //@ts-ignore
+        setRecipes(res.data.payload.content);
       });
   }
 
@@ -253,12 +255,9 @@ const Home: NextPage = () => {
                 justify-center
               "
             >
-              <RecipeCard />
-              <RecipeCard />
-              <RecipeCard />
-              <RecipeCard />
-              <RecipeCard />
-              <RecipeCard />
+              {recipes.map((recipe) => (
+                <RecipeCard recipe={recipe} />
+              ))}
             </div>
           </section>
         </div>
