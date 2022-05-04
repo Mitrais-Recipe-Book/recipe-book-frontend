@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Navbar from "../components/Navbar";
@@ -17,9 +17,16 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
+import axios from "axios";
 
 
 const Home: NextPage = () => {
+  useEffect(() => {
+    axios
+    .get("https://recipyb-dev.herokuapp.com/api/v1/recipe/list?size=1&page=0&author=")
+    .then(res => {
+      console.log(res.data);
+  }, []);
   SwiperCore.use([Autoplay]);
   return (
     <div>

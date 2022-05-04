@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { SiCodechef } from "react-icons/si";
 
-export default function RecipeCard() {
+export default function RecipeCard(props: object) {
   return (
     <div className="mx-2 my-3 sm:w-40 xl:w-50 box-border border-1 pb-2 rounded shadow transition-all hover:bg-orange-200 hover:scale-110">
       <Image
