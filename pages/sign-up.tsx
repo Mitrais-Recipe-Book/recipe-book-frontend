@@ -65,7 +65,7 @@ export default function SignUp() {
                                 name="email"
                                 id="email"
                                 placeholder="Email"
-                                className="block w-full p-4 text-lg rounded-sm bg-slate"
+                                className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
                             />
                         </div>
                         <div className="pb-2 pt-4">
@@ -74,7 +74,7 @@ export default function SignUp() {
                                 name="name"
                                 id="name"
                                 placeholder="Full Name"
-                                className="block w-full p-4 text-lg rounded-sm bg-slate"
+                                className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
                             />
                         </div>
                         <div className="pb-2 pt-4">
@@ -83,12 +83,12 @@ export default function SignUp() {
                                 name="username"
                                 id="username"
                                 placeholder="Username"
-                                className="block w-full p-4 text-lg rounded-sm bg-slate"
+                                className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
                             />
                         </div>
                         <div className="pb-2 pt-4">
                             <input
-                                className="block w-full p-4 text-lg rounded-sm bg-slate"
+                                className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
                                 type="password"
                                 name="password"
                                 id="password"
@@ -97,7 +97,7 @@ export default function SignUp() {
                         </div>
                         <div className="pb-2 pt-4">
                             <input
-                                className="block w-full p-4 text-lg rounded-sm bg-slate"
+                                className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
                                 type="password"
                                 name="confirm-password"
                                 id="confirm-password"

@@ -65,12 +65,12 @@ export default function SignIn() {
                 name="email"
                 id="email"
                 placeholder="Email/Username"
-                className="block w-full p-4 text-lg rounded-sm bg-slate"
+                className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
               />
             </div>
             <div className="pb-2 pt-4">
               <input
-                className="block w-full p-4 text-lg rounded-sm bg-slate"
+                className="block w-full p-4 text-lg text-gray-900 leading-tight focus:outline-orange-400 rounded-sm bg-slate"
                 type="password"
                 name="password"
                 id="password"
