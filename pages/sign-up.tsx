@@ -10,7 +10,6 @@ export default function SignUp() {
     const createUser = (event: React.SyntheticEvent) => {
         event.preventDefault();
         console.log(userData);
-        // router.push("/sign-in");
         submitForm();
     }
 
@@ -26,7 +25,7 @@ export default function SignUp() {
             // 👇️ const data: CreateUserResponse
             const { data } = await axios.post<CreateUserResponse>(
                 'https://recipyb-dev.herokuapp.com/auth/sign-up',
-                { userData },
+                { email: userData.email, username: userData.username, password: userData.password, fullName: userData.fullName },
                 {
                     headers: {
                         'Content-Type': 'application/json',

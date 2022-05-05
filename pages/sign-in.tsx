@@ -1,6 +1,73 @@
 import Image from "next/image";
+import axios from "axios";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
+import jwt_decode from "jwt-decode";
+import { setAuth } from "../redux/reducers/authReducer";
+import { useDispatch } from "react-redux";
 
 export default function SignIn() {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const [userData, setUserData] = useState({ username: "", password: "" });
+
+  const createUser = (event: React.SyntheticEvent) => {
+    event.preventDefault();
+    submitForm();
+  }
+
+  type CreateUserResponse = {
+    username: string;
+    password: string;
+  };
+
+  interface AccessToken {
+    access_token: Object;
+  }
+
+  interface CreateSignInResponse {
+    data: AccessToken;
+  }
+
+  async function submitForm() {
+    try {
+      // 👇️ const data: CreateUserResponse
+      const { data } = await axios.post<CreateSignInResponse>(
+        'https://recipyb-dev.herokuapp.com/auth/sign-in',
+        { username: userData.username, password: userData.password },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        },
+      );
+
+      var token = data.data.access_token;
+      var decoded = jwt_decode(JSON.stringify(token));
+
+      const ex = {
+        name: "Ilham",
+        role: "Creator"
+      }
+
+      dispatch(setAuth(ex));
+      console.log(decoded);
+      console.log(JSON.stringify(data, null, 4));
+
+      return data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log('error message: ', error.message);
+        // 👇️ error: AxiosError<any, any>
+        return error.message;
+      } else {
+        console.log('unexpected error: ', error);
+        return 'An unexpected error occurred';
+      }
+    }
+  }
+
   return (
     <div className="min-h-screen flex items-stretch text-white">
       <div
@@ -58,13 +125,14 @@ export default function SignIn() {
             </span>
           </div> 
           <p className="text-gray-100">or use email your account</p>*/}
-          <form action="" className="sm:w-2/3 w-full px-4 lg:px-0 mx-auto">
+          <form onSubmit={createUser} className="sm:w-2/3 w-full px-4 lg:px-0 mx-auto">
             <div className="pb-2 pt-4">
               <input
-                type="email"
-                name="email"
-                id="email"
-                placeholder="Email/Username"
+                type="text"
+                name="username"
+                id="username"
+                placeholder="Username"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserData({ ...userData, [e.target.name]: e.target.value })}
                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
               />
             </div>
@@ -74,6 +142,7 @@ export default function SignIn() {
                 type="password"
                 name="password"
                 id="password"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserData({ ...userData, [e.target.name]: e.target.value })}
                 placeholder="Password"
               />
             </div>
@@ -81,7 +150,7 @@ export default function SignIn() {
               <a href="/sign-up">Sign up here</a>
             </div>
             <div className="px-4 pb-2 pt-4">
-              <button className="uppercase block w-full p-4 text-lg rounded-full bg-orange-400 hover:bg-orange-500 focus:outline-none">
+              <button type="submit" className="uppercase block w-full p-4 text-lg rounded-full bg-orange-400 hover:bg-orange-500 focus:outline-none">
                 sign in
               </button>
             </div>
