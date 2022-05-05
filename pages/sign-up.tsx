@@ -1,6 +1,56 @@
+import axios from "axios";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
 
 export default function SignUp() {
+    const router = useRouter();
+    const [userData, setUserData] = useState({ email: "", username: "", fullName: "", password: "" });
+
+    const createUser = (event: React.SyntheticEvent) => {
+        event.preventDefault();
+        console.log(userData);
+        // router.push("/sign-in");
+        submitForm();
+    }
+
+    type CreateUserResponse = {
+        email: string;
+        username: string;
+        fullName: string;
+        password: string;
+    };
+
+    async function submitForm() {
+        try {
+            // 👇️ const data: CreateUserResponse
+            const { data } = await axios.post<CreateUserResponse>(
+                'https://recipyb-dev.herokuapp.com/auth/sign-up',
+                { userData },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                },
+            );
+
+            console.log(JSON.stringify(data, null, 4));
+            router.push("/sign-in");
+
+            return data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.log('error message: ', error.message);
+                // 👇️ error: AxiosError<any, any>
+                return error.message;
+            } else {
+                console.log('unexpected error: ', error);
+                return 'An unexpected error occurred';
+            }
+        }
+    }
+
     return (
         <div className="min-h-screen flex items-stretch text-white">
             <div
@@ -46,34 +96,24 @@ export default function SignUp() {
                         </h1>
                     </div>
                     <h1 className="my-6 text-3xl font-bold">Sign Up</h1>
-                    {/* <div className="py-6 space-x-2">
-            <span className="w-10 h-10 items-center justify-center inline-flex rounded-full font-bold text-lg border-2 border-white">
-              f
-            </span>
-            <span className="w-10 h-10 items-center justify-center inline-flex rounded-full font-bold text-lg border-2 border-white">
-              G+
-            </span>
-            <span className="w-10 h-10 items-center justify-center inline-flex rounded-full font-bold text-lg border-2 border-white">
-              in
-            </span>
-          </div> 
-          <p className="text-gray-100">or use email your account</p>*/}
-                    <form action="" className="sm:w-2/3 w-full px-4 lg:px-0 mx-auto">
+                    <form onSubmit={createUser} method="POST" className="sm:w-2/3 w-full px-4 lg:px-0 mx-auto">
                         <div className="pb-2 pt-4">
                             <input
                                 type="email"
                                 name="email"
                                 id="email"
                                 placeholder="Email"
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserData({ ...userData, [e.target.name]: e.target.value })}
                                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
                             />
                         </div>
                         <div className="pb-2 pt-4">
                             <input
                                 type="text"
-                                name="name"
-                                id="name"
+                                name="fullName"
+                                id="fullName"
                                 placeholder="Full Name"
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserData({ ...userData, [e.target.name]: e.target.value })}
                                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
                             />
                         </div>
@@ -83,6 +123,7 @@ export default function SignUp() {
                                 name="username"
                                 id="username"
                                 placeholder="Username"
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserData({ ...userData, [e.target.name]: e.target.value })}
                                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
                             />
                         </div>
@@ -92,6 +133,7 @@ export default function SignUp() {
                                 type="password"
                                 name="password"
                                 id="password"
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserData({ ...userData, [e.target.name]: e.target.value })}
                                 placeholder="Password"
                             />
                         </div>
@@ -108,7 +150,7 @@ export default function SignUp() {
                             <a href="/sign-in">Already have account? Sign in here</a>
                         </div>
                         <div className="px-4 pb-2 pt-4">
-                            <button className="uppercase block w-full p-4 text-lg rounded-full bg-orange-400 hover:bg-orange-500 focus:outline-none">
+                            <button type="submit" className="uppercase block w-full p-4 text-lg rounded-full bg-orange-400 hover:bg-orange-500 focus:outline-none">
                                 sign up
                             </button>
                         </div>
