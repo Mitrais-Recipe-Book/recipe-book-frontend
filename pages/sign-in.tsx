@@ -14,7 +14,7 @@ export default function SignIn() {
   const createUser = (event: React.SyntheticEvent) => {
     event.preventDefault();
     submitForm();
-  }
+  };
 
   type CreateUserResponse = {
     username: string;
@@ -33,14 +33,14 @@ export default function SignIn() {
     try {
       // 👇️ const data: CreateUserResponse
       const { data } = await axios.post<CreateSignInResponse>(
-        'https://recipyb-dev.herokuapp.com/auth/sign-in',
+        "https://recipyb-dev.herokuapp.com/auth/sign-in",
         { username: userData.username, password: userData.password },
         {
           headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
+            "Content-Type": "application/json",
+            Accept: "application/json",
           },
-        },
+        }
       );
 
       var token = data.data.access_token;
@@ -48,22 +48,22 @@ export default function SignIn() {
 
       const ex = {
         name: "Ilham",
-        role: "Creator"
-      }
+        role: "Creator",
+      };
 
-      dispatch(setAuth(ex));
-      console.log(decoded);
+      // console.log(decoded);
+      dispatch(setAuth(decoded));
       console.log(JSON.stringify(data, null, 4));
 
       return data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log('error message: ', error.message);
+        console.log("error message: ", error.message);
         // 👇️ error: AxiosError<any, any>
         return error.message;
       } else {
-        console.log('unexpected error: ', error);
-        return 'An unexpected error occurred';
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
       }
     }
   }
@@ -125,14 +125,19 @@ export default function SignIn() {
             </span>
           </div> 
           <p className="text-gray-100">or use email your account</p>*/}
-          <form onSubmit={createUser} className="sm:w-2/3 w-full px-4 lg:px-0 mx-auto">
+          <form
+            onSubmit={createUser}
+            className="sm:w-2/3 w-full px-4 lg:px-0 mx-auto"
+          >
             <div className="pb-2 pt-4">
               <input
                 type="text"
                 name="username"
                 id="username"
                 placeholder="Username"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserData({ ...userData, [e.target.name]: e.target.value })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setUserData({ ...userData, [e.target.name]: e.target.value })
+                }
                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
               />
             </div>
@@ -142,7 +147,9 @@ export default function SignIn() {
                 type="password"
                 name="password"
                 id="password"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserData({ ...userData, [e.target.name]: e.target.value })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setUserData({ ...userData, [e.target.name]: e.target.value })
+                }
                 placeholder="Password"
               />
             </div>
@@ -150,7 +157,10 @@ export default function SignIn() {
               <a href="/sign-up">Sign up here</a>
             </div>
             <div className="px-4 pb-2 pt-4">
-              <button type="submit" className="uppercase block w-full p-4 text-lg rounded-full bg-orange-400 hover:bg-orange-500 focus:outline-none">
+              <button
+                type="submit"
+                className="uppercase block w-full p-4 text-lg rounded-full bg-orange-400 hover:bg-orange-500 focus:outline-none"
+              >
                 sign in
               </button>
             </div>
