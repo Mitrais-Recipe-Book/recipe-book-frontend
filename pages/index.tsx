@@ -21,6 +21,7 @@ import axios from "axios";
 
 const Home: NextPage = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [popularRecipes, setPopularRecipes] = useState<Recipe[]>([]);
 
   interface Recipe {
     recipeName: string;
@@ -35,13 +36,23 @@ const Home: NextPage = () => {
   function fetchData() {
     axios
       .get<Recipe[]>(
-        "https://recipyb-dev.herokuapp.com/api/v1/recipe/list?size=1&page=0&author="
+        "https://recipyb-dev.herokuapp.com/api/v1/recipe/list?search=&author=&tags=&page=0"
       )
       .then((res) => {
         //@ts-ignore
         console.log(res.data.payload.content);
         //@ts-ignore
         setRecipes(res.data.payload.content);
+      });
+    axios
+      .get<Recipe[]>(
+        "https://recipyb-dev.herokuapp.com/api/v1/recipe/popular?limit=5"
+      )
+      .then((res) => {
+        //@ts-ignore
+        console.log("Popular: ",res.data.payload);
+        //@ts-ignore
+        setPopularRecipes(res.data.payload);
       });
   }
 
@@ -210,18 +221,13 @@ const Home: NextPage = () => {
                 },
               }}
             >
+              {popularRecipes.map((recipe) => {
+              return(
               <SwiperSlide>
-                <RecipeCardFull />
+                <RecipeCardFull recipe={recipe} />
               </SwiperSlide>
-              <SwiperSlide>
-                <RecipeCardFull />
-              </SwiperSlide>
-              <SwiperSlide>
-                <RecipeCardFull />
-              </SwiperSlide>
-              <SwiperSlide>
-                <RecipeCardFull />
-              </SwiperSlide>
+              )
+              })}
             </Swiper>
           </section>
 

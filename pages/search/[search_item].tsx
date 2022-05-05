@@ -14,7 +14,7 @@ export default function SearchItem() {
     axios
       .get(
         //TODO : Ganti API ke search by item
-        "https://recipyb-dev.herokuapp.com/api/v1/recipe/list?size=1&page=0&author="
+        "https://recipyb-dev.herokuapp.com/api/v1/recipe/list?search=&author=&tags=&page=0"
       )
       .then((res) => {
         //@ts-ignore
