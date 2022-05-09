@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Fragment } from "react";
 import { CgMenu } from "react-icons/cg";
 import { Menu, Transition } from "@headlessui/react";
+import TagsPill from "./TagsPill";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -42,7 +43,7 @@ export default function RecipeCardLong() {
                           "block px-4 py-2 text-sm"
                         )}
                       >
-                        Account settings
+                        Edit
                       </a>
                     )}
                   </Menu.Item>
@@ -57,7 +58,7 @@ export default function RecipeCardLong() {
                           "block px-4 py-2 text-sm"
                         )}
                       >
-                        Support
+                        Delete
                       </a>
                     )}
                   </Menu.Item>
@@ -66,10 +67,10 @@ export default function RecipeCardLong() {
             </Transition>
           </Menu>
         </div>
-        <h1 className="text-2xl my-3 font-semibold">Spaghett</h1>
+        <h1 className="text-2xl text-center md:text-left my-3 font-semibold">Spaghett</h1>
         <div className="grid grid-cols-4 my-3">
-          <div className="col-span-3">
-            <p className="">
+          <div className="order-2 md:order-1 col-span-4 md:col-span-3">
+            <p className="text-justify md:text-left four-lines-ellipsis">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. A amet
               impedit, modi similique molestiae, ad praesentium doloremque hic,
               maxime minima magni pariatur deserunt. Amet placeat magnam
@@ -78,10 +79,18 @@ export default function RecipeCardLong() {
               quis dolorum ad optio quasi magni error animi ducimus officia
               perferendis et placeat nobis, suscipit dolore doloribus!
             </p>
+            <div className="flex flex-wrap gap-1 md:gap-3 my-3">
+                <TagsPill />
+                <TagsPill />
+                <TagsPill />
+                <TagsPill />
+                <TagsPill />
+                <TagsPill />
+            </div>
           </div>
-          <div className="px-3">
+          <div className="order-1 md:order-2 px-5 my-3 mx-2 col-span-4 md:col-span-1">
             <Image
-              className="rounded"
+              className="rounded mx-auto w--40 md:w-full"
               src="/images/bibimbap512x512.png"
               alt="RecipyBook"
               width={100}

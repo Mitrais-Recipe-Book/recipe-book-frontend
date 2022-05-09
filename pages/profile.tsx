@@ -19,12 +19,15 @@ export default function ProfilePage() {
                 <link rel="icon" href="/images/bibimbap192x192.png" />
             </Head>
             <Navbar />
-            <main className="container mx-auto pt-1">
-                <div className="container xl:px-[4rem] ">
+            <main className="lg:container mx-auto pt-1">
+                <div className="lg:container xl:px-[4rem] ">
                     <div className="grid grid-cols-4 gap-5">
                         {/* Column created recipe */}
                         <div className="col-span-4 md:col-span-3 p-4 order-2 md:order-1 shadow-xl rounded-lg">
                             <h1 className="text-3xl my-3 font-bold">Created Recipe(s)</h1>
+                            <p className="p-4 text-center">
+                                You don't have recipe(s) yet, <a href="#" className="transition  bg-gray-800 text-sm text-white hover:bg-gray-600 px-4 py-2 rounded-md ">Create one</a> now!
+                            </p>
                             <RecipeCardLong />
                         </div>
                         {/* Column profile card */}
@@ -51,7 +54,7 @@ export default function ProfilePage() {
                                         <h3>7 likes</h3>
                                         <h3>7 followers</h3>
                                     </div>
-                                    <p className="my-4 w-3/4 mx-auto">
+                                    <p className="my-4 w-3/4 mx-auto four-lines-ellipsis">
                                         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Excepturi placeat harum quis vitae soluta quibusdam laboriosam ad minus fugiat ex suscipit quam illum facilis velit, dolorum obcaecati recusandae, hic aut.
                                     </p>
                                     <button className="uppercase transition  bg-gray-800 text-sm text-white hover:bg-gray-600 px-4 py-2 rounded-md ">Edit Profile </button>
