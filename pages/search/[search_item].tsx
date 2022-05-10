@@ -27,9 +27,9 @@ export default function SearchItem() {
   return (
     <div>
       <Navbar />
-      <main className="container mx-auto pt-1">
+      <main className="container mx-auto pt-2">
         <section>
-          <h1 className="text-4xl text-center mb-3 font-bold">
+          <h1 className="text-4xl text-center pb-3 font-bold">
             Searching Recipes: <a className="text-orange-500">{searchItem}</a>
           </h1>
         </section>
@@ -41,9 +41,12 @@ export default function SearchItem() {
                 justify-center
               "
           >
-            {recipes.map((recipe) => (
+            {
+            recipes.length?
+            recipes.map((recipe) => (
                 <RecipeCard recipe={recipe} />
-              ))}
+              )):
+              <h1 className="text-xl text-center">No Recipe Found</h1>}
           </div>
         </section>
       </main>
