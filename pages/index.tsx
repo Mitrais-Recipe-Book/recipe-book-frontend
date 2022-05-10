@@ -34,16 +34,17 @@ const Home: NextPage = () => {
   }
 
   function fetchData() {
-    axios
-      .get<Recipe[]>(
-        "https://recipyb-dev.herokuapp.com/api/v1/recipe/list?search=&author=&tags=&page=0"
-      )
-      .then((res) => {
-        //@ts-ignore
-        console.log(res.data.payload.content);
-        //@ts-ignore
-        setRecipes(res.data.payload.content);
-      });
+    //TODO: Change api to get popular recipes
+    // axios
+    //   .get<Recipe[]>(
+    //     "https://recipyb-dev.herokuapp.com/api/v1/recipe/list?search=&author=&tags=&page=0"
+    //   )
+    //   .then((res) => {
+    //     //@ts-ignore
+    //     console.log(res.data.payload.content);
+    //     //@ts-ignore
+    //     setRecipes(res.data.payload.content);
+    //   });
     axios
       .get<Recipe[]>(
         "https://recipyb-dev.herokuapp.com/api/v1/recipe/popular?limit=5"
