@@ -4,14 +4,18 @@ import Meta from "../components/Meta";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "../redux/store/store";
+import { SessionProvider } from "next-auth/react";
 
-function MyApp({ Component, pageProps }: AppProps) {
+
+function MyApp({ Component, pageProps: { session, pageProps } }: AppProps) {
   return (
     <>
       <Provider store={store}>
         <PersistGate persistor={persistor}>
-          <Meta />
-          <Component {...pageProps} />
+          <SessionProvider session={session}>
+            <Meta />
+            <Component {...pageProps} />
+          </SessionProvider>
         </PersistGate>
       </Provider>
     </>
