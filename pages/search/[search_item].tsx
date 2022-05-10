@@ -14,15 +14,15 @@ export default function SearchItem() {
     axios
       .get(
         //TODO : Ganti API ke search by item
-        "https://recipyb-dev.herokuapp.com/api/v1/recipe/list?search=&author=&tags=&page=0"
+        `https://recipyb-dev.herokuapp.com/api/v1/recipe/search?title=${searchItem}&author=&tagId=&page=0`
       )
       .then((res) => {
         //@ts-ignore
-        console.log(res.data.payload.content);
+        console.log("resep=",res.data.payload.content);
         //@ts-ignore
         setRecipes(res.data.payload.content);
       });
-    }, []);
+    }, [searchItem]);
   
   return (
     <div>
