@@ -22,6 +22,7 @@ import axios from "axios";
 const Home: NextPage = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [popularRecipes, setPopularRecipes] = useState<Recipe[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
 
   interface Recipe {
     recipeName: string;
@@ -31,6 +32,11 @@ const Home: NextPage = () => {
     author: string;
     authorImage: string;
     authorFollower: number;
+  }
+
+  interface Tag {
+    id: number;
+    name: string;
   }
 
   function fetchData() {
@@ -54,6 +60,14 @@ const Home: NextPage = () => {
         console.log("Popular: ",res.data.payload);
         //@ts-ignore
         setPopularRecipes(res.data.payload);
+      });
+    axios
+      .get<Tag[]>("https://recipyb-dev.herokuapp.com/api/v1/tag")
+      .then((res) => {
+        //@ts-ignore
+        console.log("Tags: ",res.data.payload);
+        //@ts-ignore
+        setTags(res.data.payload);
       });
   }
 
@@ -236,19 +250,12 @@ const Home: NextPage = () => {
           <section className="my-5 py-3 rounded-md bg-white drop-shadow-lg">
             <h1 className="text-4xl text-center mb-3 font-bold">Tags</h1>
             <div className="flex flex-wrap w-full md:w-3/4 mx-auto justify-center pb-3">
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
+              {tags.map((tag) => {
+                return (
+                  <TagsPill tag={tag} />
+                );
+              })}
+              
             </div>
           </section>
 
