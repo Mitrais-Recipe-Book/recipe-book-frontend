@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Navbar from "../components/Navbar";
@@ -9,17 +9,59 @@ import RecipeCardFull from "../components/RecipeCardFull";
 import TagsPill from "../components/TagsPill";
 
 // Import Swiper React components
-import { Swiper, SwiperSlide, } from 'swiper/react';
-import { Navigation, Pagination, Scrollbar, A11y } from 'swiper';
-import SwiperCore, { Autoplay } from 'swiper';
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Scrollbar, A11y } from "swiper";
+import SwiperCore, { Autoplay } from "swiper";
 
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import 'swiper/css/scrollbar';
-
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/scrollbar";
+import axios from "axios";
 
 const Home: NextPage = () => {
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [popularRecipes, setPopularRecipes] = useState<Recipe[]>([]);
+
+  interface Recipe {
+    recipeName: string;
+    description: string;
+    recipeImage: string;
+    recipeViews: number;
+    author: string;
+    authorImage: string;
+    authorFollower: number;
+  }
+
+  function fetchData() {
+    //TODO: Change api to get popular recipes
+    // axios
+    //   .get<Recipe[]>(
+    //     "https://recipyb-dev.herokuapp.com/api/v1/recipe/list?search=&author=&tags=&page=0"
+    //   )
+    //   .then((res) => {
+    //     //@ts-ignore
+    //     console.log(res.data.payload.content);
+    //     //@ts-ignore
+    //     setRecipes(res.data.payload.content);
+    //   });
+    axios
+      .get<Recipe[]>(
+        "https://recipyb-dev.herokuapp.com/api/v1/recipe/popular?limit=5"
+      )
+      .then((res) => {
+        //@ts-ignore
+        console.log("Popular: ",res.data.payload);
+        //@ts-ignore
+        setPopularRecipes(res.data.payload);
+      });
+  }
+
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   SwiperCore.use([Autoplay]);
   return (
     <div>
@@ -33,7 +75,7 @@ const Home: NextPage = () => {
         />
         <link rel="icon" href="/images/bibimbap192x192.png" />
       </Head>
-      
+
       <style>
         {`
           .swiper-button-prev,
@@ -68,7 +110,7 @@ const Home: NextPage = () => {
           {/* Carousel */}
           <section className="my-5 ">
             <Swiper
-              modules={[Navigation, Pagination, Scrollbar, A11y,Autoplay]}
+              modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
               autoplay={{
                 delay: 3000,
                 disableOnInteraction: false,
@@ -89,95 +131,104 @@ const Home: NextPage = () => {
                   height={35}
                   objectFit="cover"
                 /> */}
-                <div 
-                  className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent" 
+                <div
+                  className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent"
                   style={{
-                    backgroundImage : `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url('/images/bibimbap-image.webp')`,
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center',
-                    backgroundSize: 'cover',
-                  }} >
-                    <div className="m-auto">
-                      <h1 className="text-2xl md:text-5xl font-bold text-white ">Bibimbap</h1>
-                    </div>
+                    backgroundImage: `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url('/images/bibimbap-image.webp')`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center",
+                    backgroundSize: "cover",
+                  }}
+                >
+                  <div className="m-auto">
+                    <h1 className="text-2xl md:text-5xl font-bold text-white ">
+                      Bibimbap
+                    </h1>
+                  </div>
                 </div>
               </SwiperSlide>
               <SwiperSlide>
-                <div 
-                  className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent" 
+                <div
+                  className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent"
                   style={{
-                    backgroundImage : `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url('/images/bibimbap-image.webp')`,
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center',
-                    backgroundSize: 'cover',
-                  }} >
-                    <div className="m-auto">
-                      <h1 className="text-2xl md:text-5xl font-bold text-white ">Bibimbap 2</h1>
-                    </div>
+                    backgroundImage: `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url('/images/bibimbap-image.webp')`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center",
+                    backgroundSize: "cover",
+                  }}
+                >
+                  <div className="m-auto">
+                    <h1 className="text-2xl md:text-5xl font-bold text-white ">
+                      Bibimbap 2
+                    </h1>
+                  </div>
                 </div>
               </SwiperSlide>
               <SwiperSlide>
-                <div 
-                    className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent" 
-                    style={{
-                      backgroundImage : `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url('/images/bibimbap-image.webp')`,
-                      backgroundRepeat: 'no-repeat',
-                      backgroundPosition: 'center',
-                      backgroundSize: 'cover',
-                    }} >
-                      <div className="m-auto">
-                        <h1 className="text-2xl md:text-5xl font-bold text-white ">Bibimbap 3</h1>
-                      </div>
+                <div
+                  className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent"
+                  style={{
+                    backgroundImage: `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url('/images/bibimbap-image.webp')`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center",
+                    backgroundSize: "cover",
+                  }}
+                >
+                  <div className="m-auto">
+                    <h1 className="text-2xl md:text-5xl font-bold text-white ">
+                      Bibimbap 3
+                    </h1>
                   </div>
+                </div>
               </SwiperSlide>
               <SwiperSlide>
-                <div 
-                    className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent" 
-                    style={{
-                      backgroundImage : `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url('/images/bibimbap-image.webp')`,
-                      backgroundRepeat: 'no-repeat',
-                      backgroundPosition: 'center',
-                      backgroundSize: 'cover',
-                    }} >
-                      <div className="m-auto">
-                        <h1 className="text-2xl md:text-5xl font-bold text-white ">Bibimbap 4</h1>
-                      </div>
+                <div
+                  className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent"
+                  style={{
+                    backgroundImage: `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url('/images/bibimbap-image.webp')`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center",
+                    backgroundSize: "cover",
+                  }}
+                >
+                  <div className="m-auto">
+                    <h1 className="text-2xl md:text-5xl font-bold text-white ">
+                      Bibimbap 4
+                    </h1>
                   </div>
+                </div>
               </SwiperSlide>
             </Swiper>
           </section>
-          
+
           {/* Recipes of the day */}
           <section className="my-5">
-            <h1 className="text-4xl text-center mb-3 font-bold">Recipes of the day</h1>
+            <h1 className="text-4xl text-center mb-3 font-bold">
+              Recipes of the day
+            </h1>
             <Swiper
               modules={[Navigation, A11y]}
               spaceBetween={30}
               navigation={true}
               breakpoints={{
-                320:{
-                  slidesPerView:1
+                320: {
+                  slidesPerView: 1,
                 },
-                768:{
-                  slidesPerView:2
+                768: {
+                  slidesPerView: 2,
                 },
-                1024:{
-                  slidesPerView:3
+                1024: {
+                  slidesPerView: 3,
                 },
               }}
             >
+              {popularRecipes.map((recipe) => {
+              return(
               <SwiperSlide>
-                <RecipeCardFull />
+                <RecipeCardFull recipe={recipe} />
               </SwiperSlide>
-              <SwiperSlide>
-                <RecipeCardFull />
-              </SwiperSlide>
-              <SwiperSlide>
-                <RecipeCardFull />
-              </SwiperSlide>
-              <SwiperSlide>
-                <RecipeCardFull />
-              </SwiperSlide>
+              )
+              })}
             </Swiper>
           </section>
 
@@ -211,12 +262,9 @@ const Home: NextPage = () => {
                 justify-center
               "
             >
-              <RecipeCard />
-              <RecipeCard />
-              <RecipeCard />
-              <RecipeCard />
-              <RecipeCard />
-              <RecipeCard />
+              {recipes.map((recipe) => (
+                <RecipeCard recipe={recipe} />
+              ))}
             </div>
           </section>
         </div>

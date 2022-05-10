@@ -1,5 +1,6 @@
+import axios from "axios";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
 import RecipeCard from "../../components/RecipeCard";
@@ -7,6 +8,22 @@ import RecipeCard from "../../components/RecipeCard";
 export default function SearchItem() {
   const router = useRouter();
   const searchItem = router.query.search_item;
+  const [recipes, setRecipes] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(
+        //TODO : Ganti API ke search by item
+        "https://recipyb-dev.herokuapp.com/api/v1/recipe/list?search=&author=&tags=&page=0"
+      )
+      .then((res) => {
+        //@ts-ignore
+        console.log(res.data.payload.content);
+        //@ts-ignore
+        setRecipes(res.data.payload.content);
+      });
+    }, []);
+  
   return (
     <div>
       <Navbar />
@@ -24,12 +41,9 @@ export default function SearchItem() {
                 justify-center
               "
           >
-            <RecipeCard />
-            <RecipeCard />
-            <RecipeCard />
-            <RecipeCard />
-            <RecipeCard />
-            <RecipeCard />
+            {recipes.map((recipe) => (
+                <RecipeCard recipe={recipe} />
+              ))}
           </div>
         </section>
       </main>
