@@ -4,8 +4,8 @@ import axios from 'axios'
 
 export default NextAuth({
     pages: {
-        signIn: '/auth/login',
-        error: '/auth/login',
+        signIn: '/sign-in',
+        error: '/sign-in',
     },
     providers: [
         CredentialsProvider({
@@ -15,17 +15,20 @@ export default NextAuth({
                 password: { label: 'Password', type: 'password' },
             },
             async authorize(credentials) {
-                const { username, password } = credentials;
-
+                const username = credentials.username;
+                const password = credentials.password;
                 const login = await axios
-                    .post(`${process.env.BACKEND_URL}/api/v1/auth/login`, {
+                    .post(`https://recipyb-dev.herokuapp.com/auth/sign-in`, {
                         username,
                         password,
                     })
                     .then(({ data }) => {
-                        let user = data.user;
-                        const { access_token, refresh_token } = data;
-                        user = { ...user, access_token, refresh_token };
+                        let user = {};
+                        var token = data.data.access_token;
+                        var decoded = jwt_decode(JSON.stringify(token));
+                        let roles = decoded.roles;
+                        let name = decoded.sub;
+                        user = { ...user, token, roles, name };
                         return user;
                     })
                     .catch((err) => {
@@ -38,7 +41,7 @@ export default NextAuth({
         }),
     ],
     callbacks: {
-        async signIn({ user, account, profile, email, credentials }) {
+        async signIn({ credentials }) {
             return true;
         },
         async session({ session, user, token }) {

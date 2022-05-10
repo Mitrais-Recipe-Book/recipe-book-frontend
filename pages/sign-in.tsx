@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import jwt_decode from "jwt-decode";
 import { setAuth } from "../redux/reducers/authReducer";
 import { useDispatch } from "react-redux";
+import { signIn } from "next-auth/react";
 
 export default function SignIn() {
   const dispatch = useDispatch();
@@ -13,7 +14,14 @@ export default function SignIn() {
 
   const createUser = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    submitForm();
+    // submitForm();
+  };
+
+  //@ts-ignore
+  const login = async () => {
+    const username = userData.username;
+    const password = userData.password;
+    signIn('credentials', { username, password, callbackUrl: '/' });
   };
 
   type CreateUserResponse = {
@@ -29,44 +37,45 @@ export default function SignIn() {
     data: AccessToken;
   }
 
-  async function submitForm() {
-    try {
-      // 👇️ const data: CreateUserResponse
-      const { data } = await axios.post<CreateSignInResponse>(
-        "https://recipyb-dev.herokuapp.com/auth/sign-in",
-        { username: userData.username, password: userData.password },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
+  // async function submitForm() {
+  //   try {
+  //     // 👇️ const data: CreateUserResponse
+  //     const { data } = await axios.post<CreateSignInResponse>(
+  //       "https://recipyb-dev.herokuapp.com/auth/sign-in",
+  //       { username: userData.username, password: userData.password },
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Accept: "application/json",
+  //         },
+  //       }
+  //     );
 
-      var token = data.data.access_token;
-      var decoded = jwt_decode(JSON.stringify(token));
+  //     var token = data.data.access_token;
+  //     var decoded = jwt_decode(JSON.stringify(token));
 
-      const ex = {
-        name: "Ilham",
-        role: "Creator",
-      };
+  //     const ex = {
+  //       name: "Ilham",
+  //       role: "Creator",
+  //     };
 
-      // console.log(decoded);
-      dispatch(setAuth(decoded));
-      console.log(JSON.stringify(data, null, 4));
+  //     
 
-      return data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log("error message: ", error.message);
-        // 👇️ error: AxiosError<any, any>
-        return error.message;
-      } else {
-        console.log("unexpected error: ", error);
-        return "An unexpected error occurred";
-      }
-    }
-  }
+  //     dispatch(setAuth(decoded));
+  //     console.log(JSON.stringify(data, null, 4));
+
+  //     return data;
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       console.log("error message: ", error.message);
+  //       // 👇️ error: AxiosError<any, any>
+  //       return error.message;
+  //     } else {
+  //       console.log("unexpected error: ", error);
+  //       return "An unexpected error occurred";
+  //     }
+  //   }
+  // }
 
   return (
     <div className="min-h-screen flex items-stretch text-white">
@@ -112,6 +121,13 @@ export default function SignIn() {
               Recipy Book
             </h1>
           </div>
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <strong className="font-bold">Holy smokes!</strong>
+            <span className="block sm:inline">Something seriously bad happened.</span>
+            <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
+              <svg className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
+            </span>
+          </div>
           <h1 className="my-6 text-3xl font-bold">Sign In</h1>
           {/* <div className="py-6 space-x-2">
             <span className="w-10 h-10 items-center justify-center inline-flex rounded-full font-bold text-lg border-2 border-white">
@@ -126,7 +142,7 @@ export default function SignIn() {
           </div> 
           <p className="text-gray-100">or use email your account</p>*/}
           <form
-            onSubmit={createUser}
+            onSubmit={login}
             className="sm:w-2/3 w-full px-4 lg:px-0 mx-auto"
           >
             <div className="pb-2 pt-4">
