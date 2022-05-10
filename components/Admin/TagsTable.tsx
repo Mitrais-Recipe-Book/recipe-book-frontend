@@ -20,13 +20,11 @@ export default function TagsTable() {
   ]);
 
   const [newTag, setNewTag] = useState("");
-  const [editedTag, setEditedTag] = useState("");
-  const [editedTagValue, setEditedTagValue] = useState("");
 
   useEffect(() => {
     axios.get(URL).then((res) => {
       setTags(res.data.payload);
-      console.log(res.data.payload);
+      console.log("payload= ",res.data.payload);
     });
   }, []);
 
@@ -34,10 +32,10 @@ export default function TagsTable() {
     {
       name: "Tags",
       sortable: true,
-      selector: (row: { name: string }) => (
+      selector: (row: { id: any, name: string }) => (
         <input
           disabled={true}
-          name={"input" + row.name}
+          name={"input" + row.id}
           className="text-base p-1 rounded-full w-full"
           type="text"
           value={row.name}
@@ -58,33 +56,33 @@ export default function TagsTable() {
       name: "Actions",
       sortable: false,
       maxWidth: "100px",
-      selector: (row: { name: string }) => {
+      selector: (row: { id: any, name: string }) => {
         return (
           <div>
             <button
-              name={"edit" + row.name}
+              name={"edit" + row.id}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
               onClick={() => {
                 var inputText = document.querySelector(
-                  `input[name='input${row.name}']`
+                  `input[name='input${row.id}']`
                 ) as HTMLInputElement;
                 inputText.disabled = !inputText.disabled;
                 inputText.disabled
                   ? ((inputText.className =
                       "w-full border-0 p-1 rounded-full text-base"),
-                    setEditedTagValue(inputText.value),
-                    axios.put(URL + "/" + editedTag, editedTagValue),
+                    axios.put(URL, {
+                      tagId: row.id,
+                      tagReplace: row.name}),
                     ((
                       document.querySelector(
-                        `button[name='edit${row.name}']`
+                        `button[name='edit${row.id}']`
                       ) as HTMLButtonElement
                     ).innerHTML = "Edit"))
                   : ((inputText.className =
                       "w-full border-2 border-gray-400 p-1 rounded-full text-base"),
-                    setEditedTag(inputText.value),
                     ((
                       document.querySelector(
-                        `button[name='edit${row.name}']`
+                        `button[name='edit${row.id}']`
                       ) as HTMLButtonElement
                     ).innerHTML = "Save"));
               }}
@@ -122,11 +120,14 @@ export default function TagsTable() {
         <button
           className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-1 px-4 rounded"
           onClick={() => {
-            // console.log(newTag);
-            axios.post(URL, newTag).then((res) => {
+            console.log("send tag:",newTag);
+            axios.post(URL, newTag, {headers:{
+              "Content-Type": "application/xwww-form-urlencoded",
+            }}).then((res) => {
+              console.log("uploaded tag: ",res.data.payload);
               setTags([
                 ...tags,
-                { id: res.data.payload.id, name: res.data.payload.name },
+                { id: res.data.payload.id, name: res.data.payload.name }
               ]);
             });
             setNewTag("");
