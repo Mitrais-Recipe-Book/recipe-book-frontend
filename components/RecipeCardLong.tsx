@@ -80,12 +80,11 @@ export default function RecipeCardLong() {
               perferendis et placeat nobis, suscipit dolore doloribus!
             </p>
             <div className="flex flex-wrap gap-1 md:gap-3 my-3">
-                <TagsPill />
-                <TagsPill />
-                <TagsPill />
-                <TagsPill />
-                <TagsPill />
-                <TagsPill />
+                <TagsPill tag={{id: 0, name: "tags"}} />
+                <TagsPill tag={{id: 0, name: "tags"}} />
+                <TagsPill tag={{id: 0, name: "tags"}} />
+                <TagsPill tag={{id: 0, name: "tags"}} />
+                <TagsPill tag={{id: 0, name: "tags"}} />
             </div>
           </div>
           <div className="order-1 md:order-2 px-5 my-3 mx-2 col-span-4 md:col-span-1">
