@@ -1,7 +1,7 @@
 import Image from "next/image";
 import axios from "axios";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 import { setAuth } from "../redux/reducers/authReducer";
 import { useDispatch } from "react-redux";
@@ -11,6 +11,17 @@ export default function SignIn() {
   const dispatch = useDispatch();
   const router = useRouter();
   const [userData, setUserData] = useState({ username: "", password: "" });
+  const [message, setMessage] = useState("");
+  const [notif, setNotif] = useState(false);
+
+  useEffect(() => {
+    console.log(message);
+    //@ts-ignore
+    if (router.query.create) { setMessage(router.query.create), setNotif(true) };
+    setTimeout(() => { setNotif(false) }, 5000);
+  }, []);
+
+
 
   const createUser = (event: React.SyntheticEvent) => {
     event.preventDefault();
@@ -121,26 +132,17 @@ export default function SignIn() {
               Recipy Book
             </h1>
           </div>
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-            <strong className="font-bold">Holy smokes!</strong>
-            <span className="block sm:inline">Something seriously bad happened.</span>
-            <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
-              <svg className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
-            </span>
-          </div>
+          {notif ?
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+              <strong className="font-bold">Success!</strong>
+              <br />
+              <span className="block sm:inline">Successfully created new account please Sign In!</span>
+              <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
+              </span>
+            </div> : ""
+          }
           <h1 className="my-6 text-3xl font-bold">Sign In</h1>
-          {/* <div className="py-6 space-x-2">
-            <span className="w-10 h-10 items-center justify-center inline-flex rounded-full font-bold text-lg border-2 border-white">
-              f
-            </span>
-            <span className="w-10 h-10 items-center justify-center inline-flex rounded-full font-bold text-lg border-2 border-white">
-              G+
-            </span>
-            <span className="w-10 h-10 items-center justify-center inline-flex rounded-full font-bold text-lg border-2 border-white">
-              in
-            </span>
-          </div> 
-          <p className="text-gray-100">or use email your account</p>*/}
           <form
             onSubmit={login}
             className="sm:w-2/3 w-full px-4 lg:px-0 mx-auto"

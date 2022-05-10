@@ -113,7 +113,7 @@ const Home: NextPage = () => {
 
       <Navbar />
       {/* @ts-ignore */}
-      <h1>{session.user ? session.user.name : "Default User"}</h1>
+      <h1>{session.user ? session.user.name : ""}</h1>
       {/* @ts-ignore */}
       <h1>{session.user ? session.user.roles[0] : ""}</h1>
       <main className="container mx-auto pt-1">

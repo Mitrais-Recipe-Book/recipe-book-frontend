@@ -5,6 +5,8 @@ import React, { useState } from "react";
 
 export default function SignUp() {
     const router = useRouter();
+    const [password, setPassword] = useState("");
+    const [passwordConf, setPasswordConf] = useState("");
     const [userData, setUserData] = useState({ email: "", username: "", fullName: "", password: "" });
 
     const createUser = (event: React.SyntheticEvent) => {
@@ -35,7 +37,12 @@ export default function SignUp() {
             );
 
             console.log(JSON.stringify(data, null, 4));
-            router.push("/sign-in");
+            router.push({
+                pathname: "/sign-in",
+                query: {
+                    create: "success"
+                }
+            });
 
             return data;
         } catch (error) {
@@ -102,6 +109,7 @@ export default function SignUp() {
                                 name="email"
                                 id="email"
                                 placeholder="Email"
+                                required
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserData({ ...userData, [e.target.name]: e.target.value })}
                                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
                             />
@@ -111,6 +119,7 @@ export default function SignUp() {
                                 type="text"
                                 name="fullName"
                                 id="fullName"
+                                required
                                 placeholder="Full Name"
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserData({ ...userData, [e.target.name]: e.target.value })}
                                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
@@ -121,6 +130,7 @@ export default function SignUp() {
                                 type="text"
                                 name="username"
                                 id="username"
+                                required
                                 placeholder="Username"
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserData({ ...userData, [e.target.name]: e.target.value })}
                                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
@@ -132,16 +142,28 @@ export default function SignUp() {
                                 type="password"
                                 name="password"
                                 id="password"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserData({ ...userData, [e.target.name]: e.target.value })}
+                                required
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    setPassword(e.target.value);
+                                    setUserData({ ...userData, ["password"]: e.target.value })
+                                }}
                                 placeholder="Password"
                             />
                         </div>
+                        {password != passwordConf &&
+                            <div className="text-red-600">
+                                <small>The password confirmation does not match</small>
+                            </div>}
                         <div className="pb-2 pt-4">
                             <input
                                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
                                 type="password"
                                 name="confirm-password"
                                 id="confirm-password"
+                                required
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    setPasswordConf(e.target.value)
+                                }}
                                 placeholder="Confirm Password"
                             />
                         </div>
