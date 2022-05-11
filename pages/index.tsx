@@ -18,11 +18,16 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { getTags } from "../redux/reducers/tagReducer";
 
 const Home: NextPage = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [popularRecipes, setPopularRecipes] = useState<Recipe[]>([]);
-  const [tags, setTags] = useState<Tag[]>([]);
+  // const [tags, setTags] = useState<Tag[]>([]);
+  //@ts-ignore
+  const tags: Tag[] = useSelector((state) => state.tags.allTags? state.tags.allTags : []);
+  const dispatch = useDispatch();
 
   interface Recipe {
     recipeName: string;
@@ -60,18 +65,22 @@ const Home: NextPage = () => {
         //@ts-ignore
         setPopularRecipes(res.data.payload);
       });
-    axios
-      .get<Tag[]>("https://recipyb-dev.herokuapp.com/api/v1/tag")
-      .then((res) => {
-        //@ts-ignore
-        console.log("Tags: ",res.data.payload);
-        //@ts-ignore
-        setTags(res.data.payload);
-      });
+    // axios
+    //   .get<Tag[]>("https://recipyb-dev.herokuapp.com/api/v1/tag")
+    //   .then((res) => {
+    //     //@ts-ignore
+    //     console.log("Tags: ",res.data.payload);
+    //     //@ts-ignore
+    //     setTags(res.data.payload);
+    //   });
+    //@ts-ignore
+    dispatch(getTags());
+    
   }
 
   useEffect(() => {
     fetchData();
+    console.log("tags:",tags)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
