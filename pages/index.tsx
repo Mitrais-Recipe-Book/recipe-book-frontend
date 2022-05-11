@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import { useEffect, useRef, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
-import Navbar from "../components/Navbar";
+import Navbar from "@components/Navbar";
 import Footer from "../components/Footer";
 import RecipeCard from "../components/RecipeCard";
 import RecipeCardFull from "../components/RecipeCardFull";
@@ -51,7 +51,7 @@ const Home: NextPage = () => {
       )
       .then((res) => {
         //@ts-ignore
-        console.log("Popular: ",res.data.payload);
+        console.log("Popular: ", res.data.payload);
         //@ts-ignore
         setPopularRecipes(res.data.payload);
       });
@@ -223,11 +223,11 @@ const Home: NextPage = () => {
               }}
             >
               {popularRecipes.map((recipe) => {
-              return(
-              <SwiperSlide>
-                <RecipeCardFull recipe={recipe} />
-              </SwiperSlide>
-              )
+                return (
+                  <SwiperSlide>
+                    <RecipeCardFull recipe={recipe} />
+                  </SwiperSlide>
+                );
               })}
             </Swiper>
           </section>
