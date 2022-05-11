@@ -9,10 +9,11 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function RecipeCardLong() {
+//@ts-ignore
+export default function RecipeCardLong(prop) {
   return (
     <>
-      <div className="w-full border shadow-md p-4">
+      <div className="w-full border shadow-md p-4 my-2">
         <div className="flex">
           <div className=" grow">
             <h4>4 May 2022</h4>
@@ -51,6 +52,10 @@ export default function RecipeCardLong() {
                     {({ active }) => (
                       <a
                         href="#"
+                        onClick={(e)=>{
+                          e.preventDefault()
+                          prop.deleteAction(prop.recipe.id)
+                        }}
                         className={classNames(
                           active
                             ? "bg-gray-100 text-gray-900"
@@ -67,24 +72,30 @@ export default function RecipeCardLong() {
             </Transition>
           </Menu>
         </div>
-        <h1 className="text-2xl text-center md:text-left my-3 font-semibold">Spaghett</h1>
+        <h1 className="text-2xl text-center md:text-left my-3 font-semibold">
+          {
+            //@ts-ignore
+            prop.recipe.title
+          }
+        </h1>
         <div className="grid grid-cols-4 my-3">
           <div className="order-2 md:order-1 col-span-4 md:col-span-3">
             <p className="text-justify md:text-left four-lines-ellipsis">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. A amet
-              impedit, modi similique molestiae, ad praesentium doloremque hic,
-              maxime minima magni pariatur deserunt. Amet placeat magnam
-              sapiente tempora, vitae incidunt? Lorem ipsum dolor sit amet
-              consectetur adipisicing elit. Veniam voluptas maiores est odio
-              quis dolorum ad optio quasi magni error animi ducimus officia
-              perferendis et placeat nobis, suscipit dolore doloribus!
+              {
+                //@ts-ignore
+                prop.recipe.overview
+              }
             </p>
             <div className="flex flex-wrap gap-1 md:gap-3 my-3">
-                <TagsPill tag={{id: 0, name: "tags"}} />
-                <TagsPill tag={{id: 0, name: "tags"}} />
-                <TagsPill tag={{id: 0, name: "tags"}} />
-                <TagsPill tag={{id: 0, name: "tags"}} />
-                <TagsPill tag={{id: 0, name: "tags"}} />
+              {
+                prop.recipe?.tags.length > 0 ? (
+                  prop.recipe.tags.map((tag:any) => (
+                    <TagsPill key={Math.random()*Math.random()} tag={{id: tag.id, name: tag.name}} />
+                  ))
+                ) : (
+                  <div className=""></div>
+                )
+              }
             </div>
           </div>
           <div className="order-1 md:order-2 px-5 my-3 mx-2 col-span-4 md:col-span-1">

@@ -26,6 +26,7 @@
     "redux": "^4.2.0",
     "redux-persist": "^6.0.0",
     "styled-components": "^5.3.5",
+    "sweetalert2": "^11.4.13",
     "swiper": "^8.1.4"
   },
   "devDependencies": {
