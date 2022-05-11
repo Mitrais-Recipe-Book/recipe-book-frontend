@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { enableMapSet } from "immer";
 import  Router  from "next/router";
-import { join } from "path";
 
 enableMapSet();
 
@@ -27,14 +26,12 @@ export const getRecipesByTags = createAsyncThunk(
         return `tagId=${tag}&`;
       })
       .join("")}page=0`;
-    //   console.log(url);
     
     axios.get(url).then((res) => {
       //@ts-ignore
       console.log("resep=", res.data.payload.content);
       //@ts-ignore
       thunkAPI.dispatch(setRecipesQuery(res.data.payload.content));
-    //   Router.push( `/tag?${queryTags.join("-")}`);
     });
   }
 );
@@ -59,7 +56,6 @@ const tagReducer = createSlice({
   initialState,
   reducers: {
     addTagsToQuery: (state, action) => {
-      // if (typeof state.queryTags !== 'Set')
       try {
         state.queryTags.add(action.payload);
       } catch (error) {
@@ -67,7 +63,6 @@ const tagReducer = createSlice({
         state.queryTags.add(action.payload);
       }
       console.log(state.queryTags);
-    //   Router.push( `/tag?${state.queryTags}`);
     },
     removeTagsFromQuery: (state, action) => {
       state.queryTags.delete(action.payload);
