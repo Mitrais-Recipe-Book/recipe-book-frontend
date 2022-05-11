@@ -1,10 +1,12 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import Footer from '../../components/Footer';
 import Navbar from '../../components/Navbar';
 import TagsPill from '../../components/TagsPill';
+import {removeAllQueryTags, removeRecipesQuery} from '../../redux/reducers/tagReducer';
 
 export default function index() {
+    const dispatch = useDispatch();
     interface reduxStore {
         tags: {
             allTags: Tag[];
@@ -15,6 +17,11 @@ export default function index() {
         name: string;
     }
     const tags = useSelector((state: reduxStore) => state.tags.allTags)
+        dispatch(removeAllQueryTags());
+        dispatch(removeRecipesQuery());
+    useEffect(() => {
+
+    }, []);
   return (
     <div>
       <Navbar />

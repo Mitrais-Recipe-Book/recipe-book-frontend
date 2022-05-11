@@ -28,6 +28,8 @@ const Home: NextPage = () => {
   //@ts-ignore
   const tags: Tag[] = useSelector((state) => state.tags.allTags? state.tags.allTags : []);
   const dispatch = useDispatch();
+  //@ts-ignore
+  console.log("query tags: ", useSelector((state) => state.tags.queryTags));
 
   interface Recipe {
     recipeName: string;

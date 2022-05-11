@@ -10,13 +10,17 @@ import TagsPill from "../../components/TagsPill";
 export default function TagItem() {
   const router = useRouter();
   const searchTag = String(router.query.tag_item).split("&");
-  const [recipes, setRecipes] = useState([]);
+  // const [recipes, setRecipes] = useState([]);
   // const [tags, setTags] = useState<Tag[]>([]);
+  const recipes = useSelector((state: reduxStore) => state.tags.queryRecipes);
   const tags = useSelector((state: reduxStore) => state.tags.allTags);
+  const activeTags = useSelector((state: reduxStore) => state.tags.queryTags);
 
   interface reduxStore {
     tags: {
       allTags: Tag[];
+      queryTags: Set<number>;
+      queryRecipes: [];
     };
   }
   interface Tag {
@@ -34,17 +38,18 @@ export default function TagItem() {
       //     //@ts-ignore
       //     setTags(res.data.payload);
       //   });
-      axios
-        .get(
-          `https://recipyb-dev.herokuapp.com/api/v1/recipe/search?title=&author=&tagId=${searchTag[0]}&page=0`
-        )
-        .then((res) => {
-          //@ts-ignore
-          console.log("resep=", res.data.payload.content);
-          //@ts-ignore
-          setRecipes(res.data.payload.content);
-        });
+      // axios
+      //   .get(
+      //     `https://recipyb-dev.herokuapp.com/api/v1/recipe/search?title=&author=&tagId=${searchTag[0]}&page=0`
+      //   )
+      //   .then((res) => {
+      //     //@ts-ignore
+      //     console.log("resep=", res.data.payload.content);
+      //     //@ts-ignore
+      //     setRecipes(res.data.payload.content);
+      //   });
     }
+    // console.log("active tags: ", recipes2);
   }, [router.isReady, searchTag[0]]);
 
   return (
@@ -75,7 +80,7 @@ export default function TagItem() {
                 justify-center
               "
           >
-            {recipes.length ? (
+            {recipes ? (
               recipes.map((recipe) => <RecipeCard recipe={recipe} />)
             ) : (
               <h1 className="text-xl text-center">No Recipe With This Tag</h1>
