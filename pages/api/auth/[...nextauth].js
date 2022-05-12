@@ -1,21 +1,26 @@
 import NextAuth from 'next-auth/next';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios'
+import { redirect } from 'next/dist/server/api-utils';
 
 export default NextAuth({
-  // pages: {
-  //   signIn: '/sign-in',
-  //   error: '/sign-in',
-  // },
+  jwt: {
+    secret: process.env.NEXTAUTH_SECRET,
+    maxAge: 60 * 60 * 24 * 30,
+  },
+  pages: {
+    signIn: '/sign-in',
+    signOut: '/sign-in'
+  },
   providers: [
     CredentialsProvider({
       name: 'credentials',
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
-        if (credentials.username === "john", credentials.password === "test") {
+        if (credentials.username === "a", credentials.password === "a") {
           return { id: 1, name: 'J Smith', email: 'jsmith@example.com' };
         }
         return null
@@ -43,6 +48,9 @@ export default NextAuth({
       }
       return token;
     },
+    async redirect({ url, baseUrl }) {
+      return baseUrl
+    }
   },
   debug: true,
 });

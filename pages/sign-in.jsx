@@ -1,99 +1,34 @@
 import Image from "next/image";
-import axios from "axios";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import jwt_decode from "jwt-decode";
-import { setAuth } from "../redux/reducers/authReducer";
+import React, { useEffect, useState, SyntheticEvent } from "react";
 import { useDispatch } from "react-redux";
 import { signIn, useSession, getProviders, signOut, ClientSafeProvider, LiteralUnion, getSession, getCsrfToken } from "next-auth/react";
-import { BuiltInProviderType } from "next-auth/providers";
 import { GetServerSideProps } from "next";
+import jsCookie from "js-cookie";
 
-//@ts-ignore
 export default function LogIn({ csrfToken, providers }) {
   const session = useSession();
-
-  console.log("session", session);
+  console.log("Sign-in Session", session);
 
   const dispatch = useDispatch();
   const router = useRouter();
   const [userData, setUserData] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
   const [notif, setNotif] = useState(false);
-  // const [providers, setProviders] = useState<Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider> | null>();
 
   useEffect(() => {
-    //@ts-ignore
+    if (jsCookie.get("next-auth.csrf-token")) {
+      router.push("/");
+    }
     if (router.query.create) { setMessage(router.query.create), setNotif(true) };
     setTimeout(() => { setNotif(false) }, 5000);
   }, []);
 
-
-
-  const createUser = (event: React.SyntheticEvent) => {
-    event.preventDefault();
-    // submitForm();
-  };
-
-  //@ts-ignore
   const login = async () => {
     const username = userData.username;
     const password = userData.password;
-    signIn('credentials', { username, password, callbackUrl: '/' });
+    signIn('credentials', { username, password });
   };
-
-  type CreateUserResponse = {
-    username: string;
-    password: string;
-  };
-
-  interface AccessToken {
-    access_token: Object;
-  }
-
-  interface CreateSignInResponse {
-    data: AccessToken;
-  }
-
-  // async function submitForm() {
-  //   try {
-  //     // 👇️ const data: CreateUserResponse
-  //     const { data } = await axios.post<CreateSignInResponse>(
-  //       "https://recipyb-dev.herokuapp.com/auth/sign-in",
-  //       { username: userData.username, password: userData.password },
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Accept: "application/json",
-  //         },
-  //       }
-  //     );
-
-  //     var token = data.data.access_token;
-  //     var decoded = jwt_decode(JSON.stringify(token));
-
-  //     const ex = {
-  //       name: "Ilham",
-  //       role: "Creator",
-  //     };
-
-  //     
-
-  //     dispatch(setAuth(decoded));
-  //     console.log(JSON.stringify(data, null, 4));
-
-  //     return data;
-  //   } catch (error) {
-  //     if (axios.isAxiosError(error)) {
-  //       console.log("error message: ", error.message);
-  //       // 👇️ error: AxiosError<any, any>
-  //       return error.message;
-  //     } else {
-  //       console.log("unexpected error: ", error);
-  //       return "An unexpected error occurred";
-  //     }
-  //   }
-  // }
 
   return (
     <div className="min-h-screen flex items-stretch text-white">
@@ -151,18 +86,18 @@ export default function LogIn({ csrfToken, providers }) {
           }
           <h1 className="my-6 text-3xl font-bold">Sign In</h1>
           <form
+            onSubmit={login}
             method="post"
-            action="/api/auth/callback/credentials"
             className="sm:w-2/3 w-full px-4 lg:px-0 mx-auto"
           >
-            <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+            <input name='csrfToken' type='hidden' />
             <div className="pb-2 pt-4">
               <input
                 type="text"
                 name="username"
                 id="username"
                 placeholder="Username"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(e) =>
                   setUserData({ ...userData, [e.target.name]: e.target.value })
                 }
                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
@@ -174,7 +109,7 @@ export default function LogIn({ csrfToken, providers }) {
                 type="password"
                 name="password"
                 id="password"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(e) =>
                   setUserData({ ...userData, [e.target.name]: e.target.value })
                 }
                 placeholder="Password"
@@ -234,7 +169,6 @@ export default function LogIn({ csrfToken, providers }) {
   );
 }
 
-//@ts-ignore
 export async function getServerSideProps(context) {
   const session = await getSession(context);
 

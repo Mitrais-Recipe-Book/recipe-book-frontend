@@ -8,6 +8,7 @@ import RecipeCard from "../components/RecipeCard";
 import RecipeCardFull from "../components/RecipeCardFull";
 import TagsPill from "../components/TagsPill";
 import { getSession, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -128,6 +129,15 @@ const Home: NextPage = () => {
       </style>
 
       <Navbar />
+      {session &&
+        <div>
+          {session?.user?.name}
+
+          <button onClick={() => signOut()}>
+            sign out
+          </button>
+        </div>
+      }
       {/* @ts-ignore */}
       {/* <h1>{session.user ? session.user.name : ""}</h1> */}
       {/* @ts-ignore */}
