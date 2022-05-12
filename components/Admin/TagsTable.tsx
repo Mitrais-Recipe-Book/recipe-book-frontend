@@ -4,6 +4,8 @@ import DataTable from "react-data-table-component";
 
 export default function TagsTable() {
   const URL = "https://recipyb-dev.herokuapp.com/api/v1/tag";
+  const [notif, setNotif] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("")
   const [tags, setTags] = useState([
     {
       id: 1,
@@ -23,8 +25,7 @@ export default function TagsTable() {
 
   useEffect(() => {
     axios.get(URL).then((res) => {
-      setTags(res.data.payload);
-      console.log("payload= ",res.data.payload);
+      setTags(res.data.payload)
     });
   }, []);
 
@@ -42,8 +43,8 @@ export default function TagsTable() {
           onChange={(e) => {
             setTags(
               tags.map((tag) => {
-                if (tag.name === row.name) {
-                  tag.name = e.target.value;
+                if (tag.id === row.id) {
+                  tag.name = e.target.value.toLowerCase();
                 }
                 return tag;
               })
@@ -72,7 +73,19 @@ export default function TagsTable() {
                       "w-full border-0 p-1 rounded-full text-base"),
                     axios.put(URL, {
                       tagId: row.id,
-                      tagReplace: row.name}),
+                      tagReplace: row.name})
+                      .then((res) => {
+                        console.log("res= ",res);
+                      }
+                      )
+                      .catch((err) => {
+                        axios.get(URL).then((res) => {
+                          setTags(res.data.payload);
+                        });
+                        setErrorMessage(err.response.data.message);
+                        setNotif(true);
+                      }
+                      ),
                     ((
                       document.querySelector(
                         `button[name='edit${row.id}']`
@@ -97,6 +110,17 @@ export default function TagsTable() {
 
   return (
     <div className="px-4 py-4 m-2">
+      {notif ?
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <strong className="font-bold">Failed!</strong>
+              <br />
+              <span className="block sm:inline">Failed created new tag: ${errorMessage}</span>
+              <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg className="fill-current h-6 w-6 text-black-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"
+                onClick={()=>setNotif(false)} /></svg>
+              </span>
+            </div> : ""
+          }
       <DataTable
         name="Tags"
         //@ts-ignore
@@ -113,7 +137,7 @@ export default function TagsTable() {
           placeholder="New tag..."
           value={newTag}
           onChange={(e) => {
-            setNewTag(e.target.value);
+            setNewTag(e.target.value.toLowerCase());
           }}
         />
         <span className="px-2"></span>
@@ -124,12 +148,18 @@ export default function TagsTable() {
             axios.post(URL, newTag, {headers:{
               "Content-Type": "application/xwww-form-urlencoded",
             }}).then((res) => {
-              console.log("uploaded tag: ",res.data.payload);
+              console.log("res= ",res.data.payload);
               setTags([
                 ...tags,
                 { id: res.data.payload.id, name: res.data.payload.name }
               ]);
-            });
+            })
+            .catch((err) => {
+              console.log("e: ",err.response.data);
+              setErrorMessage(err.response.data.message);
+              setNotif(true);
+            }
+            );
             setNewTag("");
           }}
         >
