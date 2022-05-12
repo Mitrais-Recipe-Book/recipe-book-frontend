@@ -20,8 +20,13 @@ import "swiper/css/scrollbar";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { getTags } from "../redux/reducers/tagReducer";
+import session from "redux-persist/lib/storage/session";
 
 const Home: NextPage = () => {
+  // const auth = useSelector((state) =>
+  // @ts-ignore
+  //   state.auth.value ? state.auth.value : []
+  // );
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [popularRecipes, setPopularRecipes] = useState<Recipe[]>([]);
   // const [tags, setTags] = useState<Tag[]>([]);
@@ -63,7 +68,7 @@ const Home: NextPage = () => {
       )
       .then((res) => {
         //@ts-ignore
-        console.log("Popular: ",res.data.payload);
+        console.log("Popular: ", res.data.payload);
         //@ts-ignore
         setPopularRecipes(res.data.payload);
       });
@@ -129,6 +134,10 @@ const Home: NextPage = () => {
       </style>
 
       <Navbar />
+      {/* @ts-ignore */}
+      <h1>{session.user ? session.user.name : ""}</h1>
+      {/* @ts-ignore */}
+      <h1>{session.user ? session.user.roles[0] : ""}</h1>
       <main className="container mx-auto pt-1">
         <div className="container md:px-[50px] lg:px-[100px] xl:px-[150px]">
           {/* Carousel */}
@@ -247,11 +256,11 @@ const Home: NextPage = () => {
               }}
             >
               {popularRecipes.map((recipe) => {
-              return(
-              <SwiperSlide>
-                <RecipeCardFull recipe={recipe} />
-              </SwiperSlide>
-              )
+                return (
+                  <SwiperSlide>
+                    <RecipeCardFull recipe={recipe} />
+                  </SwiperSlide>
+                );
               })}
             </Swiper>
           </section>

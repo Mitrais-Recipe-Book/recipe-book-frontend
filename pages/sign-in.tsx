@@ -1,6 +1,93 @@
 import Image from "next/image";
+import axios from "axios";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import jwt_decode from "jwt-decode";
+import { setAuth } from "../redux/reducers/authReducer";
+import { useDispatch } from "react-redux";
+import { signIn } from "next-auth/react";
 
 export default function SignIn() {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const [userData, setUserData] = useState({ username: "", password: "" });
+  const [message, setMessage] = useState("");
+  const [notif, setNotif] = useState(false);
+
+  useEffect(() => {
+    console.log(message);
+    //@ts-ignore
+    if (router.query.create) { setMessage(router.query.create), setNotif(true) };
+    setTimeout(() => { setNotif(false) }, 5000);
+  }, []);
+
+
+
+  const createUser = (event: React.SyntheticEvent) => {
+    event.preventDefault();
+    // submitForm();
+  };
+
+  //@ts-ignore
+  const login = async () => {
+    const username = userData.username;
+    const password = userData.password;
+    signIn('credentials', { username, password, callbackUrl: '/' });
+  };
+
+  type CreateUserResponse = {
+    username: string;
+    password: string;
+  };
+
+  interface AccessToken {
+    access_token: Object;
+  }
+
+  interface CreateSignInResponse {
+    data: AccessToken;
+  }
+
+  // async function submitForm() {
+  //   try {
+  //     // 👇️ const data: CreateUserResponse
+  //     const { data } = await axios.post<CreateSignInResponse>(
+  //       "https://recipyb-dev.herokuapp.com/auth/sign-in",
+  //       { username: userData.username, password: userData.password },
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Accept: "application/json",
+  //         },
+  //       }
+  //     );
+
+  //     var token = data.data.access_token;
+  //     var decoded = jwt_decode(JSON.stringify(token));
+
+  //     const ex = {
+  //       name: "Ilham",
+  //       role: "Creator",
+  //     };
+
+  //     
+
+  //     dispatch(setAuth(decoded));
+  //     console.log(JSON.stringify(data, null, 4));
+
+  //     return data;
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       console.log("error message: ", error.message);
+  //       // 👇️ error: AxiosError<any, any>
+  //       return error.message;
+  //     } else {
+  //       console.log("unexpected error: ", error);
+  //       return "An unexpected error occurred";
+  //     }
+  //   }
+  // }
+
   return (
     <div className="min-h-screen flex items-stretch text-white">
       <div
@@ -45,26 +132,30 @@ export default function SignIn() {
               Recipy Book
             </h1>
           </div>
+          {notif ?
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+              <strong className="font-bold">Success!</strong>
+              <br />
+              <span className="block sm:inline">Successfully created new account please Sign In!</span>
+              <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
+              </span>
+            </div> : ""
+          }
           <h1 className="my-6 text-3xl font-bold">Sign In</h1>
-          {/* <div className="py-6 space-x-2">
-            <span className="w-10 h-10 items-center justify-center inline-flex rounded-full font-bold text-lg border-2 border-white">
-              f
-            </span>
-            <span className="w-10 h-10 items-center justify-center inline-flex rounded-full font-bold text-lg border-2 border-white">
-              G+
-            </span>
-            <span className="w-10 h-10 items-center justify-center inline-flex rounded-full font-bold text-lg border-2 border-white">
-              in
-            </span>
-          </div> 
-          <p className="text-gray-100">or use email your account</p>*/}
-          <form action="" className="sm:w-2/3 w-full px-4 lg:px-0 mx-auto">
+          <form
+            onSubmit={login}
+            className="sm:w-2/3 w-full px-4 lg:px-0 mx-auto"
+          >
             <div className="pb-2 pt-4">
               <input
-                type="email"
-                name="email"
-                id="email"
-                placeholder="Email/Username"
+                type="text"
+                name="username"
+                id="username"
+                placeholder="Username"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setUserData({ ...userData, [e.target.name]: e.target.value })
+                }
                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
               />
             </div>
@@ -74,6 +165,9 @@ export default function SignIn() {
                 type="password"
                 name="password"
                 id="password"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setUserData({ ...userData, [e.target.name]: e.target.value })
+                }
                 placeholder="Password"
               />
             </div>
@@ -81,7 +175,10 @@ export default function SignIn() {
               <a href="/sign-up">Sign up here</a>
             </div>
             <div className="px-4 pb-2 pt-4">
-              <button className="uppercase block w-full p-4 text-lg rounded-full bg-orange-400 hover:bg-orange-500 focus:outline-none">
+              <button
+                type="submit"
+                className="uppercase block w-full p-4 text-lg rounded-full bg-orange-400 hover:bg-orange-500 focus:outline-none"
+              >
                 sign in
               </button>
             </div>
