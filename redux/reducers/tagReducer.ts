@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { enableMapSet } from "immer";
-import  Router  from "next/router";
+import Router from "next/router";
 
 enableMapSet();
 
@@ -18,21 +18,14 @@ export const getRecipesByTags = createAsyncThunk(
   "tag/getRecipesByTags",
   async (tags, thunkAPI) => {
     //@ts-ignore
-    console.log("from other world", thunkAPI.getState().tags.queryTags);
-    //@ts-ignore
     const queryTags = Array.from(thunkAPI.getState().tags.queryTags);
     const url = `https://recipyb-dev.herokuapp.com/api/v1/recipe/search?title=&author=&${queryTags
       .map((tag) => {
         return `tagId=${tag}&`;
       })
       .join("")}page=0`;
-    
-    axios.get(url).then((res) => {
-      //@ts-ignore
-      console.log("resep=", res.data.payload.content);
-      //@ts-ignore
-      thunkAPI.dispatch(setRecipesQuery(res.data.payload.content));
-    });
+
+    return axios.get(url).then((res) => res.data.payload.content);
   }
 );
 
@@ -62,21 +55,21 @@ const tagReducer = createSlice({
         state.queryTags = new Set();
         state.queryTags.add(action.payload);
       }
-      console.log(state.queryTags);
     },
     removeTagsFromQuery: (state, action) => {
       state.queryTags.delete(action.payload);
+      console.log("after remove:", state.queryTags);
     },
     removeAllQueryTags: (state) => {
       state.queryTags = new Set();
       state.queryTags.clear();
     },
     setRecipesQuery: (state, action) => {
-        state.queryRecipes = action.payload;
+      state.queryRecipes = action.payload;
     },
     removeRecipesQuery: (state) => {
-        state.queryRecipes = [];
-    }
+      state.queryRecipes = [];
+    },
   },
   extraReducers: {
     //@ts-ignore
@@ -86,8 +79,15 @@ const tagReducer = createSlice({
     //@ts-ignore
     [getRecipesByTags.fulfilled]: (state, action) => {
       state.queryRecipes = action.payload;
+      Router.push(`/tag/id=${Array.from(state.queryTags).join("&")}`);
     },
   },
 });
-export const { addTagsToQuery, removeAllQueryTags, setRecipesQuery, removeRecipesQuery } = tagReducer.actions;
+export const {
+  addTagsToQuery,
+  removeAllQueryTags,
+  setRecipesQuery,
+  removeRecipesQuery,
+  removeTagsFromQuery
+} = tagReducer.actions;
 export default tagReducer.reducer;

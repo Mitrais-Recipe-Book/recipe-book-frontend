@@ -49,7 +49,7 @@ export default function TagItem() {
                 justify-center
               "
           >
-            {recipes ? (
+            {recipes.length > 0 ? (
               recipes.map((recipe) => <RecipeCard recipe={recipe} />)
             ) : (
               <h1 className="text-xl text-center">No Recipe With This Tag</h1>
