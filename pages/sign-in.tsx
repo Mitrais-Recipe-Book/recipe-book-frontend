@@ -5,17 +5,24 @@ import React, { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 import { setAuth } from "../redux/reducers/authReducer";
 import { useDispatch } from "react-redux";
-import { signIn } from "next-auth/react";
+import { signIn, useSession, getProviders, signOut, ClientSafeProvider, LiteralUnion, getSession, getCsrfToken } from "next-auth/react";
+import { BuiltInProviderType } from "next-auth/providers";
+import { GetServerSideProps } from "next";
 
-export default function SignIn() {
+//@ts-ignore
+export default function LogIn({ csrfToken, providers }) {
+  const session = useSession();
+
+  console.log("session", session);
+
   const dispatch = useDispatch();
   const router = useRouter();
   const [userData, setUserData] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
   const [notif, setNotif] = useState(false);
+  // const [providers, setProviders] = useState<Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider> | null>();
 
   useEffect(() => {
-    console.log(message);
     //@ts-ignore
     if (router.query.create) { setMessage(router.query.create), setNotif(true) };
     setTimeout(() => { setNotif(false) }, 5000);
@@ -144,9 +151,11 @@ export default function SignIn() {
           }
           <h1 className="my-6 text-3xl font-bold">Sign In</h1>
           <form
-            onSubmit={login}
+            method="post"
+            action="/api/auth/callback/credentials"
             className="sm:w-2/3 w-full px-4 lg:px-0 mx-auto"
           >
+            <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
             <div className="pb-2 pt-4">
               <input
                 type="text"
@@ -223,4 +232,26 @@ export default function SignIn() {
       </div>
     </div>
   );
+}
+
+//@ts-ignore
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+
+  // if logged in, redirect to home page
+  if (session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      csrfToken: await getCsrfToken(context),
+      providers: await getProviders(),
+    },
+  };
 }

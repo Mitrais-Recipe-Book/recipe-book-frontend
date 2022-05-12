@@ -7,7 +7,7 @@ import Footer from "../components/Footer";
 import RecipeCard from "../components/RecipeCard";
 import RecipeCardFull from "../components/RecipeCardFull";
 import TagsPill from "../components/TagsPill";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -30,6 +30,9 @@ const Home: NextPage = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [popularRecipes, setPopularRecipes] = useState<Recipe[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
+
+  const { data: session } = useSession();
+  console.log("Session", session);
 
   interface Recipe {
     recipeName: string;
@@ -71,7 +74,7 @@ const Home: NextPage = () => {
       .get<Tag[]>("https://recipyb-dev.herokuapp.com/api/v1/tag")
       .then((res) => {
         //@ts-ignore
-        console.log("Tags: ",res.data.payload);
+        console.log("Tags: ", res.data.payload);
         //@ts-ignore
         setTags(res.data.payload);
       });
@@ -126,9 +129,9 @@ const Home: NextPage = () => {
 
       <Navbar />
       {/* @ts-ignore */}
-      <h1>{session.user ? session.user.name : ""}</h1>
+      {/* <h1>{session.user ? session.user.name : ""}</h1> */}
       {/* @ts-ignore */}
-      <h1>{session.user ? session.user.roles[0] : ""}</h1>
+      {/* <h1>{session.user ? session.user.roles[0] : ""}</h1> */}
       <main className="container mx-auto pt-1">
         <div className="container md:px-[50px] lg:px-[100px] xl:px-[150px]">
           {/* Carousel */}
@@ -265,7 +268,7 @@ const Home: NextPage = () => {
                   <TagsPill tag={tag} />
                 );
               })}
-              
+
             </div>
           </section>
 
