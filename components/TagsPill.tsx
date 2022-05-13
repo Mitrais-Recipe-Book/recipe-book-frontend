@@ -9,17 +9,19 @@ const TagsPill = ({tag}:any) => {
   const [isActive, setIsActive] = useState(false);
   
   return (
-    <div className="rounded py-1 px-4 mx-1 my-1 border-solid border-2 border-black transition-all cursor-pointer hover:scale-110 hover:bg-orange-300 "
-    onClick={() => {
+    <div id="tag" className="rounded py-1 px-4 mx-1 my-1 border-solid border-2 border-black transition-all cursor-pointer hover:scale-110 hover:bg-orange-300 "
+    onClick={(event) => {
       if(!isActive){
       dispatch(addTagsToQuery(tag.id));
       //@ts-ignore
       dispatch(getRecipesByTags());
+      event.currentTarget.className = "rounded bg-orange-600 py-1 px-4 mx-1 my-1 border-solid border-2 border-black transition-all cursor-pointer hover:scale-110 hover:bg-orange-300 ";
       setIsActive(true);
       } else{
         dispatch(removeTagsFromQuery(tag.id));
         //@ts-ignore
         dispatch(getRecipesByTags());
+        event.currentTarget.className = "rounded bg-white py-1 px-4 mx-1 my-1 border-solid border-2 border-black transition-all cursor-pointer hover:scale-110 hover:bg-orange-300";
         setIsActive(false);
         console.log("removed");
       }

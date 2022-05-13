@@ -19,11 +19,15 @@ export const getRecipesByTags = createAsyncThunk(
   async (tags, thunkAPI) => {
     //@ts-ignore
     const queryTags = Array.from(thunkAPI.getState().tags.queryTags);
-    const url = `https://recipyb-dev.herokuapp.com/api/v1/recipe/search?title=&author=&${queryTags
+    const url = `https://recipyb-dev.herokuapp.com/api/v1/recipe/search?title=&author=&${
+      queryTags.length > 0 ?
+      queryTags
       .map((tag) => {
         return `tagId=${tag}&`;
       })
-      .join("")}page=0`;
+      .join(""):
+      "tagId=&"}page=0`;
+
 
     return axios.get(url).then((res) => res.data.payload.content);
   }
