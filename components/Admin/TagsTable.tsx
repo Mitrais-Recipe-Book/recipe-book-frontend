@@ -80,9 +80,7 @@ export default function TagsTable() {
                       }
                       )
                       .catch((err) => {
-                        axios.get(URL).then((res) => {
-                          setTags(res.data.payload);
-                        });
+                        row.name=err.response.data.payload.toBeEdited;
                         setErrorMessage(err.response.data.message);
                         setNotif(true);
                       }
