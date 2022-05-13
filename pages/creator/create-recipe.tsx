@@ -52,8 +52,11 @@ export default function CreateRecipe() {
     axios
       .get("https://recipyb-dev.herokuapp.com/api/v1/tag")
       .then((res) => {
-        setRecipeTags(res.data.payload);
+        res.data.payload.forEach((tag: { id: any; name: any }) => {
+          setRecipeTags(...recipeTags, tag.name, tag.id);
+        });
         console.log("Tags: ", res.data.payload);
+        console.log("RecipeTags: ", recipeTags);
       })
       .catch((err) => {
         console.log(err);
@@ -72,6 +75,7 @@ export default function CreateRecipe() {
     axios
       .post("https://recipyb-dev.herokuapp.com/api/v1/recipe/add", recipeForm)
       .then((res) => {
+        console.log("uploaded recipe, now uploading image");
         uploadImage(res.data.payload.recipeId);
       })
       .catch((err) => {
@@ -102,12 +106,12 @@ export default function CreateRecipe() {
         // console.log(res);
         // setModalImage(false);
         setImageFormData({});
-        window.alert("Successfully updated");
+        window.alert("Successfully upload image");
         // dispatch(setUserImage());
       })
       .catch((err) => {
         console.log(err);
-        window.alert("Failed to update");
+        window.alert("Failed to upload image");
       });
   }
 
