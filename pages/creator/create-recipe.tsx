@@ -6,6 +6,7 @@ import axios from "axios";
 import { IoIosAdd, IoIosRemove } from "react-icons/io";
 import Select from "react-select";
 import { Editor, EditorState } from "draft-js";
+import RichTextEditor from "@components/RichTextEditor";
 
 export default function CreateRecipe() {
   const [userInfo, setUserInfo]: any = useState({});
@@ -60,30 +61,6 @@ export default function CreateRecipe() {
       .get("https://recipyb-dev.herokuapp.com/api/v1/tag")
       .then((res) => {
         setRecipeTagsData(res.data.payload);
-        // options = manager.map((s) => {
-        //   return {
-        //     value: s.userId,
-
-        //     label: `${s.username} - ${s.firstName} ${s.lastName}`,
-        //   };
-        // });
-        // recipeTags = res.data.payload.map((tag: { id: any; name: any }) => {
-        //   return {
-        //     label: tag.name,
-        //     value: tag.id,
-        //   };
-        // recipeTags.current = res.data.payload.map(
-        //   (tag: { id: any; name: any }) => {
-        //     return {
-        //       label: tag.name,
-        //       value: tag.id,
-        //     };
-        //   }
-        // );
-        // });
-        // res.data.payload.map((tag: { id: any; name: any }) => {
-        //   recipeTags.return({ label: tag.name, value: tag.id });
-        // });
         console.log("Tags: ", res.data.payload);
       })
       .catch((err) => {
@@ -102,7 +79,7 @@ export default function CreateRecipe() {
   tagOptions = recipeTagsData.map((tag: { id: any; name: any }) => {
     return {
       label: tag.name,
-      value: tag.name,
+      value: tag.id,
     };
   });
 
@@ -270,10 +247,7 @@ export default function CreateRecipe() {
                   </div>
                   <div className="flex flex-col">
                     <label className="leading-loose"> Content</label>
-                    <Editor
-                      editorState={editorState}
-                      onChange={setEditorState}
-                    />
+                    <RichTextEditor className="pb-14" />
                     {/* <textarea className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"></textarea> */}
                   </div>
                 </div>
