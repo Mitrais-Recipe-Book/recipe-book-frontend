@@ -2,7 +2,8 @@ const withPWA = require("next-pwa");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  //stop running useEffect twice in UseEffect dev mode
+  reactStrictMode: false,
   images: {
     domains: ["images.unsplash.com"],
   },

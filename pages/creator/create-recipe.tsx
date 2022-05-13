@@ -1,9 +1,11 @@
 import Footer from "@components/Footer";
 import Image from "next/image";
 import Navbar from "@components/Navbar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { IoIosAdd, IoIosRemove } from "react-icons/io";
+import Select from "react-select";
+import { Editor, EditorState } from "draft-js";
 
 export default function CreateRecipe() {
   const [userInfo, setUserInfo]: any = useState({});
@@ -13,8 +15,13 @@ export default function CreateRecipe() {
   const [ingredientList, setIngredientList]: any = useState([]);
   const [submit, setSubmit]: any = useState(false);
   const [imageFormData, setImageFormData]: any = useState({});
-  const [recipeTags, setRecipeTags]: any = useState([]);
+  const [recipeTagsData, setRecipeTagsData]: any = useState([]);
+  let tagOptions: any = [];
+  const tagInput: any = [];
   const username = "user1";
+  const [editorState, setEditorState] = useState(() =>
+    EditorState.createEmpty()
+  );
 
   const onAddBtnClick = () => {
     setIngredientList(
@@ -52,11 +59,32 @@ export default function CreateRecipe() {
     axios
       .get("https://recipyb-dev.herokuapp.com/api/v1/tag")
       .then((res) => {
-        res.data.payload.forEach((tag: { id: any; name: any }) => {
-          setRecipeTags(...recipeTags, tag.name, tag.id);
-        });
+        setRecipeTagsData(res.data.payload);
+        // options = manager.map((s) => {
+        //   return {
+        //     value: s.userId,
+
+        //     label: `${s.username} - ${s.firstName} ${s.lastName}`,
+        //   };
+        // });
+        // recipeTags = res.data.payload.map((tag: { id: any; name: any }) => {
+        //   return {
+        //     label: tag.name,
+        //     value: tag.id,
+        //   };
+        // recipeTags.current = res.data.payload.map(
+        //   (tag: { id: any; name: any }) => {
+        //     return {
+        //       label: tag.name,
+        //       value: tag.id,
+        //     };
+        //   }
+        // );
+        // });
+        // res.data.payload.map((tag: { id: any; name: any }) => {
+        //   recipeTags.return({ label: tag.name, value: tag.id });
+        // });
         console.log("Tags: ", res.data.payload);
-        console.log("RecipeTags: ", recipeTags);
       })
       .catch((err) => {
         console.log(err);
@@ -70,6 +98,13 @@ export default function CreateRecipe() {
       setSubmit(false);
     }
   }, [submit, recipeForm]);
+
+  tagOptions = recipeTagsData.map((tag: { id: any; name: any }) => {
+    return {
+      label: tag.name,
+      value: tag.name,
+    };
+  });
 
   function handleSubmit() {
     axios
@@ -167,6 +202,26 @@ export default function CreateRecipe() {
                     />
                   </div>
                   <div className="flex flex-col">
+                    <label className="leading-loose">Recipe Tags</label>
+                    <Select
+                      id="tags"
+                      name="tags"
+                      isMulti
+                      className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-full sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+                      placeholder="Choose Recipe Tags"
+                      options={tagOptions}
+                      onChange={(e) => {
+                        e.map((i: any) => {
+                          tagInput.push(i.value);
+                        });
+                        setRecipeForm({
+                          ...recipeForm,
+                          tags: tagInput,
+                        });
+                      }}
+                    />
+                  </div>
+                  <div className="flex flex-col">
                     <label className="leading-loose">Ingredients</label>
                     <div className="pb-2 flex flex-row">
                       <input
@@ -215,7 +270,11 @@ export default function CreateRecipe() {
                   </div>
                   <div className="flex flex-col">
                     <label className="leading-loose"> Content</label>
-                    <textarea className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"></textarea>
+                    <Editor
+                      editorState={editorState}
+                      onChange={setEditorState}
+                    />
+                    {/* <textarea className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"></textarea> */}
                   </div>
                 </div>
                 <div className="pt-4 flex items-center space-x-4">
