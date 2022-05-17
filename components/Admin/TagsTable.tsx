@@ -1,50 +1,60 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DataTable from "react-data-table-component";
 
 export default function TagsTable() {
   const URL = "https://recipyb-dev.herokuapp.com/api/v1/tag";
+  const [loading, setLoading] = useState(true)
+  // const [sortable, setSortable] = useState(true)
   const [notif, setNotif] = useState(false);
   const [errorMessage, setErrorMessage] = useState("")
   const [tags, setTags] = useState([
     {
       id: 1,
-      name: "Tag 1",
-    },
-    {
-      id: 2,
-      name: "Tag 2",
-    },
-    {
-      id: 3,
-      name: "Tag 3",
-    },
+      name: "",
+      temp: "",
+    }
   ]);
 
   const [newTag, setNewTag] = useState("");
 
   useEffect(() => {
     axios.get(URL).then((res) => {
-      setTags(res.data.payload)
+      setTags(res.data.payload.map((tag:any) => ({
+        id: tag.id,
+        name: tag.name,
+        temp: tag.name,
+      })))
+      setLoading(false)
     });
   }, []);
 
   const columns = [
     {
       name: "Tags",
-      sortable: true,
-      selector: (row: { id: any, name: string }) => (
+      sortFunction: (a: any,b: any) => {
+        // if (sortable.current){
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+      // }
+        return 0;
+      },
+      selector: (row: { id: any, name: string, temp: string }) => (
         <input
           disabled={true}
           name={"input" + row.id}
           className="text-base p-1 rounded-full w-full"
           type="text"
-          value={row.name}
+          value={row.temp}
           onChange={(e) => {
             setTags(
               tags.map((tag) => {
                 if (tag.id === row.id) {
-                  tag.name = e.target.value.toLowerCase();
+                  tag.temp = e.target.value.toLowerCase();
                 }
                 return tag;
               })
@@ -57,7 +67,7 @@ export default function TagsTable() {
       name: "Actions",
       sortable: false,
       maxWidth: "100px",
-      selector: (row: { id: any, name: string }) => {
+      selector: (row: { id: any, name: string, temp: string }) => {
         return (
           <div>
             <button
@@ -73,15 +83,22 @@ export default function TagsTable() {
                       "w-full border-0 p-1 rounded-full text-base"),
                     axios.put(URL, {
                       tagId: row.id,
-                      tagReplace: row.name})
+                      tagReplace: row.temp})
                       .then((res) => {
                         setNotif(false);
-                        console.log("res= ",res);
                       }
                       )
                       .catch((err) => {
-                        row.name=err.response.data.payload.toBeEdited;
-                        setErrorMessage(err.response.data.message);
+                        setTags(
+                          tags.map((tag) => {
+                            if (tag.id === row.id) {
+                              tag.temp = tag.name;
+                            }
+                            return tag;
+                          })
+                        )
+                        setErrorMessage(`Failed to edit tag ${err.response.data.payload.toBeEdited} to ${err.response.data.payload.input}. ${err.response.data.message}`);
+
                         setNotif(true);
                       }
                       ),
@@ -113,7 +130,7 @@ export default function TagsTable() {
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
               <strong className="font-bold">Failed!</strong>
               <br />
-              <span className="block sm:inline">Failed created new tag, {errorMessage}</span>
+              <span className="block sm:inline">{errorMessage}</span>
               <span className="absolute top-0 bottom-0 right-0 px-4 py-3 " onClick={()=>setNotif(false)}>
                 <svg className="fill-current h-6 w-6 text-black-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"
                  /></svg>
@@ -125,6 +142,7 @@ export default function TagsTable() {
         //@ts-ignore
         columns={columns}
         data={tags}
+        progressPending={loading}
         pagination
         paginationPerPage={5}
         paginationRowsPerPageOptions={[5, 10, 20]}
@@ -143,20 +161,17 @@ export default function TagsTable() {
         <button
           className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-1 px-4 rounded"
           onClick={() => {
-            console.log("send tag:",newTag);
             axios.post(URL, newTag, {headers:{
               "Content-Type": "application/xwww-form-urlencoded",
             }}).then((res) => {
-              console.log("res= ",res.data.payload);
               setNotif(false);
               setTags([
                 ...tags,
-                { id: res.data.payload.id, name: res.data.payload.name }
+                { id: res.data.payload.id, name: res.data.payload.name, temp: res.data.payload.name }
               ]);
             })
             .catch((err) => {
-              console.log("e: ",err.response.data);
-              setErrorMessage(err.response.data.message);
+              setErrorMessage(`Failed to create tag.\n${err.response.data.message}`);
               setNotif(true);
             }
             );
