@@ -2,6 +2,7 @@ import NextAuth from 'next-auth/next';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios'
 import { redirect } from 'next/dist/server/api-utils';
+import jwtDecode from 'jwt-decode';
 
 export default NextAuth({
   jwt: {
@@ -10,7 +11,8 @@ export default NextAuth({
   },
   pages: {
     signIn: '/sign-in',
-    signOut: '/sign-in'
+    signOut: '/sign-in',
+    error: '/sign-in'
   },
   providers: [
     CredentialsProvider({
@@ -20,10 +22,25 @@ export default NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
-        if (credentials.username === "a", credentials.password === "a") {
-          return { id: 1, name: 'J Smith', email: 'jsmith@example.com' };
-        }
-        return null
+        const { username, password } = credentials;
+
+        const login = await axios
+          .post(`https://recipyb-dev.herokuapp.com/auth/sign-in`, {
+            username,
+            password,
+          })
+          .then(({ data }) => {
+            let user = data.payload.user;
+            const { access_token } = data.payload.access_token;
+            user = { ...user, access_token };
+            return user;
+          })
+          .catch((err) => {
+            let message = err?.response?.data?.error;
+            if (message == null) message = 'Something went wrong'
+            throw new Error(message);
+          });
+        return login;
       }
     })
   ],

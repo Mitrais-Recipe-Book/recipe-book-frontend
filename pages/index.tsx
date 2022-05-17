@@ -130,10 +130,12 @@ const Home: NextPage = () => {
 
       <Navbar />
       {session &&
-        <div>
-          {session?.user?.name}
+        <div className="p-2 text-center bg-blue-200 m-2 md:px-[50px] lg:px-[100px] xl:px-[150px] rounded-xl w-10/12 mx-auto">
+          <div>
+            Hello {session?.user?.username}!
+          </div>
 
-          <button onClick={() => signOut()}>
+          <button onClick={() => signOut()} className="m-1 bg-blue-500 rounded p-2 hover:bg-blue-700 text-white uppercase">
             sign out
           </button>
         </div>

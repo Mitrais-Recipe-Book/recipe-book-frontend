@@ -24,7 +24,8 @@ export default function LogIn({ csrfToken, providers }) {
     setTimeout(() => { setNotif(false) }, 5000);
   }, []);
 
-  const login = async () => {
+  const login = async (event) => {
+    event.preventDefault();
     const username = userData.username;
     const password = userData.password;
     signIn('credentials', { username, password });
