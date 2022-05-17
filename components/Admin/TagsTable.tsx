@@ -6,13 +6,13 @@ export default function TagsTable() {
   const URL = "https://recipyb-dev.herokuapp.com/api/v1/tag";
   const [loading, setLoading] = useState(true)
   // const [sortable, setSortable] = useState(true)
-  const sortable = useRef(true)
   const [notif, setNotif] = useState(false);
   const [errorMessage, setErrorMessage] = useState("")
   const [tags, setTags] = useState([
     {
       id: 1,
       name: "",
+      temp: "",
     }
   ]);
 
@@ -20,7 +20,11 @@ export default function TagsTable() {
 
   useEffect(() => {
     axios.get(URL).then((res) => {
-      setTags(res.data.payload)
+      setTags(res.data.payload.map((tag:any) => ({
+        id: tag.id,
+        name: tag.name,
+        temp: tag.name,
+      })))
       setLoading(false)
     });
   }, []);
@@ -29,28 +33,28 @@ export default function TagsTable() {
     {
       name: "Tags",
       sortFunction: (a: any,b: any) => {
-        if (sortable.current){
+        // if (sortable.current){
         if (a.name < b.name) {
           return -1;
         }
         if (a.name > b.name) {
           return 1;
         }
-      }
+      // }
         return 0;
       },
-      selector: (row: { id: any, name: string }) => (
+      selector: (row: { id: any, name: string, temp: string }) => (
         <input
           disabled={true}
           name={"input" + row.id}
           className="text-base p-1 rounded-full w-full"
           type="text"
-          value={row.name}
+          value={row.temp}
           onChange={(e) => {
             setTags(
               tags.map((tag) => {
                 if (tag.id === row.id) {
-                  tag.name = e.target.value.toLowerCase();
+                  tag.temp = e.target.value.toLowerCase();
                 }
                 return tag;
               })
@@ -63,7 +67,7 @@ export default function TagsTable() {
       name: "Actions",
       sortable: false,
       maxWidth: "100px",
-      selector: (row: { id: any, name: string }) => {
+      selector: (row: { id: any, name: string, temp: string }) => {
         return (
           <div>
             <button
@@ -77,20 +81,23 @@ export default function TagsTable() {
                 inputText.disabled
                   ? ((inputText.className =
                       "w-full border-0 p-1 rounded-full text-base"),
-                      sortable.current=true,
                     axios.put(URL, {
                       tagId: row.id,
-                      tagReplace: row.name})
+                      tagReplace: row.temp})
                       .then((res) => {
                         setNotif(false);
-                        console.log("res= ",res);
                       }
                       )
                       .catch((err) => {
-                        axios.get(URL).then((res) => {
-                          setTags(res.data.payload);
-                        });
-                        setErrorMessage(`Failed to edit tag.\n${err.response.data.message}`);
+                        setTags(
+                          tags.map((tag) => {
+                            if (tag.id === row.id) {
+                              tag.temp = tag.name;
+                            }
+                            return tag;
+                          })
+                        )
+                        setErrorMessage(`Failed to edit tag ${err.response.data.payload.toBeEdited} to ${err.response.data.payload.input}. ${err.response.data.message}`);
                         setNotif(true);
                       }
                       ),
@@ -101,7 +108,6 @@ export default function TagsTable() {
                     ).innerHTML = "Edit"))
                   : ((inputText.className =
                       "w-full border-2 border-gray-400 p-1 rounded-full text-base"),
-                    sortable.current=false,
                     ((
                       document.querySelector(
                         `button[name='edit${row.id}']`
@@ -154,15 +160,13 @@ export default function TagsTable() {
         <button
           className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-1 px-4 rounded"
           onClick={() => {
-            console.log("send tag:",newTag);
             axios.post(URL, newTag, {headers:{
               "Content-Type": "application/xwww-form-urlencoded",
             }}).then((res) => {
-              console.log("res= ",res.data.payload);
               setNotif(false);
               setTags([
                 ...tags,
-                { id: res.data.payload.id, name: res.data.payload.name }
+                { id: res.data.payload.id, name: res.data.payload.name, temp: res.data.payload.name }
               ]);
             })
             .catch((err) => {
