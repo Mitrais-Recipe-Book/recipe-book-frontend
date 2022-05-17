@@ -1,9 +1,13 @@
 import Image from "next/image";
 import Router from "next/router";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { sendQuery, setQueryRecipeName } from "../redux/reducers/queryReducer";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  let searchItem = useSelector((state: any) => state.query.queryRecipeName);
+  const dispatch = useDispatch();
 
   return (
     <nav className="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-800">
@@ -43,10 +47,16 @@ export default function Navbar() {
               id="search-bar"
               className="block p-2 pl-10 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search Recipe..."
+              value={searchItem}
+              onChange={(event) => {
+                dispatch(setQueryRecipeName(event.target.value));
+              }}
               onKeyUp={(e) => {
                 if (e.key === "Enter") {
                   //@ts-ignore
                   console.log(document.getElementById("search-bar")?.value);
+                  //@ts-ignore
+                  dispatch(sendQuery(document.getElementById("search-bar")?.value));
                   Router.push(
                     //@ts-ignore
                     `/search/${document.getElementById("search-bar")?.value}`

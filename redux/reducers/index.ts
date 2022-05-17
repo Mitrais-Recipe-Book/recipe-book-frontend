@@ -1,11 +1,11 @@
 import { combineReducers } from "redux";
 import authReducer from "./authReducer";
 import userReducer from "./userReducer";
-import tagSlice from "./tagReducer";
+import queryReducer from "./queryReducer";
 
 const rootReducer = combineReducers({
   user: userReducer,
-  tags: tagSlice,
+  query: queryReducer,
   auth: authReducer
 });
 

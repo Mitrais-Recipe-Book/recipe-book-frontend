@@ -19,7 +19,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { getTags } from "../redux/reducers/tagReducer";
+import { getTags } from "../redux/reducers/queryReducer";
 import session from "redux-persist/lib/storage/session";
 
 const Home: NextPage = () => {
@@ -31,10 +31,10 @@ const Home: NextPage = () => {
   const [popularRecipes, setPopularRecipes] = useState<Recipe[]>([]);
   // const [tags, setTags] = useState<Tag[]>([]);
   //@ts-ignore
-  const tags: Tag[] = useSelector((state) => state.tags.allTags? state.tags.allTags : []);
+  const tags: Tag[] = useSelector((state) => state.query.allTags? state.query.allTags : []);
   const dispatch = useDispatch();
   //@ts-ignore
-  console.log("query tags: ", useSelector((state) => state.tags.queryTags));
+  // console.log("query tags: ", useSelector((state) => state.tags.queryTags));
 
   interface Recipe {
     recipeName: string;
@@ -58,7 +58,7 @@ const Home: NextPage = () => {
       )
       .then((res) => {
         //@ts-ignore
-        console.log(res.data.payload);
+        // console.log(res.data.payload);
         //@ts-ignore
         setRecipes(res.data.payload);
       });
@@ -68,18 +68,10 @@ const Home: NextPage = () => {
       )
       .then((res) => {
         //@ts-ignore
-        console.log("Popular: ", res.data.payload);
+        // console.log("Popular: ", res.data.payload);
         //@ts-ignore
         setPopularRecipes(res.data.payload);
       });
-    // axios
-    //   .get<Tag[]>("https://recipyb-dev.herokuapp.com/api/v1/tag")
-    //   .then((res) => {
-    //     //@ts-ignore
-    //     console.log("Tags: ",res.data.payload);
-    //     //@ts-ignore
-    //     setTags(res.data.payload);
-    //   });
     //@ts-ignore
     dispatch(getTags());
     
