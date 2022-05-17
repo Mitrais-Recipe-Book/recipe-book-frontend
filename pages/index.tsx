@@ -7,7 +7,6 @@ import Footer from "../components/Footer";
 import RecipeCard from "../components/RecipeCard";
 import RecipeCardFull from "../components/RecipeCardFull";
 import TagsPill from "../components/TagsPill";
-import { getSession } from "next-auth/react";
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -19,8 +18,9 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { getTags } from "../redux/reducers/tagReducer";
 import session from "redux-persist/lib/storage/session";
-// import { useSelector } from "react-redux";
 
 const Home: NextPage = () => {
   // const auth = useSelector((state) =>
@@ -29,7 +29,12 @@ const Home: NextPage = () => {
   // );
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [popularRecipes, setPopularRecipes] = useState<Recipe[]>([]);
-  const [tags, setTags] = useState<Tag[]>([]);
+  // const [tags, setTags] = useState<Tag[]>([]);
+  //@ts-ignore
+  const tags: Tag[] = useSelector((state) => state.tags.allTags? state.tags.allTags : []);
+  const dispatch = useDispatch();
+  //@ts-ignore
+  console.log("query tags: ", useSelector((state) => state.tags.queryTags));
 
   interface Recipe {
     recipeName: string;
@@ -67,18 +72,22 @@ const Home: NextPage = () => {
         //@ts-ignore
         setPopularRecipes(res.data.payload);
       });
-    axios
-      .get<Tag[]>("https://recipyb-dev.herokuapp.com/api/v1/tag")
-      .then((res) => {
-        //@ts-ignore
-        console.log("Tags: ",res.data.payload);
-        //@ts-ignore
-        setTags(res.data.payload);
-      });
+    // axios
+    //   .get<Tag[]>("https://recipyb-dev.herokuapp.com/api/v1/tag")
+    //   .then((res) => {
+    //     //@ts-ignore
+    //     console.log("Tags: ",res.data.payload);
+    //     //@ts-ignore
+    //     setTags(res.data.payload);
+    //   });
+    //@ts-ignore
+    dispatch(getTags());
+    
   }
 
   useEffect(() => {
     fetchData();
+    console.log("tags:",tags)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
