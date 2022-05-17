@@ -86,6 +86,15 @@ export default function TagsTable() {
                       tagReplace: row.temp})
                       .then((res) => {
                         setNotif(false);
+                        setTags(
+                          tags.map((tag) => {
+                            if (tag.id === row.id) {
+                              tag.name = tag.temp;
+                            }
+                            return tag;
+                          })
+                        )
+
                       }
                       )
                       .catch((err) => {
