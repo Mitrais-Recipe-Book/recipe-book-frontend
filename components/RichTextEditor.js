@@ -1,5 +1,12 @@
 /* eslint-disable react/no-string-refs */
-import { Editor, EditorState, getDefaultKeyBinding, RichUtils } from "draft-js";
+import {
+  convertToRaw,
+  Editor,
+  EditorState,
+  getDefaultKeyBinding,
+  RichUtils,
+} from "draft-js";
+import { convertToHTML } from "draft-convert";
 import React from "react";
 
 class RichTextEditor extends React.Component {
@@ -7,7 +14,11 @@ class RichTextEditor extends React.Component {
     super(props);
     this.state = { editorState: EditorState.createEmpty() };
     this.focus = () => this.refs.editor.focus();
-    this.onChange = (editorState) => this.setState({ editorState });
+    this.getHtmlContent = this.props.getHtmlContent;
+    this.onChange = (editorState) => {
+      this.setState({ editorState });
+      this.getHtmlContent(convertToHTML(editorState.getCurrentContent()));
+    };
 
     this.handleKeyCommand = this._handleKeyCommand.bind(this);
     this.mapKeyToEditorCommand = this._mapKeyToEditorCommand.bind(this);
@@ -19,6 +30,7 @@ class RichTextEditor extends React.Component {
     const newState = RichUtils.handleKeyCommand(editorState, command);
     if (newState) {
       this.onChange(newState);
+      console.log(newState);
       return true;
     }
     return false;
@@ -62,6 +74,9 @@ class RichTextEditor extends React.Component {
       }
     }
 
+    // console.log(convertToRaw(editorState.getCurrentContent()));
+    // console.log("HTML", convertToHTML(editorState.getCurrentContent()));
+    // this.getHtmlContent(convertToHTML(editorState.getCurrentContent()));
     return (
       <div className="RichEditor-root">
         <BlockStyleControls
@@ -80,7 +95,6 @@ class RichTextEditor extends React.Component {
             handleKeyCommand={this.handleKeyCommand}
             keyBindingFn={this.mapKeyToEditorCommand}
             onChange={this.onChange}
-            placeholder="Tell a story..."
             ref="editor"
             spellCheck={true}
           />

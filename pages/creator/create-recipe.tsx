@@ -1,11 +1,11 @@
 import Footer from "@components/Footer";
 import Image from "next/image";
 import Navbar from "@components/Navbar";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { IoIosAdd, IoIosRemove } from "react-icons/io";
 import Select from "react-select";
-import { Editor, EditorState } from "draft-js";
+
 import RichTextEditor from "@components/RichTextEditor";
 
 export default function CreateRecipe() {
@@ -20,9 +20,6 @@ export default function CreateRecipe() {
   let tagOptions: any = [];
   const tagInput: any = [];
   const username = "user1";
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
-  );
 
   const onAddBtnClick = () => {
     setIngredientList(
@@ -40,7 +37,14 @@ export default function CreateRecipe() {
         <input
           type="text"
           className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
-          placeholder="Ingredient name and quantity"
+          style={{ flex: "2 1" }}
+          placeholder="Ingredient name"
+        />
+        <input
+          type="text"
+          className="ml-2 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+          style={{ flex: "1 1" }}
+          placeholder="quantity"
         />
       </div>
     );
@@ -127,11 +131,18 @@ export default function CreateRecipe() {
       });
   }
 
+  function getHtmlContent(content: any) {
+    setRecipeForm({
+      ...recipeForm,
+      content: content,
+    });
+  }
+
   return (
     <>
       <Navbar />
       <div
-        className="py-6 bg-repeat bg-contain
+        className="py-6 bg-repeat bg-auto 
       bg-[url('https://previews.123rf.com/images/redspruce/redspruce1409/redspruce140900015/32280224-doodle-food-icons-seamless-background.jpg')]"
       >
         <div className="relative py-3 w-full mx-auto">
@@ -204,7 +215,20 @@ export default function CreateRecipe() {
                       <input
                         type="text"
                         className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
-                        placeholder="Ingredient name and quantity"
+                        placeholder="Ingredient name"
+                        style={{ flex: "2 1" }}
+                        onChange={(e) => {
+                          setRecipeForm({
+                            ...recipeForm,
+                            ingredients: e.target.value,
+                          });
+                        }}
+                      />
+                      <input
+                        type="text"
+                        className="ml-2 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+                        placeholder="quantity"
+                        style={{ flex: "1 1" }}
                         onChange={(e) => {
                           setRecipeForm({
                             ...recipeForm,
@@ -247,8 +271,10 @@ export default function CreateRecipe() {
                   </div>
                   <div className="flex flex-col">
                     <label className="leading-loose"> Content</label>
-                    <RichTextEditor className="pb-14" />
-                    {/* <textarea className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"></textarea> */}
+                    <RichTextEditor
+                      className="pb-14"
+                      getHtmlContent={getHtmlContent}
+                    />
                   </div>
                 </div>
                 <div className="pt-4 flex items-center space-x-4">
@@ -277,6 +303,21 @@ export default function CreateRecipe() {
         </div>
       </div>
       <Footer />
+      <style>
+        {`
+          .public-DraftEditor-content * {
+            font-size: revert !important;
+          }
+          .public-DraftStyleDefault-ol {
+            list-style-type: decimal !important;
+            margin-left: 20px !important;
+          }
+          .public-DraftStyleDefault-ul {
+            list-style: inherit !important;
+            margin-left: 20px !important;
+          }
+        `}
+      </style>
     </>
   );
 }
