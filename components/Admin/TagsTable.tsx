@@ -98,6 +98,7 @@ export default function TagsTable() {
                           })
                         )
                         setErrorMessage(`Failed to edit tag ${err.response.data.payload.toBeEdited} to ${err.response.data.payload.input}. ${err.response.data.message}`);
+
                         setNotif(true);
                       }
                       ),
