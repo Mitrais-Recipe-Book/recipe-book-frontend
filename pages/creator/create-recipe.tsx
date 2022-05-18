@@ -26,18 +26,30 @@ export default function CreateRecipe() {
   let tagOptions: any = [];
   const tagInput: any = [];
   const username = "user1";
+  const ingredientListCount: any = useRef(0);
 
-  const onAddBtnClick = () => {
+  function onAddBtnClick() {
+    ingredientListCount.current++;
     setIngredientList(
-      ingredientList.concat(<IngredientInput key={ingredientList.length} />)
+      ingredientList.concat(
+        <IngredientInput
+          key={ingredientList.length}
+          index={ingredientListCount.current}
+        />
+      )
     );
-  };
+    console.log(ingredientListCount.current);
+  }
 
-  const onRemoveBtnClick = () => {
-    setIngredientList(ingredientList.slice(0, ingredientList.length - 1));
-  };
+  function onRemoveBtnClick() {
+    if (ingredientListCount.current > 0) {
+      setIngredientList(ingredientList.slice(0, -1));
+      ingredientFormData.current.ingredients.splice(0, 1);
+      ingredientListCount.current--;
+    }
+  }
 
-  const IngredientInput = () => {
+  const IngredientInput = ({ index }: any) => {
     return (
       <div className="pb-2 flex flex-row pr-[55px]">
         <input
@@ -47,11 +59,11 @@ export default function CreateRecipe() {
           placeholder="Ingredient name"
           required
           onChange={(e) => {
-            ingredientFormData.current.ingredients[ingredientList.length] = {
-              ...ingredientFormData.current.ingredients[ingredientList.length],
-              qty: e.target.value,
+            ingredientFormData.current.ingredients[index] = {
+              ...ingredientFormData.current.ingredients[index],
+              name: e.target.value,
             };
-            console.log(ingredientFormData.current.ingredients);
+            console.log(index);
           }}
         />
         <input
@@ -61,8 +73,8 @@ export default function CreateRecipe() {
           placeholder="quantity"
           required
           onChange={(e) => {
-            ingredientFormData.current.ingredients[ingredientList.length] = {
-              ...ingredientFormData.current.ingredients[ingredientList.length],
+            ingredientFormData.current.ingredients[index] = {
+              ...ingredientFormData.current.ingredients[index],
               qty: e.target.value,
             };
           }}
@@ -94,9 +106,15 @@ export default function CreateRecipe() {
   }, []);
 
   useEffect(() => {
+    let ingredients: any = ingredientFormData.current.ingredients;
     if (submit) {
+      setRecipeForm({
+        ...recipeForm,
+        ingredients,
+      });
       console.log(recipeForm);
       console.log("ingredient form data", ingredientFormData.current);
+      console.log(ingredientListCount);
       // handleSubmit();
       setSubmit(false);
     }
@@ -232,11 +250,29 @@ export default function CreateRecipe() {
                     />
                   </div>
                   <div className="flex flex-col">
-                    <label className="leading-loose">Ingredients</label>
-                    <div className="pb-2 flex flex-row">
+                    <div className="flex flex-row">
+                      <label className="leading-loose">Ingredients</label>
+                      <div className="ml-auto">
+                        <IoIosAdd
+                          size={20}
+                          className="ml-2 cursor-pointer text-gray-600 hover:bg-gray-200"
+                          onClick={() => onAddBtnClick()}
+                        />
+                      </div>
+                      <div>
+                        <IoIosRemove
+                          size={20}
+                          className="ml-2 cursor-pointer text-gray-600 hover:bg-gray-200"
+                          onClick={() => onRemoveBtnClick()}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pb-2 flex flex-row pr-[55px]">
                       <input
                         type="text"
                         className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+                        // className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                         placeholder="Ingredient name"
                         required
                         style={{ flex: "2 1" }}
@@ -250,6 +286,7 @@ export default function CreateRecipe() {
                       <input
                         type="text"
                         className="ml-2 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+                        // className="ml-2 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                         placeholder="quantity"
                         required
                         style={{ flex: "1 1" }}
@@ -260,18 +297,6 @@ export default function CreateRecipe() {
                           };
                         }}
                       />
-                      <div className="flex items-center align-middle justify-center">
-                        <IoIosAdd
-                          size={20}
-                          className="ml-2 cursor-pointer text-gray-600 hover:bg-gray-200"
-                          onClick={onAddBtnClick}
-                        />
-                        <IoIosRemove
-                          size={20}
-                          className="ml-2 cursor-pointer text-gray-600 hover:bg-gray-200"
-                          onClick={onRemoveBtnClick}
-                        />
-                      </div>
                     </div>
                     {ingredientList}
                   </div>
