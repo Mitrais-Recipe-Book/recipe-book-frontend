@@ -8,7 +8,11 @@ const url = "https://recipyb-dev.herokuapp.com/api/v1/";
 export const getTags = createAsyncThunk("tag/getTags", async () => {
   return axios
     .get(url+"tag")
-    .then((res) => res.data.payload)
+    .then((res) => res.data.payload.map((tag:any) => ({
+      id: tag.id,
+      name: tag.name,
+      query: false,
+    })))
     .catch((err) => err.response.data);
 });
 //@ts-ignore
@@ -21,7 +25,7 @@ export const sendQuery = createAsyncThunk(
     const queryCreator = thunkAPI.getState().query.queryCreator;
     //@ts-ignore
     const queryTags = Array.from(thunkAPI.getState().query.queryTags);
-    const searchUrl = `search?title=${queryRecipeName}&author=${queryCreator}&${
+    const searchUrl = `recipe/search?title=${queryRecipeName}&author=${queryCreator}&${
       queryTags.length > 0 ?
       queryTags
       .map((tag) => {
@@ -29,6 +33,8 @@ export const sendQuery = createAsyncThunk(
       })
       .join(""):
       "tagId=&"}page=0`;
+    
+    console.log("searchUrl:",searchUrl);
 
 
     return axios.get(url+searchUrl).then((res) => res.data.payload.content);
@@ -64,18 +70,33 @@ const queryReducer = createSlice({
       state.queryCreator = "";
     },
     addTagsToQuery: (state, action) => {
-      //@ts-ignore
-      if (state.queryTags.includes(action.payload)) {
-      } else {
+      
+      state.allTags.forEach((tag) => {
         //@ts-ignore
-        state.queryTags.push(action.payload);
-      }
+        if (tag.id === action.payload.id) {
+          console.log("tag:",tag);
+          //@ts-ignore
+          tag.query = true;
+        }
+      });
     },
     removeTagsFromQuery: (state, action) => {
-      state.queryTags = state.queryTags.filter((tag) => tag !== action.payload);
+      state.allTags.forEach((tag) => {
+        //@ts-ignore
+        if (tag.id === action.payload.id) {
+          console.log("tag:",tag);
+          //@ts-ignore
+          tag.query = false;
+        }
+      });
     },
     clearQueryTags: (state) => {
       state.queryTags = []
+    },
+    clearQuery: (state) => {
+      state.queryRecipeName = "";
+      state.queryCreator = "";
+      state.queryTags = [];
     },
     setRecipesQuery: (state, action) => {
       state.queryRecipes = action.payload;
@@ -99,6 +120,7 @@ export const {
   setQueryRecipeName,
   addTagsToQuery,
   setRecipesQuery,
-  removeTagsFromQuery
+  removeTagsFromQuery,
+  clearQuery,
 } = queryReducer.actions;
 export default queryReducer.reducer;

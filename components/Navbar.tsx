@@ -54,12 +54,12 @@ export default function Navbar() {
               onKeyUp={(e) => {
                 if (e.key === "Enter") {
                   //@ts-ignore
-                  console.log(document.getElementById("search-bar")?.value);
+                  console.log(searchItem);
                   //@ts-ignore
-                  dispatch(sendQuery(document.getElementById("search-bar")?.value));
+                  dispatch(sendQuery(searchItem));
                   Router.push(
                     //@ts-ignore
-                    `/search/${document.getElementById("search-bar")?.value}`
+                    `/search/${searchItem}`
                   );
                 }
               }}

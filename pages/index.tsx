@@ -19,7 +19,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { getTags } from "../redux/reducers/queryReducer";
+import { getTags, clearQuery } from "../redux/reducers/queryReducer";
 import session from "redux-persist/lib/storage/session";
 
 const Home: NextPage = () => {
@@ -74,6 +74,7 @@ const Home: NextPage = () => {
       });
     //@ts-ignore
     dispatch(getTags());
+    dispatch(clearQuery());
     
   }
 
