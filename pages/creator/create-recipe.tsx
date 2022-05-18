@@ -90,6 +90,10 @@ export default function CreateRecipe() {
         //@ts-ignore
         setUserInfo(res.data.payload);
         console.log("User Info: ", res.data.payload);
+        setRecipeForm({
+          ...recipeForm,
+          userId: res.data.payload.id,
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -105,20 +109,22 @@ export default function CreateRecipe() {
       });
   }, []);
 
-  useEffect(() => {
-    let ingredients: any = ingredientFormData.current.ingredients;
-    if (submit) {
-      setRecipeForm({
-        ...recipeForm,
-        ingredients,
-      });
-      console.log(recipeForm);
-      console.log("ingredient form data", ingredientFormData.current);
-      console.log(ingredientListCount);
-      // handleSubmit();
-      setSubmit(false);
-    }
-  }, [submit, recipeForm]);
+  function handleButton() {
+    let ingredients: any = JSON.stringify(
+      ingredientFormData.current.ingredients
+    );
+    setRecipeForm({
+      ...recipeForm,
+      userId: userInfo.id,
+      draft: false,
+      ingredients,
+    });
+    console.log(recipeForm);
+    console.log("ingredient form data", ingredientFormData.current);
+    console.log(ingredientListCount);
+    handleSubmit();
+    setSubmit(false);
+  }
 
   tagOptions = recipeTagsData.map((tag: { id: any; name: any }) => {
     return {
@@ -244,7 +250,7 @@ export default function CreateRecipe() {
                         });
                         setRecipeForm({
                           ...recipeForm,
-                          tags: tagInput,
+                          tagIds: tagInput,
                         });
                       }}
                     />
@@ -335,13 +341,7 @@ export default function CreateRecipe() {
                   </button>
                   <button
                     className="bg-blue-500 flex justify-center items-center w-full text-white px-4 py-3 rounded-md focus:outline-none"
-                    onClick={() => {
-                      setRecipeForm({
-                        ...recipeForm,
-                        draft: false,
-                      }),
-                        setSubmit(true);
-                    }}
+                    onClick={() => handleButton()}
                   >
                     Create
                   </button>
