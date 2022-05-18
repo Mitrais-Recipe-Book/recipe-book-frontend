@@ -14,7 +14,6 @@ export default function CreateRecipe() {
     draft: true,
   });
   const [ingredientList, setIngredientList]: any = useState([]);
-  const [submit, setSubmit]: any = useState(false);
   const [imageFormData, setImageFormData]: any = useState({});
   const [recipeTagsData, setRecipeTagsData]: any = useState([]);
   // const [ingredientFormData, setIngredientFormData]: any = useState({
@@ -123,7 +122,6 @@ export default function CreateRecipe() {
     console.log("ingredient form data", ingredientFormData.current);
     console.log(ingredientListCount);
     handleSubmit();
-    setSubmit(false);
   }
 
   tagOptions = recipeTagsData.map((tag: { id: any; name: any }) => {
