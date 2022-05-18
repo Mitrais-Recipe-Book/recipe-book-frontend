@@ -1,7 +1,7 @@
 import Footer from "@components/Footer";
 import Image from "next/image";
 import Navbar from "@components/Navbar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { IoIosAdd, IoIosRemove } from "react-icons/io";
 import Select from "react-select";
@@ -17,6 +17,12 @@ export default function CreateRecipe() {
   const [submit, setSubmit]: any = useState(false);
   const [imageFormData, setImageFormData]: any = useState({});
   const [recipeTagsData, setRecipeTagsData]: any = useState([]);
+  // const [ingredientFormData, setIngredientFormData]: any = useState({
+  //   ingredients: new Array(),
+  // });
+  const ingredientFormData: any = useRef({
+    ingredients: [],
+  });
   let tagOptions: any = [];
   const tagInput: any = [];
   const username = "user1";
@@ -33,18 +39,33 @@ export default function CreateRecipe() {
 
   const IngredientInput = () => {
     return (
-      <div className="pb-2 flex flex-row">
+      <div className="pb-2 flex flex-row pr-[55px]">
         <input
           type="text"
           className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
           style={{ flex: "2 1" }}
           placeholder="Ingredient name"
+          required
+          onChange={(e) => {
+            ingredientFormData.current.ingredients[ingredientList.length] = {
+              ...ingredientFormData.current.ingredients[ingredientList.length],
+              qty: e.target.value,
+            };
+            console.log(ingredientFormData.current.ingredients);
+          }}
         />
         <input
           type="text"
           className="ml-2 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
           style={{ flex: "1 1" }}
           placeholder="quantity"
+          required
+          onChange={(e) => {
+            ingredientFormData.current.ingredients[ingredientList.length] = {
+              ...ingredientFormData.current.ingredients[ingredientList.length],
+              qty: e.target.value,
+            };
+          }}
         />
       </div>
     );
@@ -75,6 +96,7 @@ export default function CreateRecipe() {
   useEffect(() => {
     if (submit) {
       console.log(recipeForm);
+      console.log("ingredient form data", ingredientFormData.current);
       // handleSubmit();
       setSubmit(false);
     }
@@ -216,24 +238,26 @@ export default function CreateRecipe() {
                         type="text"
                         className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                         placeholder="Ingredient name"
+                        required
                         style={{ flex: "2 1" }}
                         onChange={(e) => {
-                          setRecipeForm({
-                            ...recipeForm,
-                            ingredients: e.target.value,
-                          });
+                          ingredientFormData.current.ingredients[0] = {
+                            ...ingredientFormData.current.ingredients[0],
+                            name: e.target.value,
+                          };
                         }}
                       />
                       <input
                         type="text"
                         className="ml-2 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                         placeholder="quantity"
+                        required
                         style={{ flex: "1 1" }}
                         onChange={(e) => {
-                          setRecipeForm({
-                            ...recipeForm,
-                            ingredients: e.target.value,
-                          });
+                          ingredientFormData.current.ingredients[0] = {
+                            ...ingredientFormData.current.ingredients[0],
+                            qty: e.target.value,
+                          };
                         }}
                       />
                       <div className="flex items-center align-middle justify-center">
