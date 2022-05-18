@@ -132,6 +132,7 @@ const Home: NextPage = () => {
       {session &&
         <div className="p-2 text-center bg-blue-200 m-2 md:px-[50px] lg:px-[100px] xl:px-[150px] rounded-xl w-10/12 mx-auto">
           <div>
+            {/* @ts-ignore */}
             Hello {session?.user?.username}!
           </div>
 
