@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { signIn, useSession, getProviders, signOut, ClientSafeProvider, LiteralUnion, getSession, getCsrfToken } from "next-auth/react";
 import { GetServerSideProps } from "next";
 import jsCookie from "js-cookie";
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function LogIn({ csrfToken, providers }) {
   const session = useSession();
@@ -14,14 +15,31 @@ export default function LogIn({ csrfToken, providers }) {
   const router = useRouter();
   const [userData, setUserData] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const [notif, setNotif] = useState(false);
+  const [errMessage, setErrMessage] = useState(false);
+
+  const [passwordType, setPasswordType] = useState("password");
+  const [showPassword, setShowPassword] = useState(true);
+
+  const togglePassword = () => {
+    if (showPassword) {
+      setShowPassword(false);
+      setPasswordType("text");
+    } else {
+      setShowPassword(true);
+      setPasswordType("password");
+    }
+  }
 
   useEffect(() => {
     if (jsCookie.get("next-auth.csrf-token")) {
       router.push("/");
     }
     if (router.query.create) { setMessage(router.query.create), setNotif(true) };
+    if (router.query.error) { setError(router.query.error), setErrMessage(true) };
     setTimeout(() => { setNotif(false) }, 5000);
+    setTimeout(() => { setErrMessage(false) }, 5000);
   }, []);
 
   const login = async (event) => {
@@ -85,6 +103,16 @@ export default function LogIn({ csrfToken, providers }) {
               </span>
             </div> : ""
           }
+          {errMessage ?
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <strong className="font-bold">Sign-in Failed!</strong>
+              <br />
+              <span className="block sm:inline">Check your username and password!</span>
+              <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
+              </span>
+            </div> : ""
+          }
           <h1 className="my-6 text-3xl font-bold">Sign In</h1>
           <form
             onSubmit={login}
@@ -104,10 +132,10 @@ export default function LogIn({ csrfToken, providers }) {
                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
               />
             </div>
-            <div className="pb-2 pt-4">
+            <div className="pb-2 pt-4 flex">
               <input
-                className="block w-full p-4 text-lg text-gray-900 leading-tight focus:outline-orange-400 rounded-sm bg-slate"
-                type="password"
+                className="block w-full p-4 text-lg text-gray-900 leading-tight focus:outline-orange-400 rounded-l-sm bg-slate"
+                type={passwordType}
                 name="password"
                 id="password"
                 onChange={(e) =>
@@ -115,6 +143,11 @@ export default function LogIn({ csrfToken, providers }) {
                 }
                 placeholder="Password"
               />
+              <span className="bg-slate-100 text-gray-900 cursor-pointer min-w-fit p-3 flex items-center justify-center" onClick={togglePassword}>
+                {showPassword
+                  ? <FaEye />
+                  : <FaEyeSlash />}
+              </span>
             </div>
             <div className="text-right text-gray-400 hover:underline hover:text-gray-100">
               <a href="/sign-up">Sign up here</a>
