@@ -42,12 +42,12 @@ export const sendQuery = createAsyncThunk(
 );
 
 interface Tag {
-  tagsId: number;
-  tagsName: string;
+  id: number;
+  name: string;
+  query: boolean;
 }
 const initialState = {
   allTags: [],
-  queryTags: [],
   queryCreator: "",
   queryRecipeName: "",
   queryRecipes: [],
@@ -71,32 +71,37 @@ const queryReducer = createSlice({
     },
     addTagsToQuery: (state, action) => {
       
-      state.allTags.forEach((tag) => {
-        //@ts-ignore
+      state.allTags.forEach((tag: Tag) => {
         if (tag.id === action.payload.id) {
-          console.log("tag:",tag);
-          //@ts-ignore
           tag.query = true;
         }
       });
     },
     removeTagsFromQuery: (state, action) => {
-      state.allTags.forEach((tag) => {
-        //@ts-ignore
+      state.allTags.forEach((tag: Tag) => {
         if (tag.id === action.payload.id) {
           console.log("tag:",tag);
-          //@ts-ignore
           tag.query = false;
         }
       });
     },
     clearQueryTags: (state) => {
-      state.queryTags = []
+      state.allTags.forEach((tag: Tag) => {
+          tag.query = false;
+      });
     },
     clearQuery: (state) => {
       state.queryRecipeName = "";
       state.queryCreator = "";
-      state.queryTags = [];
+      state.allTags.forEach((tag: Tag) => {
+        tag.query = false;
+    });
+    },
+    clearQueryExceptName: (state) => {
+      state.queryCreator = "";
+      state.allTags.forEach((tag: Tag) => {
+        tag.query = false;
+    });
     },
     setRecipesQuery: (state, action) => {
       state.queryRecipes = action.payload;
@@ -122,5 +127,6 @@ export const {
   setRecipesQuery,
   removeTagsFromQuery,
   clearQuery,
+  clearQueryExceptName,
 } = queryReducer.actions;
 export default queryReducer.reducer;

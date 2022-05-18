@@ -2,7 +2,7 @@ import Image from "next/image";
 import Router from "next/router";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { sendQuery, setQueryRecipeName } from "../redux/reducers/queryReducer";
+import { clearQueryExceptName, sendQuery, setQueryRecipeName } from "../redux/reducers/queryReducer";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,8 +53,7 @@ export default function Navbar() {
               }}
               onKeyUp={(e) => {
                 if (e.key === "Enter") {
-                  //@ts-ignore
-                  console.log(searchItem);
+                  dispatch(clearQueryExceptName())
                   //@ts-ignore
                   dispatch(sendQuery(searchItem));
                   Router.push(
