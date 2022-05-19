@@ -1,92 +1,53 @@
 import Image from "next/image";
-import axios from "axios";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import jwt_decode from "jwt-decode";
-import { setAuth } from "../redux/reducers/authReducer";
+import React, { useEffect, useState, SyntheticEvent } from "react";
 import { useDispatch } from "react-redux";
-import { signIn } from "next-auth/react";
+import { signIn, useSession, getProviders, signOut, ClientSafeProvider, LiteralUnion, getSession, getCsrfToken } from "next-auth/react";
+import { GetServerSideProps } from "next";
+import jsCookie from "js-cookie";
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
-export default function SignIn() {
+export default function LogIn({ csrfToken, providers }) {
+  const session = useSession();
+  console.log("Sign-in Session", session);
+
   const dispatch = useDispatch();
   const router = useRouter();
   const [userData, setUserData] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const [notif, setNotif] = useState(false);
+  const [errMessage, setErrMessage] = useState(false);
+
+  const [passwordType, setPasswordType] = useState("password");
+  const [showPassword, setShowPassword] = useState(true);
+
+  const togglePassword = () => {
+    if (showPassword) {
+      setShowPassword(false);
+      setPasswordType("text");
+    } else {
+      setShowPassword(true);
+      setPasswordType("password");
+    }
+  }
 
   useEffect(() => {
-    console.log(message);
-    //@ts-ignore
+    if (jsCookie.get("next-auth.csrf-token")) {
+      router.push("/");
+    }
     if (router.query.create) { setMessage(router.query.create), setNotif(true) };
+    if (router.query.error) { setError(router.query.error), setErrMessage(true) };
     setTimeout(() => { setNotif(false) }, 5000);
+    setTimeout(() => { setErrMessage(false) }, 5000);
   }, []);
 
-
-
-  const createUser = (event: React.SyntheticEvent) => {
+  const login = async (event) => {
     event.preventDefault();
-    // submitForm();
-  };
-
-  //@ts-ignore
-  const login = async () => {
     const username = userData.username;
     const password = userData.password;
-    signIn('credentials', { username, password, callbackUrl: '/' });
+    signIn('credentials', { username, password });
   };
-
-  type CreateUserResponse = {
-    username: string;
-    password: string;
-  };
-
-  interface AccessToken {
-    access_token: Object;
-  }
-
-  interface CreateSignInResponse {
-    data: AccessToken;
-  }
-
-  // async function submitForm() {
-  //   try {
-  //     // 👇️ const data: CreateUserResponse
-  //     const { data } = await axios.post<CreateSignInResponse>(
-  //       "https://recipyb-dev.herokuapp.com/auth/sign-in",
-  //       { username: userData.username, password: userData.password },
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Accept: "application/json",
-  //         },
-  //       }
-  //     );
-
-  //     var token = data.data.access_token;
-  //     var decoded = jwt_decode(JSON.stringify(token));
-
-  //     const ex = {
-  //       name: "Ilham",
-  //       role: "Creator",
-  //     };
-
-  //     
-
-  //     dispatch(setAuth(decoded));
-  //     console.log(JSON.stringify(data, null, 4));
-
-  //     return data;
-  //   } catch (error) {
-  //     if (axios.isAxiosError(error)) {
-  //       console.log("error message: ", error.message);
-  //       // 👇️ error: AxiosError<any, any>
-  //       return error.message;
-  //     } else {
-  //       console.log("unexpected error: ", error);
-  //       return "An unexpected error occurred";
-  //     }
-  //   }
-  // }
 
   return (
     <div className="min-h-screen flex items-stretch text-white">
@@ -142,34 +103,51 @@ export default function SignIn() {
               </span>
             </div> : ""
           }
+          {errMessage ?
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <strong className="font-bold">Sign-in Failed!</strong>
+              <br />
+              <span className="block sm:inline">Check your username and password!</span>
+              <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
+              </span>
+            </div> : ""
+          }
           <h1 className="my-6 text-3xl font-bold">Sign In</h1>
           <form
             onSubmit={login}
+            method="post"
             className="sm:w-2/3 w-full px-4 lg:px-0 mx-auto"
           >
+            <input name='csrfToken' type='hidden' />
             <div className="pb-2 pt-4">
               <input
                 type="text"
                 name="username"
                 id="username"
                 placeholder="Username"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(e) =>
                   setUserData({ ...userData, [e.target.name]: e.target.value })
                 }
                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
               />
             </div>
-            <div className="pb-2 pt-4">
+            <div className="pb-2 pt-4 flex">
               <input
-                className="block w-full p-4 text-lg text-gray-900 leading-tight focus:outline-orange-400 rounded-sm bg-slate"
-                type="password"
+                className="block w-full p-4 text-lg text-gray-900 leading-tight focus:outline-orange-400 rounded-l-sm bg-slate"
+                type={passwordType}
                 name="password"
                 id="password"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(e) =>
                   setUserData({ ...userData, [e.target.name]: e.target.value })
                 }
                 placeholder="Password"
               />
+              <span className="bg-slate-100 text-gray-900 cursor-pointer min-w-fit p-3 flex items-center justify-center" onClick={togglePassword}>
+                {showPassword
+                  ? <FaEye />
+                  : <FaEyeSlash />}
+              </span>
             </div>
             <div className="text-right text-gray-400 hover:underline hover:text-gray-100">
               <a href="/sign-up">Sign up here</a>
@@ -223,4 +201,25 @@ export default function SignIn() {
       </div>
     </div>
   );
+}
+
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+
+  // if logged in, redirect to home page
+  if (session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      csrfToken: await getCsrfToken(context),
+      providers: await getProviders(),
+    },
+  };
 }

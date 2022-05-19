@@ -3,6 +3,9 @@ const withPWA = require("next-pwa");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  env: {
+    NEXTAUTH_SECRET: "sdjfkhfkjsdhfjk283324sdfy34859",
+  },
   images: {
     domains: ["images.unsplash.com"],
   },
