@@ -4,7 +4,7 @@ import { SiCodechef } from "react-icons/si";
 
 // @ts-ignore
 export default function RecipeCard(props) {
-  console.log(props);
+  // console.log(props);
   return (
     <div className="mx-2 my-3 sm:w-40 xl:w-50 box-border border-1 pb-2 rounded shadow transition-all hover:bg-orange-200 hover:scale-110">
       <Image

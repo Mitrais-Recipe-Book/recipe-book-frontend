@@ -20,8 +20,9 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { getTags, clearQuery } from "../redux/reducers/queryReducer";
 import session from "redux-persist/lib/storage/session";
-// import { useSelector } from "react-redux";
 
 const Home: NextPage = () => {
   // const auth = useSelector((state) =>
@@ -30,7 +31,12 @@ const Home: NextPage = () => {
   // );
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [popularRecipes, setPopularRecipes] = useState<Recipe[]>([]);
-  const [tags, setTags] = useState<Tag[]>([]);
+  // const [tags, setTags] = useState<Tag[]>([]);
+  //@ts-ignore
+  const tags: Tag[] = useSelector((state) => state.query.allTags? state.query.allTags : []);
+  const dispatch = useDispatch();
+  //@ts-ignore
+  // console.log("query tags: ", useSelector((state) => state.tags.queryTags));
 
   const { data: session } = useSession();
   console.log("Session", session);
@@ -57,7 +63,7 @@ const Home: NextPage = () => {
       )
       .then((res) => {
         //@ts-ignore
-        console.log(res.data.payload);
+        // console.log(res.data.payload);
         //@ts-ignore
         setRecipes(res.data.payload);
       });
@@ -67,22 +73,19 @@ const Home: NextPage = () => {
       )
       .then((res) => {
         //@ts-ignore
-        console.log("Popular: ", res.data.payload);
+        // console.log("Popular: ", res.data.payload);
         //@ts-ignore
         setPopularRecipes(res.data.payload);
       });
-    axios
-      .get<Tag[]>("https://recipyb-dev.herokuapp.com/api/v1/tag")
-      .then((res) => {
-        //@ts-ignore
-        console.log("Tags: ", res.data.payload);
-        //@ts-ignore
-        setTags(res.data.payload);
-      });
+    //@ts-ignore
+    dispatch(getTags());
+    dispatch(clearQuery());
+    
   }
 
   useEffect(() => {
     fetchData();
+    console.log("tags:",tags)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

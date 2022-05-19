@@ -1,20 +1,18 @@
-import axios from "axios";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect } from "react";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
-import RecipeCard from "../../components/RecipeCard";
-import SearchByCreator from "../../components/Search/SearchByCreator";
+import { useDispatch } from "react-redux";
+import { clearQuery } from "../../redux/reducers/queryReducer";
 import SearchByName from "../../components/Search/SearchByName";
+import SearchByCreator from "../../components/Search/SearchByCreator";
 import SearchByTags from "../../components/Search/SearchByTags";
 
-export default function SearchItem() {
+export default function index() {
   const dispatch = useDispatch();
-  const router = useRouter();
-  const searchItem = router.query.search_item;
-  const recipes = useSelector((state: any) => state.query.queryRecipes);
 
+  useEffect(() => {
+    dispatch(clearQuery());
+  });
   return (
     <div>
       <Navbar />
@@ -38,12 +36,8 @@ export default function SearchItem() {
               </div>
             </section>
 
-            <section className="col-span-3 flex flex-wrap justify-center">
-              {recipes.length ? (
-                recipes.map((recipe: any) => <RecipeCard recipe={recipe} />)
-              ) : (
-                <h1 className="text-2xl place-self-center text-center">No Recipe Found</h1>
-              )}
+            <section className="col-span-3 flex flex-wrap place-content-center">
+              <h1 className="text-2xl">Explore Your Recipes Today</h1>
             </section>
           </section>
         </section>
