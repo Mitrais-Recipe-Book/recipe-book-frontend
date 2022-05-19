@@ -27,7 +27,10 @@ export default function SearchByName() {
             }
           }}
         />
-        <FiSearch className="invisible sm:cursor-pointer sm:visible sm:text-4xl sm:text-zinc-800 sm:mx-3" />
+        <FiSearch className="invisible sm:cursor-pointer sm:visible sm:text-4xl sm:text-zinc-800 sm:mx-3"
+        //@ts-ignore
+        onClick={() => dispatch(sendQuery())}
+        />
       </div>
     </main>
   );
