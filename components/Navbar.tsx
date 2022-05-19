@@ -55,7 +55,7 @@ export default function Navbar() {
                 if (e.key === "Enter") {
                   dispatch(clearQueryExceptName())
                   //@ts-ignore
-                  dispatch(sendQuery(searchItem));
+                  dispatch(sendQuery());
                 }
               }}
             />

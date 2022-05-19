@@ -23,7 +23,7 @@ export default function SearchByName() {
               //@ts-ignore
               console.log(searchItem);
               //@ts-ignore
-              dispatch(sendQuery(searchItem));
+              dispatch(sendQuery());
             }
           }}
         />

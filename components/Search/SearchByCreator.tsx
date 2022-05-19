@@ -20,7 +20,7 @@ export default function SearchByCreator() {
             onKeyUp={(e) => {
               if (e.key === "Enter") {
                 //@ts-ignore
-                dispatch(sendQuery(searchItem));
+                dispatch(sendQuery());
               }
             }}
           />

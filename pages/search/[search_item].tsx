@@ -18,40 +18,34 @@ export default function SearchItem() {
   return (
     <div>
       <Navbar />
-      <main className="container mx-auto pt-2">
-        <section>
+      <main className="flex flex-col container mx-auto pt-2 justify-center">
         <section className="flex place-content-center rounded">
           <SearchByName />
         </section>
-        <section className="flex gap-y-2 lg:gap-x-20 md:gap-x-12 sm:flex-row flex-col-reverse place-content-center my-3">
-          <div className="flex place-content-center">
-            <SearchByTags />
-          </div>
-          <div className="flex place-content-center ">
-            <SearchByCreator />
-          </div>
-        </section>
-        <section className="sm:hidden flex place-content-center">
-          <button
-            className="bg-yellow-500 rounded w-3/4 h-8 text-black px-2 py-1 font-extrabold"
-          >Search</button>
-        </section>
-        </section>
-        <section className="w-full my-2">
-          <div
-            className="
-                flex
-                flex-wrap
-                justify-center
-              "
-          >
-            {
-            recipes.length?
-            recipes.map((recipe: any) => (
-                <RecipeCard recipe={recipe} />
-              )):
-              <h1 className="text-xl text-center">No Recipe Found</h1>}
-          </div>
+        <section className="sm:flex sm:justify-center">
+          <section className="grid grid-cols-1 sm:grid-cols-4 sm:w-3/4 my-2">
+            <section className="flex gap-y-2 flex-col-reverse place-content-center my-3">
+              <div className="sm:hidden flex place-content-center">
+                <button className="bg-yellow-500 rounded w-3/4 h-8 text-black px-2 py-1 font-extrabold">
+                  Search
+                </button>
+              </div>
+              <div className="flex place-content-center">
+                <SearchByTags />
+              </div>
+              <div className="flex place-content-center ">
+                <SearchByCreator />
+              </div>
+            </section>
+
+            <section className="col-span-3 flex flex-wrap justify-center">
+              {recipes.length ? (
+                recipes.map((recipe: any) => <RecipeCard recipe={recipe} />)
+              ) : (
+                <h1 className="text-2xl place-self-center text-center">No Recipe Found</h1>
+              )}
+            </section>
+          </section>
         </section>
       </main>
       <Footer />
