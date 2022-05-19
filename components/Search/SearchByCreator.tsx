@@ -1,11 +1,11 @@
 import Router from 'next/router';
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { setQueryRecipeName } from '../../redux/reducers/queryReducer';
+import { setQueryCreator, sendQuery } from '../../redux/reducers/queryReducer';
 
 export default function SearchByCreator() {
     const dispatch = useDispatch();
-    const searchItem = useSelector((state: any) => state.query.queryRecipeName);
+    const searchItem = useSelector((state: any) => state.query.queryCreator);
     return (
       <main className="py-4 w-3/4 sm:w-full bg-yellow-500 md:grid">
         <div className="container md:flex px-2 md:place-self-center">
@@ -14,19 +14,13 @@ export default function SearchByCreator() {
             placeholder="Search By Creator..."
             value={searchItem}
             onChange={(event) => {
-              dispatch(setQueryRecipeName(event.currentTarget.value));
+              dispatch(setQueryCreator(event.currentTarget.value));
               console.log(event.target.value);
             }}
             onKeyUp={(e) => {
               if (e.key === "Enter") {
                 //@ts-ignore
-                console.log(searchItem);
-                //@ts-ignore
                 dispatch(sendQuery(searchItem));
-                Router.push(
-                  //@ts-ignore
-                  `/search/${searchItem}`
-                );
               }
             }}
           />

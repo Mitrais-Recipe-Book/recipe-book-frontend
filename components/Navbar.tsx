@@ -56,10 +56,6 @@ export default function Navbar() {
                   dispatch(clearQueryExceptName())
                   //@ts-ignore
                   dispatch(sendQuery(searchItem));
-                  Router.push(
-                    //@ts-ignore
-                    `/search/${searchItem}`
-                  );
                 }
               }}
             />

@@ -24,17 +24,22 @@ export const sendQuery = createAsyncThunk(
     //@ts-ignore
     const queryCreator = thunkAPI.getState().query.queryCreator;
     //@ts-ignore
-    const queryTags = Array.from(thunkAPI.getState().query.queryTags);
-    const searchUrl = `recipe/search?title=${queryRecipeName}&author=${queryCreator}&${
-      queryTags.length > 0 ?
-      queryTags
-      .map((tag) => {
-        return `tagId=${tag}&`;
-      })
-      .join(""):
-      "tagId=&"}page=0`;
+    const queryTags = thunkAPI.getState().query.allTags.filter((tag:any) => tag.query);
+    const queryTagsId = queryTags.length > 0 ?
+    queryTags
+    .map((tag: Tag) => {
+      return `tagId=${tag.id}&`;
+    })
+    .join(""):
+    "tagId=&"
+    const searchUrl = `recipe/search?title=${queryRecipeName}&author=${queryCreator}&${queryTagsId
+      }page=0`;
     
-    console.log("searchUrl:",searchUrl);
+      
+      Router.push(
+      //@ts-ignore
+      `/search/name?${queryRecipeName}&creator?${queryCreator}&${queryTagsId}`
+    );
 
 
     return axios.get(url+searchUrl).then((res) => res.data.payload.content);
@@ -128,5 +133,6 @@ export const {
   removeTagsFromQuery,
   clearQuery,
   clearQueryExceptName,
+  setQueryCreator,
 } = queryReducer.actions;
 export default queryReducer.reducer;

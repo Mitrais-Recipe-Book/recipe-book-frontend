@@ -24,10 +24,6 @@ export default function SearchByName() {
               console.log(searchItem);
               //@ts-ignore
               dispatch(sendQuery(searchItem));
-              Router.push(
-                //@ts-ignore
-                `/search/${searchItem}`
-              );
             }
           }}
         />

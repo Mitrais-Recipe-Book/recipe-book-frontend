@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   addTagsToQuery,
   removeTagsFromQuery,
+  sendQuery,
 } from "../../redux/reducers/queryReducer";
 
 export default function SearchByTags() {
@@ -32,6 +33,8 @@ export default function SearchByTags() {
                 key={tag.name}
                 onClick={() => {
                   dispatch(removeTagsFromQuery(tag));
+                  //@ts-ignore
+                  dispatch(sendQuery());
                 }}
               >
                 {tag.name}
@@ -48,6 +51,8 @@ export default function SearchByTags() {
                 className="bg-white px-2 py-1 border-zinc-800 border-2 rounded"
                 onClick={() => {
                   dispatch(addTagsToQuery(tag));
+                  //@ts-ignore
+                  dispatch(sendQuery());
                 }}
               >
                 {tag.name}

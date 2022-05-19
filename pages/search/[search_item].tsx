@@ -1,37 +1,41 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
 import RecipeCard from "../../components/RecipeCard";
+import SearchByCreator from "../../components/Search/SearchByCreator";
+import SearchByName from "../../components/Search/SearchByName";
+import SearchByTags from "../../components/Search/SearchByTags";
 
 export default function SearchItem() {
+  const dispatch = useDispatch();
   const router = useRouter();
   const searchItem = router.query.search_item;
-  const [recipes, setRecipes] = useState([]);
+  const recipes = useSelector((state: any) => state.query.queryRecipes);
 
-  useEffect(() => {
-    axios
-      .get(
-        //TODO : Ganti API ke search by item
-        `https://recipyb-dev.herokuapp.com/api/v1/recipe/search?title=${searchItem}&author=&tagId=&page=0`
-      )
-      .then((res) => {
-        //@ts-ignore
-        console.log("resep=",res.data.payload.content);
-        //@ts-ignore
-        setRecipes(res.data.payload.content);
-      });
-    }, [searchItem]);
-  
   return (
     <div>
       <Navbar />
       <main className="container mx-auto pt-2">
         <section>
-          <h1 className="text-4xl text-center pb-3 font-bold">
-            Searching Recipes: <a className="text-orange-500">{searchItem}</a>
-          </h1>
+        <section className="flex place-content-center rounded">
+          <SearchByName />
+        </section>
+        <section className="flex gap-y-2 lg:gap-x-20 md:gap-x-12 sm:flex-row flex-col-reverse place-content-center my-3">
+          <div className="flex place-content-center">
+            <SearchByTags />
+          </div>
+          <div className="flex place-content-center ">
+            <SearchByCreator />
+          </div>
+        </section>
+        <section className="sm:hidden flex place-content-center">
+          <button
+            className="bg-yellow-500 rounded w-3/4 h-8 text-black px-2 py-1 font-extrabold"
+          >Search</button>
+        </section>
         </section>
         <section className="w-full my-2">
           <div
@@ -43,7 +47,7 @@ export default function SearchItem() {
           >
             {
             recipes.length?
-            recipes.map((recipe) => (
+            recipes.map((recipe: any) => (
                 <RecipeCard recipe={recipe} />
               )):
               <h1 className="text-xl text-center">No Recipe Found</h1>}

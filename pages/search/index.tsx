@@ -1,19 +1,13 @@
-import axios from "axios";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
-import RecipeCard from "../../components/RecipeCard";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { clearQuery } from "../../redux/reducers/queryReducer";
 import SearchByName from "../../components/Search/SearchByName";
 import SearchByCreator from "../../components/Search/SearchByCreator";
 import SearchByTags from "../../components/Search/SearchByTags";
 
 export default function index() {
-  const router = useRouter();
-  const searchItem = router.query.search_item;
-  const [recipes, setRecipes] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -39,8 +33,14 @@ export default function index() {
             className="bg-yellow-500 rounded w-3/4 h-8 text-black px-2 py-1 font-extrabold"
           >Search</button>
         </section>
+        <section>
+          <div className="flex flex-wrap justify-center">
+          Please fill in what are you looking for...
+          </div>
+        </section>
       </main>
       <Footer />
     </div>
   );
 }
+
