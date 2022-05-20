@@ -23,7 +23,7 @@ export default function index() {
         </section>
         <section className="sm:flex sm:justify-center">
           <section className="grid grid-cols-1 sm:grid-cols-4 sm:w-3/4 my-2">
-            <section className="flex gap-y-2 flex-col-reverse place-content-center my-3">
+            <section className="flex gap-y-2 flex-col-reverse place-content-start my-3">
               <div className="sm:hidden flex place-content-center">
                 <button
                   className="bg-yellow-500 rounded w-3/4 h-8 text-black px-2 py-1 font-extrabold"
