@@ -16,7 +16,7 @@ export default function RecipeCard(props) {
         objectFit="cover"
       />
       <div className="px-2 py-1">
-        <div className="font-bold text-lg cursor-pointer">
+        <div className="font-bold text-lg cursor-pointer break-words">
           {props.recipe.recipeName}
         </div>
         <div className="text-gray-600 md:text-ellipsis">
