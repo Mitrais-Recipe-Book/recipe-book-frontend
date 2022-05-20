@@ -1,34 +1,46 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import RecipeCardLong from "../components/RecipeCardLong";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import RecipeCardLong from "../../components/RecipeCardLong";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import { ProfileInfo } from "../../components/ProfilePage/ProfileInfo";
 import axios from "axios";
 import Swal from 'sweetalert2'
+import { Tab } from '@headlessui/react'
+import { getSession, useSession } from "next-auth/react";
+import { route } from "next/dist/server/router";
+
 
 export default function ProfilePage() {
     const apiUrl = "https://recipyb-dev.herokuapp.com/api/v1"
     const [recipesData,setRecipesData] = useState()
     const [currentPage,setCurrentPage] = useState(0)
     const [incrementNum,setIncrementNum] = useState(0)
+    const { data: session } = useSession();
     const [userData,setUserData] = useState({
-        username : 'faristest'
+        
     })
 
+    const router = useRouter()
+    const routeUserName = router.query.params
+
     async function getRecipes(){
-        axios.get<Recipe[]>(
-            apiUrl+`/user/${userData.username}/recipes?page=${currentPage}`
-          )
-          .then((res) => {
-            //@ts-ignore
-            const response = res.data.payload
-            //@ts-ignore
-            console.log(response);
-            //@ts-ignore
-            setRecipesData(response)
-          });
+        if(userData?.username){
+            axios.get(
+                apiUrl+`/user/${userData?.username}/recipes?page=${currentPage}`
+              )
+              .then((res) => {
+                //@ts-ignore
+                const response = res.data.payload
+                //@ts-ignore
+                // console.log(response);
+                //@ts-ignore
+                setRecipesData(response)
+              });
+        }
     }
 
     function loadMoreRecipes(){
@@ -74,9 +86,37 @@ export default function ProfilePage() {
         })
     }
 
+    function getDataProfile(username:any){
+        if (username!==undefined) {
+            axios.get(
+                apiUrl+`/user/${username}`
+            ).then((res:any)=>{
+                const response = res.data.payload
+                setUserData({...userData,response})
+            }).catch((error:any)=>{
+                console.log(error)
+            })
+        }
+    }
+
     useEffect(()=>{
+        if(routeUserName!==undefined){
+            getDataProfile(routeUserName)
+            console.log("second")
+        } else {
+            // @ts-ignore
+            getDataProfile(session?.user?.username)
+            console.log("first")
+            setUserData({
+                ...userData,
+                //@ts-ignore
+                role:session?.user?.roles[0]
+            })
+            console.log("userdata",userData)
+        }
         getRecipes()
-    },[currentPage])
+        console.log(session)
+    },[session,routeUserName])
 
     interface Recipe {
         recipeName: string;
@@ -86,6 +126,10 @@ export default function ProfilePage() {
         author: string;
         authorImage: string;
         authorFollower: number;
+    }
+
+    function classNames(...classes:any) {
+        return classes.filter(Boolean).join(' ')
     }
 
     return (
@@ -107,8 +151,49 @@ export default function ProfilePage() {
                         {/* Column created recipe */}
                         <div className="col-span-4 md:col-span-3 p-4 order-2 md:order-1 shadow-xl rounded-lg">
                             <h1 className="text-3xl my-3 font-bold">Created Recipe(s)</h1>
-                            
-                            {
+                            {/* <Tab.Group>
+                                <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 ">
+                                    <Tab className={({ selected }) =>
+                                        classNames(
+                                        'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                                        'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                                        selected
+                                            ? 'bg-white shadow'
+                                            : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'
+                                        )
+                                    }>
+                                        
+                                        Tab 1
+                                    </Tab>
+                                    <Tab className={({ selected }) =>
+                                        classNames(
+                                        'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                                        'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:ring-2',
+                                        selected
+                                            ? 'bg-white shadow'
+                                            : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'
+                                        )
+                                    }>
+                                        
+                                        Tab 2
+                                    </Tab>
+                                </Tab.List>
+                                <Tab.Panels className="mt-2">
+                                    <Tab.Panel className={
+                                        `rounded-xl bg-white p-3
+                                        ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2`
+                                    }>
+                                        Content 1
+                                    </Tab.Panel>
+                                    <Tab.Panel className={
+                                        `rounded-xl bg-white p-3
+                                        ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2`
+                                    }>
+                                        Content 1
+                                    </Tab.Panel>
+                                </Tab.Panels>
+                            </Tab.Group> */}
+                            {/* {
                                 //@ts-ignore
                                 recipesData?.data?.length > 0 ? (
                                     //@ts-ignore
@@ -133,41 +218,12 @@ export default function ProfilePage() {
                                 ) : (
                                     <div className="my-5"></div>
                                 )
-                            }
+                            } */}
                             
                         </div>
                         {/* Column profile card */}
                         <div className="p-4 col-span-4 md:col-span-1 order-1 md:order-2 my-3 md:my-0">
-                            <div className="shadow-md md:shadow-xl rounded-lg pb-6">
-                                <h1 className="text-3xl text-center font-bold my-3 ">Your Profile</h1>
-                                <div className="grid grid-cols-4">
-                                    <div className="col-span-4 ">
-                                        <div className="w-1/2 mx-auto">
-                                            <Image
-                                                className="rounded-full"
-                                                src="/images/user-profile.png"
-                                                alt="RecipyBook"
-                                                width={100}
-                                                height={100}
-                                                objectFit="cover"
-                                                layout="responsive"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="col-span-4 text-center ">
-                                        <h1 className="my-3 font-bold text-2xl">John Doe</h1>
-                                        <div className="my-3 flex font-medium text-md flex-wrap content-center justify-around">
-                                            <h3>7 recipes</h3>
-                                            <h3>7 likes</h3>
-                                            <h3>7 followers</h3>
-                                        </div>
-                                        <p className="my-4 w-3/4 mx-auto four-lines-ellipsis">
-                                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Excepturi placeat harum quis vitae soluta quibusdam laboriosam ad minus fugiat ex suscipit quam illum facilis velit, dolorum obcaecati recusandae, hic aut.
-                                        </p>
-                                        <button className="uppercase transition  bg-gray-800 text-sm text-white hover:bg-gray-600 px-4 py-2 rounded-md ">Edit Profile </button>
-                                    </div>
-                                </div>
-                            </div>
+                            <ProfileInfo userData={userData} />
                         </div>
                     </div>
                 </div>
