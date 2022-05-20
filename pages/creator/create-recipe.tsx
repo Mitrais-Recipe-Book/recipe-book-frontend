@@ -18,6 +18,7 @@ export default function CreateRecipe() {
   const [imageFormData, setImageFormData]: any = useState({});
   const [recipeTagsData, setRecipeTagsData]: any = useState([]);
   const [contentValue, setContentValue]: any = useState("");
+  const [submitFormState, setSubmitFormState]: any = useState(false);
   // const [ingredientFormData, setIngredientFormData]: any = useState({
   //   ingredients: new Array(),
   // });
@@ -40,7 +41,7 @@ export default function CreateRecipe() {
         />
       )
     );
-    console.log(ingredientListCount.current);
+    console.log(ingredientFormData.current);
   }
 
   // remove ingredient input form
@@ -49,6 +50,7 @@ export default function CreateRecipe() {
       setIngredientList(ingredientList.slice(0, -1));
       ingredientFormData.current.ingredients.splice(0, 1);
       ingredientListCount.current--;
+      console.log(ingredientFormData.current);
     }
   }
 
@@ -108,7 +110,6 @@ export default function CreateRecipe() {
       cancelButtonText: "Wait, I need to make changes!",
     }).then((result) => {
       if (result.value) {
-        console.log(recipeForm);
         submitForm();
       }
     });
@@ -184,38 +185,48 @@ export default function CreateRecipe() {
     };
   });
 
+  useEffect(() => {
+    uploadDatabase();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [submitFormState]);
+
   // submit form function
   function submitForm() {
     let contentValues = contentValue;
     let ingredients: any = JSON.stringify(
       ingredientFormData.current.ingredients
     );
+    console.log(ingredients);
     setRecipeForm({
       ...recipeForm,
-      userId: userInfo.id,
       ingredients,
       content: contentValues,
     });
+    console.log(recipeForm);
+    setSubmitFormState(!submitFormState);
+  }
 
+  function uploadDatabase() {
     axios
       .post("https://recipyb-dev.herokuapp.com/api/v1/recipe/add", recipeForm)
       .then((res) => {
         console.log("uploaded recipe, now uploading image");
-        uploadImage(res.data.payload.recipeId);
+        uploadImage(res.data.payload);
       })
       .catch((err) => {
         console.log(err);
       });
   }
-
   //upload image form function
-  function uploadImage(recipeId: any) {
-    const formData = new FormData();
+  function uploadImage(recipeId: number) {
+    const formData: any = new FormData();
+    console.log(imageFormData);
     formData.append(
       recipeForm.title + "-photo",
       imageFormData,
       imageFormData.name
     );
+    console.log(formData.get(imageFormData));
     axios
       .put(
         "https://recipyb-dev.herokuapp.com/api/v1/recipe/" +
@@ -369,7 +380,14 @@ export default function CreateRecipe() {
                   </div>
                   <div className="flex flex-col">
                     <label className="leading-loose">Upload Banner Image</label>
-                    <input type="file" />
+                    <input
+                      type="file"
+                      name="image-file"
+                      onChange={(e) => {
+                        //  @ts-ignore
+                        setImageFormData(e.target.files[0]);
+                      }}
+                    />
                   </div>
                   <div className="flex flex-col">
                     <label className="leading-loose">VideoURL</label>
