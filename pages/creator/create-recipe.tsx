@@ -221,11 +221,7 @@ export default function CreateRecipe() {
   function uploadImage(recipeId: number) {
     const formData: any = new FormData();
     console.log(imageFormData);
-    formData.append(
-      recipeForm.title + "-photo",
-      imageFormData,
-      imageFormData.name
-    );
+    formData.append("photo", imageFormData, imageFormData.name);
     console.log(formData.get(imageFormData));
     axios
       .put(
