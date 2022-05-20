@@ -6,6 +6,7 @@ import { clearQuery } from "../../redux/reducers/queryReducer";
 import SearchByName from "../../components/Search/SearchByName";
 import SearchByCreator from "../../components/Search/SearchByCreator";
 import SearchByTags from "../../components/Search/SearchByTags";
+import { sendQuery } from "../../redux/reducers/queryReducer";
 
 export default function index() {
   const dispatch = useDispatch();
@@ -24,7 +25,11 @@ export default function index() {
           <section className="grid grid-cols-1 sm:grid-cols-4 sm:w-3/4 my-2">
             <section className="flex gap-y-2 flex-col-reverse place-content-center my-3">
               <div className="sm:hidden flex place-content-center">
-                <button className="bg-yellow-500 rounded w-3/4 h-8 text-black px-2 py-1 font-extrabold">
+                <button
+                  className="bg-yellow-500 rounded w-3/4 h-8 text-black px-2 py-1 font-extrabold"
+                  //@ts-ignore
+                  onClick={() => dispatch(sendQuery())}
+                >
                   Search
                 </button>
               </div>

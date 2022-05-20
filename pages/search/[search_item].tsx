@@ -1,6 +1,5 @@
-import axios from "axios";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
@@ -8,6 +7,7 @@ import RecipeCard from "../../components/RecipeCard";
 import SearchByCreator from "../../components/Search/SearchByCreator";
 import SearchByName from "../../components/Search/SearchByName";
 import SearchByTags from "../../components/Search/SearchByTags";
+import { sendQuery } from "../../redux/reducers/queryReducer";
 
 export default function SearchItem() {
   const dispatch = useDispatch();
@@ -26,7 +26,11 @@ export default function SearchItem() {
           <section className="grid grid-cols-1 sm:grid-cols-4 sm:w-3/4 my-2">
             <section className="flex gap-y-2 flex-col-reverse place-content-center my-3">
               <div className="sm:hidden flex place-content-center">
-                <button className="bg-yellow-500 rounded w-3/4 h-8 text-black px-2 py-1 font-extrabold">
+                <button
+                  className="bg-yellow-500 rounded w-3/4 h-8 text-black px-2 py-1 font-extrabold"
+                  //@ts-ignore
+                  onClick={() => dispatch(sendQuery())}
+                >
                   Search
                 </button>
               </div>
@@ -42,7 +46,9 @@ export default function SearchItem() {
               {recipes.length ? (
                 recipes.map((recipe: any) => <RecipeCard recipe={recipe} />)
               ) : (
-                <h1 className="text-2xl place-self-center text-center">No Recipe Found</h1>
+                <h1 className="text-2xl place-self-center text-center">
+                  No Recipe Found
+                </h1>
               )}
             </section>
           </section>
