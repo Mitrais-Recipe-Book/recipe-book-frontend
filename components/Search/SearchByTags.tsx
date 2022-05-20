@@ -24,13 +24,13 @@ export default function SearchByTags() {
           }}
         />
       </div>
-      <div className="grid grid-flow-row-dens grid-cols-3 gap-x-1 px-2 py-2">
+      <div className="flex flex-wrap gap-x-1 px-2 py-2">
         {tagsList.map((tag: any) => {
           if (tag.query) {
             return (
               <button
                 title={tag.name}
-                className="bg-orange-600 px-2 py-1 border-zinc-800 border-2 rounded truncate hover:scale-110 hover:bg-orange-300"
+                className="grow bg-orange-600 px-2 py-1 border-zinc-800 border-2 rounded truncate hover:scale-110 hover:bg-orange-300"
                 key={tag.name}
                 onClick={() => {
                   dispatch(removeTagsFromQuery(tag));
@@ -44,8 +44,9 @@ export default function SearchByTags() {
           }
         })}
       </div>
-      <div className="grid grid-flow-row grid-cols-3 justify-center gap-x-1 px-2 py-2">
-        {tagsList.map((tag: any) => {
+      <div className="flex flex-wrap gap-x-1 gap-y-1 px-2 py-2">
+        {
+        tagsList.map((tag: any) => {
           if (tag.query === false && tag.name.includes(filteredTags)) {
             return (
               <button
