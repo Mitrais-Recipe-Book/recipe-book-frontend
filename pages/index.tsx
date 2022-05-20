@@ -7,6 +7,8 @@ import Footer from "../components/Footer";
 import RecipeCard from "../components/RecipeCard";
 import RecipeCardFull from "../components/RecipeCardFull";
 import TagsPill from "../components/TagsPill";
+import { getSession, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -18,10 +20,28 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { getTags, clearQuery } from "../redux/reducers/queryReducer";
+import session from "redux-persist/lib/storage/session";
 
 const Home: NextPage = () => {
+  // const auth = useSelector((state) =>
+  // @ts-ignore
+  //   state.auth.value ? state.auth.value : []
+  // );
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [popularRecipes, setPopularRecipes] = useState<Recipe[]>([]);
+  // const [tags, setTags] = useState<Tag[]>([]);
+  //@ts-ignore
+  const tags: Tag[] = useSelector((state) =>
+    state.query.allTags ? state.query.allTags : []
+  );
+  const dispatch = useDispatch();
+  //@ts-ignore
+  // console.log("query tags: ", useSelector((state) => state.tags.queryTags));
+
+  const { data: session } = useSession();
+  console.log("Session", session);
 
   interface Recipe {
     recipeName: string;
@@ -33,32 +53,40 @@ const Home: NextPage = () => {
     authorFollower: number;
   }
 
+  interface Tag {
+    id: number;
+    name: string;
+  }
+
   function fetchData() {
-    //TODO: Change api to get popular recipes
-    // axios
-    //   .get<Recipe[]>(
-    //     "https://recipyb-dev.herokuapp.com/api/v1/recipe/list?search=&author=&tags=&page=0"
-    //   )
-    //   .then((res) => {
-    //     //@ts-ignore
-    //     console.log(res.data.payload.content);
-    //     //@ts-ignore
-    //     setRecipes(res.data.payload.content);
-    //   });
+    axios
+      .get<Recipe[]>(
+        "https://recipyb-dev.herokuapp.com/api/v1/recipe/discover?limit=10"
+      )
+      .then((res) => {
+        //@ts-ignore
+        // console.log(res.data.payload);
+        //@ts-ignore
+        setRecipes(res.data.payload);
+      });
     axios
       .get<Recipe[]>(
         "https://recipyb-dev.herokuapp.com/api/v1/recipe/popular?limit=5"
       )
       .then((res) => {
         //@ts-ignore
-        console.log("Popular: ", res.data.payload);
+        // console.log("Popular: ", res.data.payload);
         //@ts-ignore
         setPopularRecipes(res.data.payload);
       });
+    //@ts-ignore
+    dispatch(getTags());
+    dispatch(clearQuery());
   }
 
   useEffect(() => {
     fetchData();
+    console.log("tags:", tags);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -105,6 +133,25 @@ const Home: NextPage = () => {
       </style>
 
       <Navbar />
+      {session && (
+        <div className="p-2 text-center bg-blue-200 m-2 md:px-[50px] lg:px-[100px] xl:px-[150px] rounded-xl w-10/12 mx-auto">
+          <div>
+            {/* @ts-ignore */}
+            Hello {session?.user?.username}!
+          </div>
+
+          <button
+            onClick={() => signOut()}
+            className="m-1 bg-blue-500 rounded p-2 hover:bg-blue-700 text-white uppercase"
+          >
+            sign out
+          </button>
+        </div>
+      )}
+      {/* @ts-ignore */}
+      {/* <h1>{session.user ? session.user.name : ""}</h1> */}
+      {/* @ts-ignore */}
+      {/* <h1>{session.user ? session.user.roles[0] : ""}</h1> */}
       <main className="container mx-auto pt-1">
         <div className="container md:px-[50px] lg:px-[100px] xl:px-[150px]">
           {/* Carousel */}
@@ -236,19 +283,9 @@ const Home: NextPage = () => {
           <section className="my-5 py-3 rounded-md bg-white drop-shadow-lg">
             <h1 className="text-4xl text-center mb-3 font-bold">Tags</h1>
             <div className="flex flex-wrap w-full md:w-3/4 mx-auto justify-center pb-3">
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
-              <TagsPill />
+              {tags.map((tag) => {
+                return <TagsPill tag={tag} />;
+              })}
             </div>
           </section>
 

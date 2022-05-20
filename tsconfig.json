@@ -36,7 +36,7 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.js"
-  ],
+, "pages/sign-in.jsx"  ],
   "exclude": [
     "node_modules"
   ]

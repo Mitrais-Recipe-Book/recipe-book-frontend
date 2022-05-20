@@ -4,6 +4,9 @@ const withPWA = require("next-pwa");
 const nextConfig = {
   //stop running useEffect twice in UseEffect dev mode
   reactStrictMode: false,
+  env: {
+    NEXTAUTH_SECRET: "sdjfkhfkjsdhfjk283324sdfy34859",
+  },
   images: {
     domains: ["images.unsplash.com"],
   },

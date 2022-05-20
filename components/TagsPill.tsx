@@ -1,9 +1,21 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {addTagsToQuery,sendQuery,} from "../redux/reducers/queryReducer";
 
-const TagsPill = () => {
+const TagsPill = ({ tag }: any) => {
+  const dispatch = useDispatch();
+
   return (
-    <div className="rounded py-1 px-4 mx-1 my-1 border-solid border-2 border-black transition-all cursor-pointer hover:scale-110 hover:bg-orange-300 ">
-      <h1 className="whitespace-nowrap">Tags Pill</h1>
+    <div
+      id="tag"
+      className="rounded py-1 px-4 mx-1 my-1 border-solid border-2 border-black transition-all cursor-pointer hover:scale-110 hover:bg-orange-300 "
+      onClick={(event) => {
+        dispatch(addTagsToQuery(tag));
+        //@ts-ignore
+        dispatch(sendQuery());
+      }}
+    >
+      <h1 className="whitespace-nowrap">{tag.name}</h1>
     </div>
   );
 };
