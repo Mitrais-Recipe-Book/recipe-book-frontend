@@ -33,7 +33,7 @@ const Home: NextPage = () => {
   const [popularRecipes, setPopularRecipes] = useState<Recipe[]>([]);
   // const [tags, setTags] = useState<Tag[]>([]);
   //@ts-ignore
-  const tags: Tag[] = useSelector((state) =>
+  const tags: Tag[] = useSelector((state: State) =>
     state.query.allTags ? state.query.allTags : []
   );
   const dispatch = useDispatch();
@@ -43,6 +43,11 @@ const Home: NextPage = () => {
   const { data: session } = useSession();
   console.log("Session", session);
 
+  interface State{
+    query: {
+      allTags: Tag[];
+    }
+  }
   interface Recipe {
     recipeName: string;
     description: string;
