@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import RecipeCardLong from "../../components/RecipeCardLong";
+import { CreatedRecipeTabs } from "../../components/ProfilePage/CreatedRecipeTabs";
+import { FollowerTabs } from "../../components/ProfilePage/FollowerTabs";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { ProfileInfo } from "../../components/ProfilePage/ProfileInfo";
@@ -150,49 +152,48 @@ export default function ProfilePage() {
                     <div className="grid grid-cols-4 gap-5">
                         {/* Column created recipe */}
                         <div className="col-span-4 md:col-span-3 p-4 order-2 md:order-1 shadow-xl rounded-lg">
-                            <h1 className="text-3xl my-3 font-bold">Created Recipe(s)</h1>
-                            {/* <Tab.Group>
+                            <Tab.Group>
                                 <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 ">
                                     <Tab className={({ selected }) =>
                                         classNames(
-                                        'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                                        'px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
                                         'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
                                         selected
                                             ? 'bg-white shadow'
-                                            : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'
+                                            : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
                                         )
                                     }>
                                         
-                                        Tab 1
+                                        Created Recipe(s)
                                     </Tab>
                                     <Tab className={({ selected }) =>
                                         classNames(
-                                        'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
-                                        'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:ring-2',
+                                        'px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                                        'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
                                         selected
                                             ? 'bg-white shadow'
-                                            : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'
+                                            : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
                                         )
                                     }>
                                         
-                                        Tab 2
+                                        Follower
                                     </Tab>
                                 </Tab.List>
                                 <Tab.Panels className="mt-2">
                                     <Tab.Panel className={
                                         `rounded-xl bg-white p-3
-                                        ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2`
+                                        ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400  `
                                     }>
-                                        Content 1
+                                        <CreatedRecipeTabs />
                                     </Tab.Panel>
                                     <Tab.Panel className={
                                         `rounded-xl bg-white p-3
-                                        ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2`
+                                        ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 `
                                     }>
-                                        Content 1
+                                        <FollowerTabs />
                                     </Tab.Panel>
                                 </Tab.Panels>
-                            </Tab.Group> */}
+                            </Tab.Group>
                             {/* {
                                 //@ts-ignore
                                 recipesData?.data?.length > 0 ? (
