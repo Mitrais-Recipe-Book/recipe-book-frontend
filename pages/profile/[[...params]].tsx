@@ -27,7 +27,7 @@ export default function ProfilePage() {
     })
 
     const router = useRouter()
-    const routeUserName = router.query.params
+    let routeUserName:any
 
     async function getRecipes(){
         if(userData?.username){
@@ -101,23 +101,39 @@ export default function ProfilePage() {
         }
     }
 
+    async function checkQueryParam(){
+        console.log("router",router?.query.params)
+        console.log("session",session?.user?.username)
+        return routeUserName = router.query
+    }
+
     useEffect(()=>{
-        if(routeUserName!==undefined){
-            getDataProfile(routeUserName)
-            console.log("second")
-        } else {
-            // @ts-ignore
-            getDataProfile(session?.user?.username)
-            console.log("first")
-            setUserData({
-                ...userData,
-                //@ts-ignore
-                role:session?.user?.roles[0]
+        // if(routeUserName!==undefined){
+        //     getDataProfile(routeUserName)
+        //     console.log("second")
+        // } else {
+        //     // @ts-ignore
+        //     getDataProfile(session?.user?.username)
+        //     console.log("first")
+        //     setUserData({
+        //         ...userData,
+        //         //@ts-ignore
+        //         role:session?.user?.roles[0]
+        //     })
+        //     console.log("userdata",userData)
+        // }
+        // getRecipes()
+        // console.log(session)
+        if (session && ) {
+            checkQueryParam().then(()=>{
+                if (routeUserName.params!==undefined && routeUserName.params.length > 0) {
+                    console.log("not undefined")
+                } else {
+                    console.log("undefined")
+                }
             })
-            console.log("userdata",userData)
-        }
-        getRecipes()
-        console.log(session)
+        } 
+        
     },[session,routeUserName])
 
     interface Recipe {

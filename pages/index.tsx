@@ -57,7 +57,7 @@ const Home: NextPage = () => {
       )
       .then((res) => {
         //@ts-ignore
-        console.log(res.data.payload);
+        // console.log(res.data.payload);
         //@ts-ignore
         setRecipes(res.data.payload);
       });
@@ -67,7 +67,7 @@ const Home: NextPage = () => {
       )
       .then((res) => {
         //@ts-ignore
-        console.log("Popular: ", res.data.payload);
+        // console.log("Popular: ", res.data.payload);
         //@ts-ignore
         setPopularRecipes(res.data.payload);
       });
@@ -75,7 +75,7 @@ const Home: NextPage = () => {
       .get<Tag[]>("https://recipyb-dev.herokuapp.com/api/v1/tag")
       .then((res) => {
         //@ts-ignore
-        console.log("Tags: ", res.data.payload);
+        // console.log("Tags: ", res.data.payload);
         //@ts-ignore
         setTags(res.data.payload);
       });

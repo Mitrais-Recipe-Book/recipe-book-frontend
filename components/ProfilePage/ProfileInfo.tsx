@@ -4,7 +4,7 @@ import { useState,useEffect } from 'react';
 
 
 export const ProfileInfo = (props:any) => {
-    console.log("info",props.userData)
+    // console.log("info",props.userData)
 
 return (
     <div>
