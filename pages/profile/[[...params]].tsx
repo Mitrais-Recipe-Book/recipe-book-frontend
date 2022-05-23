@@ -21,13 +21,13 @@ export default function ProfilePage() {
     const [recipesData,setRecipesData] = useState()
     const [currentPage,setCurrentPage] = useState(0)
     const [incrementNum,setIncrementNum] = useState(0)
-    const { data: session } = useSession();
-    const [userData,setUserData] = useState({
-        
-    })
+    const { data: session }:any = useSession();
+    const [userData,setUserData]:any = useState({})
+    const [sessionProfile,setSessionProfile] = useState(false)
 
     const router = useRouter()
-    let routeUserName:any
+    let routeUserName:any=router.query
+    console.log("userData",userData)
 
     async function getRecipes(){
         if(userData?.username){
@@ -88,22 +88,21 @@ export default function ProfilePage() {
         })
     }
 
-    function getDataProfile(username:any){
-        if (username!==undefined) {
+    async function getDataProfile(username:any){
+        // if (username!==undefined) {
             axios.get(
                 apiUrl+`/user/${username}`
             ).then((res:any)=>{
                 const response = res.data.payload
+                console.log(response)
                 setUserData({...userData,response})
             }).catch((error:any)=>{
                 console.log(error)
             })
-        }
+        // }
     }
 
     async function checkQueryParam(){
-        console.log("router",router?.query.params)
-        console.log("session",session?.user?.username)
         return routeUserName = router.query
     }
 
@@ -124,17 +123,28 @@ export default function ProfilePage() {
         // }
         // getRecipes()
         // console.log(session)
-        if (session && ) {
-            checkQueryParam().then(()=>{
+        // if(router.query.params !== undefined){
+        //     if(session?.user?.username === router.query.params){
+        //         console.log("same name")
+        //     } else {
+        //         console.log("not same name")
+        //     }
+        // } else if (session) {
+        //     console.log("session only")
+        // } else{
+        //     router.push("/sign-in")
+        // }
+        if (session) {
+            // checkQueryParam().then(()=>{
                 if (routeUserName.params!==undefined && routeUserName.params.length > 0) {
-                    console.log("not undefined")
+                    getDataProfile(routeUserName.params)
                 } else {
-                    console.log("undefined")
+                    getDataProfile(session.user.username)
                 }
-            })
+            // })
         } 
         
-    },[session,routeUserName])
+    },[routeUserName])
 
     interface Recipe {
         recipeName: string;
@@ -170,21 +180,24 @@ export default function ProfilePage() {
                         <div className="col-span-4 md:col-span-3 p-4 order-2 md:order-1 shadow-xl rounded-lg">
                             <Tab.Group>
                                 <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 ">
+                                    {
+
+                                        <Tab className={({ selected }) =>
+                                            classNames(
+                                            'w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                                            'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                                            selected
+                                                ? 'bg-white shadow'
+                                                : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
+                                            )
+                                        }>
+                                            
+                                            Created Recipe(s)
+                                        </Tab>
+                                    }
                                     <Tab className={({ selected }) =>
                                         classNames(
-                                        'px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
-                                        'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-                                        selected
-                                            ? 'bg-white shadow'
-                                            : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
-                                        )
-                                    }>
-                                        
-                                        Created Recipe(s)
-                                    </Tab>
-                                    <Tab className={({ selected }) =>
-                                        classNames(
-                                        'px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                                        'w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
                                         'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
                                         selected
                                             ? 'bg-white shadow'
@@ -193,6 +206,18 @@ export default function ProfilePage() {
                                     }>
                                         
                                         Follower
+                                    </Tab>
+                                    <Tab className={({ selected }) =>
+                                        classNames(
+                                        'w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                                        'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                                        selected
+                                            ? 'bg-white shadow'
+                                            : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
+                                        )
+                                    }>
+                                        
+                                        Following
                                     </Tab>
                                 </Tab.List>
                                 <Tab.Panels className="mt-2">
@@ -207,6 +232,13 @@ export default function ProfilePage() {
                                         ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 `
                                     }>
                                         <FollowerTabs />
+                                    </Tab.Panel>
+                                    <Tab.Panel className={
+                                        `rounded-xl bg-white p-3
+                                        ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 `
+                                    }>
+                                        {/* <FollowerTabs /> */}
+                                        <div className="">Following</div>
                                     </Tab.Panel>
                                 </Tab.Panels>
                             </Tab.Group>
