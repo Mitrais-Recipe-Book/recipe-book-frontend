@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import RichTextEditor from "@components/RichTextEditor";
 
 export default function CreateRecipe() {
+  const { query } = useRouter();
   const router = useRouter();
   const [userInfo, setUserInfo]: any = useState({});
   const [recipeForm, setRecipeForm]: any = useState({});
@@ -29,6 +30,49 @@ export default function CreateRecipe() {
   const tagInput: any = [];
   const username = "user1";
   const ingredientListCount: any = useRef(0);
+
+  // fetch tags from db and add it to the tag options
+  // also fetch userID from username saved in localstorage
+  useEffect(() => {
+    if (query.id) {
+      axios
+        .get("https://recipyb-dev.herokuapp.com/api/v1/recipe/" + query.id)
+        .then((res) => {
+          setRecipeForm(res.data.data);
+          setContentValue(res.data.data.content);
+          setIngredientList(res.data.data.ingredients);
+          setRecipeTagsData(res.data.data.tags);
+          setUserInfo(res.data.data.user);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    axios
+      .get("https://recipyb-dev.herokuapp.com/api/v1/user/" + username)
+      .then((res) => {
+        //@ts-ignore
+        setUserInfo(res.data.payload);
+        console.log("User Info: ", res.data.payload);
+        setRecipeForm({
+          ...recipeForm,
+          userId: res.data.payload.id,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    axios
+      .get("https://recipyb-dev.herokuapp.com/api/v1/tag")
+      .then((res) => {
+        setRecipeTagsData(res.data.payload);
+        console.log("Tags: ", res.data.payload);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   //add new ingredient input form
   function onAddBtnClick() {
@@ -64,7 +108,7 @@ export default function CreateRecipe() {
       cancelButtonColor: "red",
       confirmButtonText: "Yes, cancel it!",
       cancelButtonText: "No, keep it!",
-    }).then((result) => {
+    }).then((result: { value: any }) => {
       if (result.value) {
         router.push("/");
       }
@@ -85,7 +129,7 @@ export default function CreateRecipe() {
       cancelButtonColor: "red",
       confirmButtonText: "Yes, Draft it!",
       cancelButtonText: "Wait, I need to make changes!",
-    }).then((result) => {
+    }).then((result: { value: any }) => {
       if (result.value) {
         submitForm();
 
@@ -108,7 +152,7 @@ export default function CreateRecipe() {
       cancelButtonColor: "red",
       confirmButtonText: "Yes!",
       cancelButtonText: "Wait, I need to make changes!",
-    }).then((result) => {
+    }).then((result: { value: any }) => {
       if (result.value) {
         submitForm();
       }
@@ -148,34 +192,6 @@ export default function CreateRecipe() {
       </div>
     );
   };
-
-  // fetch tags from db and add it to the tag options
-  // also fetch userID from username saved in localstorage
-  useEffect(() => {
-    axios
-      .get("https://recipyb-dev.herokuapp.com/api/v1/user/" + username)
-      .then((res) => {
-        //@ts-ignore
-        setUserInfo(res.data.payload);
-        console.log("User Info: ", res.data.payload);
-        setRecipeForm({
-          ...recipeForm,
-          userId: res.data.payload.id,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    axios
-      .get("https://recipyb-dev.herokuapp.com/api/v1/tag")
-      .then((res) => {
-        setRecipeTagsData(res.data.payload);
-        console.log("Tags: ", res.data.payload);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
 
   //map recipe tags into tag options
   tagOptions = recipeTagsData.map((tag: { id: any; name: any }) => {
