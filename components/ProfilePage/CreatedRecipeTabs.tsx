@@ -6,11 +6,11 @@ export const CreatedRecipeTabs = (props:any) => {
         <>
             {
                 //@ts-ignore
-                props.recipesData?.data?.length > 0 ? (
+                props.recipesData?.recipesData?.length > 0 ? (
                     //@ts-ignore
-                    props.recipesData?.data.map((recipe)=> (
+                    props.recipesData?.recipesData.map((recipe)=> (
                         //@ts-ignore
-                        <RecipeCardLong key={Math.random()*Math.random()} recipe={recipe} deleteAction={deleteRecipe} />
+                        <RecipeCardLong key={Math.random()*Math.random()} recipe={recipe} deleteAction={props.deleteRecipe} />
                     ))
                 ) : (
                     <p className="p-4 text-center">
@@ -20,7 +20,7 @@ export const CreatedRecipeTabs = (props:any) => {
             }
             {
                 //@ts-ignore
-                ((props.recipesData?.data?.length > 0) && (props.recipesData.totalPages - 1  !== currentPage)) ? (
+                ((props.recipesData?.recipesData?.length > 0) && (props.recipesData.totalPages - 1  !== props.recipesData.currentPage)) ? (
                     <div className="w-full flex items-center my-5">
                         <button className="mx-auto transition bg-gray-600 hover:bg-gray-500 px-8 font-semibold py-2 rounded-lg text-white">
                             Load more recipes

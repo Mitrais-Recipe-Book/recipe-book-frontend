@@ -31,9 +31,9 @@ return (
                         <h3>{props?.userData?.response?.recipeLikes} likes</h3>
                         <h3>{props?.userData?.response?.followers} followers</h3>
                     </div>
-                    <p className="my-4 w-3/4 mx-auto four-lines-ellipsis">
+                    {/* <p className="my-4 w-3/4 mx-auto four-lines-ellipsis">
                         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Excepturi placeat harum quis vitae soluta quibusdam laboriosam ad minus fugiat ex suscipit quam illum facilis velit, dolorum obcaecati recusandae, hic aut.
-                    </p>
+                    </p> */}
                     <button className="uppercase transition  bg-gray-800 text-sm text-white hover:bg-gray-600 px-4 py-2 rounded-md ">Edit Profile </button>
                 </div>
             </div>

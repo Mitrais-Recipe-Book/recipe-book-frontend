@@ -86,7 +86,7 @@ const Home: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  SwiperCore.use([Autoplay]);
+  // SwiperCore.use([Autoplay]);
   return (
     <div>
       <Head>

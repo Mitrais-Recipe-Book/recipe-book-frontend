@@ -18,29 +18,39 @@ import { route } from "next/dist/server/router";
 
 export default function ProfilePage() {
     const apiUrl = "https://recipyb-dev.herokuapp.com/api/v1"
-    const [recipesData,setRecipesData] = useState()
+    const [recipesData,setRecipesData] = useState({
+        recipesData:[]
+    })
     const [currentPage,setCurrentPage] = useState(0)
     const [incrementNum,setIncrementNum] = useState(0)
     const { data: session }:any = useSession();
     const [userData,setUserData]:any = useState({})
     const [sessionProfile,setSessionProfile] = useState(false)
+    const [isRendered,setIsRendered] = useState(false)
 
     const router = useRouter()
     let routeUserName:any=router.query
-    console.log("userData",userData)
 
     async function getRecipes(){
-        if(userData?.username){
+        if(userData?.response?.username){
             axios.get(
-                apiUrl+`/user/${userData?.username}/recipes?page=${currentPage}`
+                apiUrl+`/user/${userData?.response?.username}/recipes?page=${currentPage}`
               )
               .then((res) => {
                 //@ts-ignore
-                const response = res.data.payload
+                const data = res.data.payload
                 //@ts-ignore
                 // console.log(response);
                 //@ts-ignore
-                setRecipesData(response)
+                if(data.currentPage !== recipesData?.currentPage){
+                    setRecipesData({
+                        // @ts-ignore
+                        recipesData: recipesData?.recipesData?.concat(data.data),
+                        // @ts-ignore
+                        currentPage: data.currentPage,
+                        totalPages: data.totalPages
+                    })
+                }
               });
         }
     }
@@ -94,7 +104,7 @@ export default function ProfilePage() {
                 apiUrl+`/user/${username}`
             ).then((res:any)=>{
                 const response = res.data.payload
-                console.log(response)
+                // console.log(response)
                 setUserData({...userData,response})
             }).catch((error:any)=>{
                 console.log(error)
@@ -103,48 +113,24 @@ export default function ProfilePage() {
     }
 
     async function checkQueryParam(){
+        setIsRendered(true)
         return routeUserName = router.query
     }
 
     useEffect(()=>{
-        // if(routeUserName!==undefined){
-        //     getDataProfile(routeUserName)
-        //     console.log("second")
-        // } else {
-        //     // @ts-ignore
-        //     getDataProfile(session?.user?.username)
-        //     console.log("first")
-        //     setUserData({
-        //         ...userData,
-        //         //@ts-ignore
-        //         role:session?.user?.roles[0]
-        //     })
-        //     console.log("userdata",userData)
-        // }
-        // getRecipes()
-        // console.log(session)
-        // if(router.query.params !== undefined){
-        //     if(session?.user?.username === router.query.params){
-        //         console.log("same name")
-        //     } else {
-        //         console.log("not same name")
-        //     }
-        // } else if (session) {
-        //     console.log("session only")
-        // } else{
-        //     router.push("/sign-in")
-        // }
         if (session) {
-            // checkQueryParam().then(()=>{
+            checkQueryParam().then(()=>{
                 if (routeUserName.params!==undefined && routeUserName.params.length > 0) {
                     getDataProfile(routeUserName.params)
                 } else {
                     getDataProfile(session.user.username)
                 }
-            // })
+            }).then(()=>{
+                getRecipes()
+            })
         } 
         
-    },[routeUserName])
+    },[session,userData])
 
     interface Recipe {
         recipeName: string;
@@ -225,7 +211,7 @@ export default function ProfilePage() {
                                         `rounded-xl bg-white p-3
                                         ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400  `
                                     }>
-                                        <CreatedRecipeTabs />
+                                        <CreatedRecipeTabs recipesData={recipesData} deleteRecipe={deleteRecipe} />
                                     </Tab.Panel>
                                     <Tab.Panel className={
                                         `rounded-xl bg-white p-3
