@@ -2,6 +2,7 @@ import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+import Swal from 'sweetalert2'
 
 export default function SignUp() {
     const router = useRouter();
@@ -25,6 +26,7 @@ export default function SignUp() {
     async function submitForm() {
         try {
             // 👇️ const data: CreateUserResponse
+            //@ts-ignore
             const { data } = await axios.post<CreateUserResponse>(
                 'https://recipyb-dev.herokuapp.com/auth/sign-up',
                 { email: userData.email, username: userData.username, password: userData.password, fullName: userData.fullName },
@@ -34,14 +36,27 @@ export default function SignUp() {
                         Accept: 'application/json',
                     },
                 },
-            );
+            ).then((res) => {
+                Swal.fire({
+                    title: 'Success!',
+                    html: 'Sign-up success, please sign-in.',
+                    icon: 'success',
+                })
+                router.push({
+                    pathname: "/sign-in",
+                    query: {
+                        create: "success"
+                    }
 
-            console.log(JSON.stringify(data, null, 4));
-            router.push({
-                pathname: "/sign-in",
-                query: {
-                    create: "success"
-                }
+                })
+                    .catch(error => {
+                        Swal.fire(
+                            'Error',
+                            'Sign-up error please check your data',
+                            'error'
+                        )
+                    });
+
             });
 
             return data;
@@ -150,9 +165,13 @@ export default function SignUp() {
                                 placeholder="Password"
                             />
                         </div>
-                        {password != passwordConf &&
+                        {(password != passwordConf && passwordConf.length > 0) &&
                             <div className="text-red-600">
                                 <small>The password confirmation does not match</small>
+                            </div>}
+                        {(password.length > 0 && password.length < 6) &&
+                            <div className="text-red-600">
+                                <small>Password must contain at least 6 character</small>
                             </div>}
                         <div className="pb-2 pt-4">
                             <input

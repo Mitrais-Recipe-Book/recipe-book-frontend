@@ -43,7 +43,7 @@ const Home: NextPage = () => {
   const { data: session } = useSession();
   console.log("Session", session);
 
-  interface State{
+  interface State {
     query: {
       allTags: Tag[];
     }

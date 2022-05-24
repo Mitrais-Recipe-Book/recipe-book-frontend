@@ -1,8 +1,7 @@
 import NextAuth from 'next-auth/next';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios'
-import { redirect } from 'next/dist/server/api-utils';
-import jwtDecode from 'jwt-decode';
+import Swal from 'sweetalert2'
 
 export default NextAuth({
   jwt: {
@@ -37,7 +36,7 @@ export default NextAuth({
           })
           .catch((err) => {
             let message = err?.response?.data?.error;
-            if (message == null) message = 'Something went wrong'
+            if (message == null) message = 'Sign-in Error'
             throw new Error(message);
           });
         return login;
