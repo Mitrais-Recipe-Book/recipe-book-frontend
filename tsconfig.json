@@ -10,7 +10,10 @@
       ],
       "@public/*": [
         "public/*"
-      ]
+      ],
+      "@redux/*": [
+        "redux/*"
+      ],
     },
     "target": "es5",
     "lib": [

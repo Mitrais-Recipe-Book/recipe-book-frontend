@@ -1,13 +1,13 @@
 import { useRouter } from "next/router";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Footer from "../../components/Footer";
-import Navbar from "../../components/Navbar";
-import RecipeCard from "../../components/RecipeCard";
-import SearchByCreator from "../../components/Search/SearchByCreator";
-import SearchByName from "../../components/Search/SearchByName";
-import SearchByTags from "../../components/Search/SearchByTags";
-import { sendQuery } from "../../redux/reducers/queryReducer";
+import Footer from "@components/Footer";
+import Navbar from "@components/Navbar";
+import RecipeCard from "@components/RecipeCard";
+import SearchByCreator from "@components/Search/SearchByCreator";
+import SearchByName from "@components/Search/SearchByName";
+import SearchByTags from "@components/Search/SearchByTags";
+import { sendQuery } from "@redux/reducers/queryReducer";
 
 export default function SearchItem() {
   const dispatch = useDispatch();
