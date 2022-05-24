@@ -139,7 +139,7 @@ export default function ProfilePage() {
             })
         }
         
-    },[session,userData?.response?.username])
+    },[session,routeUserName,userData?.response?.username])
 
     function classNames(...classes:any) {
         return classes.filter(Boolean).join(' ')
