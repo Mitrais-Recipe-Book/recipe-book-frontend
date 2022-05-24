@@ -40,17 +40,18 @@ export default function ProfilePage() {
                 //@ts-ignore
                 const data = res.data.payload
                 //@ts-ignore
-                // console.log(response);
+                console.log("data resep",data);
                 //@ts-ignore
-                if(data.currentPage !== recipesData?.currentPage){
+                // if(data.currentPage !== recipesData?.currentPage){
                     setRecipesData({
                         // @ts-ignore
-                        recipesData: recipesData?.recipesData?.concat(data.data),
+                        // recipesData: recipesData?.recipesData?.concat(data.data),
+                        recipesData: data.data,
                         // @ts-ignore
                         currentPage: data.currentPage,
                         totalPages: data.totalPages
                     })
-                }
+                // }
               });
         }
     }
@@ -99,7 +100,7 @@ export default function ProfilePage() {
     }
 
     async function getDataProfile(username:any){
-        // if (username!==undefined) {
+        if (username!==undefined) {
             axios.get(
                 apiUrl+`/user/${username}`
             ).then((res:any)=>{
@@ -109,7 +110,7 @@ export default function ProfilePage() {
             }).catch((error:any)=>{
                 console.log(error)
             })
-        // }
+        }
     }
 
     async function checkQueryParam(){
@@ -121,26 +122,24 @@ export default function ProfilePage() {
         if (session) {
             checkQueryParam().then(()=>{
                 if (routeUserName.params!==undefined && routeUserName.params.length > 0) {
-                    getDataProfile(routeUserName.params)
+                    getDataProfile(routeUserName.params).then(()=>{
+                        getRecipes()
+                    })
                 } else {
-                    getDataProfile(session.user.username)
+                    getDataProfile(session.user.username).then(()=>{
+                        getRecipes()
+                    })
                 }
-            }).then(()=>{
-                getRecipes()
             })
-        } 
+        }  else {
+            checkQueryParam().then(()=>{
+                getDataProfile(routeUserName.params).then(()=>{
+                    getRecipes()
+                })
+            })
+        }
         
-    },[session,userData])
-
-    interface Recipe {
-        recipeName: string;
-        description: string;
-        recipeImage: string;
-        recipeViews: number;
-        author: string;
-        authorImage: string;
-        authorFollower: number;
-    }
+    },[session,userData?.response?.username])
 
     function classNames(...classes:any) {
         return classes.filter(Boolean).join(' ')
@@ -167,35 +166,38 @@ export default function ProfilePage() {
                             <Tab.Group>
                                 <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 ">
                                     {
-
-                                        <Tab className={({ selected }) =>
-                                            classNames(
-                                            'w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
-                                            'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-                                            selected
-                                                ? 'bg-white shadow'
-                                                : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
-                                            )
-                                        }>
-                                            
-                                            Created Recipe(s)
-                                        </Tab>
+                                        userData?.response?.roles.filter((item:any)=>(item.id!==2)).length > 0 &&
+                                        <>
+                                            <Tab className={({ selected }) =>
+                                                classNames(
+                                                'w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                                                'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                                                selected
+                                                    ? 'bg-white shadow'
+                                                    : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
+                                                )
+                                            }>
+                                                
+                                                Created Recipe(s)
+                                            </Tab>
+                                            <Tab className={({ selected }) =>
+                                                classNames(
+                                                `w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700`,
+                                                'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                                                selected
+                                                    ? 'bg-white shadow'
+                                                    : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
+                                                )
+                                            }>
+                                                
+                                                Follower
+                                            </Tab>
+                                        </>
+                                        
                                     }
                                     <Tab className={({ selected }) =>
                                         classNames(
-                                        'w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
-                                        'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-                                        selected
-                                            ? 'bg-white shadow'
-                                            : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
-                                        )
-                                    }>
-                                        
-                                        Follower
-                                    </Tab>
-                                    <Tab className={({ selected }) =>
-                                        classNames(
-                                        'w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                                        `${userData?.response?.roles.filter((item:any)=>(item.id!==2)).length > 0 ? "w-full" : ""} px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700`,
                                         'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
                                         selected
                                             ? 'bg-white shadow'
@@ -227,34 +229,7 @@ export default function ProfilePage() {
                                         <div className="">Following</div>
                                     </Tab.Panel>
                                 </Tab.Panels>
-                            </Tab.Group>
-                            {/* {
-                                //@ts-ignore
-                                recipesData?.data?.length > 0 ? (
-                                    //@ts-ignore
-                                    recipesData?.data.map((recipe)=> (
-                                        //@ts-ignore
-                                        <RecipeCardLong key={Math.random()*Math.random()} recipe={recipe} deleteAction={deleteRecipe} />
-                                    ))
-                                ) : (
-                                    <p className="p-4 text-center">
-                                        You don't have recipe(s) yet, <a href="#" className="transition  bg-gray-800 text-sm text-white hover:bg-gray-600 px-4 py-2 rounded-md ">Create one</a> now!
-                                    </p>
-                                )
-                            }
-                            {
-                                //@ts-ignore
-                                ((recipesData?.data?.length > 0) && (recipesData.totalPages - 1  !== currentPage)) ? (
-                                    <div className="w-full flex items-center my-5">
-                                        <button className="mx-auto transition bg-gray-600 hover:bg-gray-500 px-8 font-semibold py-2 rounded-lg text-white">
-                                            Load more recipes
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <div className="my-5"></div>
-                                )
-                            } */}
-                            
+                            </Tab.Group>                            
                         </div>
                         {/* Column profile card */}
                         <div className="p-4 col-span-4 md:col-span-1 order-1 md:order-2 my-3 md:my-0">
