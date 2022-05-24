@@ -65,26 +65,20 @@ const Home: NextPage = () => {
 
   function fetchData() {
     axios
-      .get<Recipe[]>(
+      .get(
         "https://recipyb-dev.herokuapp.com/api/v1/recipe/discover?limit=10"
       )
       .then((res) => {
-        //@ts-ignore
-        // console.log(res.data.payload);
-        //@ts-ignore
         setRecipes(res.data.payload);
       });
     axios
-      .get<Recipe[]>(
+      .get(
         "https://recipyb-dev.herokuapp.com/api/v1/recipe/popular?limit=5"
       )
       .then((res) => {
-        //@ts-ignore
-        // console.log("Popular: ", res.data.payload);
-        //@ts-ignore
         setPopularRecipes(res.data.payload);
       });
-    //@ts-ignore
+      //@ts-ignore
     dispatch(getTags());
     dispatch(clearQuery());
   }

@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { SiCodechef } from "react-icons/si";
 
 // @ts-ignore
 export default function RecipeCardFull(props) {
+  const [recipeImg, setRecipeImg] = useState("");
+  useEffect(() =>{
+    setRecipeImg(process.env.API_URL + `recipe/${props.recipe.id}/photo`)
+  },[props])
   return (
     <div className="mx-2 my-3 sm:w-full xl:w-50 box-border border-1 pb-2 rounded shadow transition-all hover:bg-orange-200 hover:scale-110">
       <Image
         className="w-full rounded-t cursor-pointer"
-        src={props.recipe.recipeImage ? props.recipe.recipeImage : "/images/bibimbap-image.webp"}
+        src={recipeImg ? recipeImg : "/images/bibimbap-image.webp"}
         alt="RecipyBook"
         width={100}
         height={50}
