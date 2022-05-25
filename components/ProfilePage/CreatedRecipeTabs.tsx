@@ -10,7 +10,7 @@ export const CreatedRecipeTabs = (props:any) => {
                     //@ts-ignore
                     props.recipesData?.recipesData.map((recipe)=> (
                         //@ts-ignore
-                        <RecipeCardLong key={Math.random()*Math.random()} recipe={recipe} deleteAction={props.deleteRecipe} />
+                        <RecipeCardLong key={Math.random()*Math.random()} recipe={recipe} deleteAction={props.deleteRecipe} dataQueryParam={props.dataQueryParam} />
                     ))
                 ) : (
                     <p className="p-4 text-center">

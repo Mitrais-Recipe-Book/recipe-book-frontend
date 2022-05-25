@@ -209,18 +209,23 @@ export default function ProfilePage() {
                                     </Tab>
                                 </Tab.List>
                                 <Tab.Panels className="mt-2">
-                                    <Tab.Panel className={
-                                        `rounded-xl bg-white p-3
-                                        ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400  `
-                                    }>
-                                        <CreatedRecipeTabs recipesData={recipesData} deleteRecipe={deleteRecipe} />
-                                    </Tab.Panel>
-                                    <Tab.Panel className={
-                                        `rounded-xl bg-white p-3
-                                        ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 `
-                                    }>
-                                        <FollowerTabs />
-                                    </Tab.Panel>
+                                    {
+                                        // userData?.response?.roles.filter((item:any)=>(item.id!==2)).length > 0 &&
+                                        <>
+                                            <Tab.Panel className={
+                                                `rounded-xl bg-white p-3
+                                                ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400  `
+                                            }>
+                                                <CreatedRecipeTabs recipesData={recipesData} deleteRecipe={deleteRecipe} dataQueryParam={routeUserName.params} />
+                                            </Tab.Panel>
+                                            <Tab.Panel className={
+                                                `rounded-xl bg-white p-3
+                                                ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 `
+                                            }>
+                                                <FollowerTabs />
+                                            </Tab.Panel>
+                                        </>
+                                    }
                                     <Tab.Panel className={
                                         `rounded-xl bg-white p-3
                                         ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 `
@@ -233,7 +238,7 @@ export default function ProfilePage() {
                         </div>
                         {/* Column profile card */}
                         <div className="p-4 col-span-4 md:col-span-1 order-1 md:order-2 my-3 md:my-0">
-                            <ProfileInfo userData={userData} />
+                            <ProfileInfo userData={userData} dataQueryParam={routeUserName.params}/>
                         </div>
                     </div>
                 </div>
