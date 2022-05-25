@@ -22,7 +22,7 @@ export default function RecipeCard(props) {
         <div className="text-gray-600 md:text-ellipsis">
           {props.recipe.description}
         </div>
-        <div className="flex py-2">
+        {props.recipe.author? (<div className="flex py-2">
           <div className="py-2 cursor-pointer ml-1 mr-2">
             {props.recipe.authorImage ? <Image src={props.recipe.authorImage} className="rounded-full" width={24} height={24} objectFit="cover" alt="author profile" /> : <SiCodechef className="rounded-full" size={24} />}
           </div>
@@ -34,7 +34,8 @@ export default function RecipeCard(props) {
               {props.recipe.authorFollower}
             </div>
           </div>
-        </div>
+        </div>): null}
+        
       </div>
       <div className="text-center pt-1">
         <div className="text-sm text-gray-600"> {props.recipe.recipeViews} </div>
