@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "../redux/store/store";
 import { SessionProvider } from "next-auth/react";
+// import { ThemeProvider } from "@material-tailwind/react";
 
 
 function MyApp({ Component, pageProps: { session, pageProps } }: AppProps) {
