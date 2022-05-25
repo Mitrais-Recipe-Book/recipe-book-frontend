@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { IoIosAdd, IoIosRemove } from "react-icons/io";
 import Select from "react-select";
-import Swal from "sweetalert2";
+import Swal, { SweetAlertResult } from "sweetalert2";
 import { useRouter } from "next/router";
 
 import RichTextEditor from "@components/RichTextEditor";
@@ -35,9 +35,11 @@ export default function CreateRecipe() {
   // also fetch userID from username saved in localstorage
   useEffect(() => {
     if (query.id) {
+      console.log(query.id);
       axios
         .get("https://recipyb-dev.herokuapp.com/api/v1/recipe/" + query.id)
         .then((res) => {
+          console.log(res.data);
           setRecipeForm(res.data.data);
           setContentValue(res.data.data.content);
           setIngredientList(res.data.data.ingredients);
@@ -48,7 +50,6 @@ export default function CreateRecipe() {
           console.log(err);
         });
     }
-
     axios
       .get("https://recipyb-dev.herokuapp.com/api/v1/user/" + username)
       .then((res) => {
@@ -108,7 +109,7 @@ export default function CreateRecipe() {
       cancelButtonColor: "red",
       confirmButtonText: "Yes, cancel it!",
       cancelButtonText: "No, keep it!",
-    }).then((result: { value: any }) => {
+    }).then((result: SweetAlertResult<any>) => {
       if (result.value) {
         router.push("/");
       }
@@ -129,7 +130,7 @@ export default function CreateRecipe() {
       cancelButtonColor: "red",
       confirmButtonText: "Yes, Draft it!",
       cancelButtonText: "Wait, I need to make changes!",
-    }).then((result: { value: any }) => {
+    }).then((result: SweetAlertResult<any>) => {
       if (result.value) {
         submitForm();
 
@@ -152,7 +153,7 @@ export default function CreateRecipe() {
       cancelButtonColor: "red",
       confirmButtonText: "Yes!",
       cancelButtonText: "Wait, I need to make changes!",
-    }).then((result: { value: any }) => {
+    }).then((result: SweetAlertResult<any>) => {
       if (result.value) {
         submitForm();
       }
@@ -202,7 +203,9 @@ export default function CreateRecipe() {
   });
 
   useEffect(() => {
-    uploadDatabase();
+    if (submitFormState) {
+      uploadDatabase();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitFormState]);
 
@@ -219,7 +222,7 @@ export default function CreateRecipe() {
       content: contentValues,
     });
     console.log(recipeForm);
-    setSubmitFormState(!submitFormState);
+    setSubmitFormState(true);
   }
 
   function uploadDatabase() {
@@ -232,6 +235,7 @@ export default function CreateRecipe() {
       .catch((err) => {
         console.log(err);
       });
+    setSubmitFormState(false);
   }
   //upload image form function
   function uploadImage(recipeId: number) {
