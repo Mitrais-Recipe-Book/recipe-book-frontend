@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, AnyAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import Router from "next/router";
 
