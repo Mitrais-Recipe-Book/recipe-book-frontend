@@ -2,19 +2,21 @@ import Image from "next/image";
 import Router from "next/router";
 import { useState } from "react";
 import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
+import { clearQueryExceptName, sendQuery, setQueryRecipeName } from "../redux/reducers/queryReducer";
 import { getSession, useSession } from "next-auth/react";
 
-
-export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const { data: session }:any = useSession();
+  
+  export default function Navbar() {
+    const [isOpen, setIsOpen] = useState(false);
+    let searchItem = useSelector((state: any) => state.query.queryRecipeName);
+    const dispatch = useDispatch();
+    const { data: session }:any = useSession();
 
   return (
     <nav className="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-800">
-
-      <div className="container flex flex-wrap justify-between items-center mx-auto">
+      <div className="container flex flex-wrap justify-around items-center mx-auto">
         <a href="/" className="flex items-center">
-
           <Image
             src="/images/bibimbap192x192.png"
             alt="RecipyBook"
@@ -47,14 +49,15 @@ export default function Navbar() {
               id="search-bar"
               className="block p-2 pl-10 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search Recipe..."
+              value={searchItem}
+              onChange={(event) => {
+                dispatch(setQueryRecipeName(event.target.value));
+              }}
               onKeyUp={(e) => {
                 if (e.key === "Enter") {
+                  dispatch(clearQueryExceptName())
                   //@ts-ignore
-                  console.log(document.getElementById("search-bar")?.value);
-                  Router.push(
-                    //@ts-ignore
-                    `/search/${document.getElementById("search-bar")?.value}`
-                  );
+                  dispatch(sendQuery());
                 }
               }}
             />
@@ -116,7 +119,7 @@ export default function Navbar() {
             <Image
               className="w-8 h-8 rounded-full"
               src="/images/user-profile.png"
-              alt="RecipyBook"
+              alt="user-profile"
               width={40}
               height={40}
               objectFit="cover"
@@ -141,7 +144,7 @@ export default function Navbar() {
             </li>
             <li>
               <a
-                href="#"
+                href="/creator/create-recipe"
                 className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >
                 Create Recipe

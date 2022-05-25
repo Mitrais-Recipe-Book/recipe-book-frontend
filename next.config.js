@@ -2,12 +2,14 @@ const withPWA = require("next-pwa");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  //stop running useEffect twice in UseEffect dev mode
+  reactStrictMode: false,
   env: {
     NEXTAUTH_SECRET: "sdjfkhfkjsdhfjk283324sdfy34859",
+    API_URL: "https://recipyb-dev.herokuapp.com/api/v1/"
   },
   images: {
-    domains: ["images.unsplash.com"],
+    domains: ["images.unsplash.com", "recipyb-dev.herokuapp.com"],
   },
   pwa: withPWA({
     dest: "public",

@@ -6,6 +6,7 @@ import { signIn, useSession, getProviders, signOut, ClientSafeProvider, LiteralU
 import { GetServerSideProps } from "next";
 import jsCookie from "js-cookie";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import Swal from 'sweetalert2'
 
 export default function LogIn({ csrfToken, providers }) {
   const session = useSession();
@@ -37,7 +38,13 @@ export default function LogIn({ csrfToken, providers }) {
       router.push("/");
     }
     if (router.query.create) { setMessage(router.query.create), setNotif(true) };
-    if (router.query.error) { setError(router.query.error), setErrMessage(true) };
+    if (router.query.error) {
+      Swal.fire(
+        'Sign-in Error',
+        'check your username or password!',
+        'error'
+      )
+    };
     setTimeout(() => { setNotif(false) }, 5000);
     setTimeout(() => { setErrMessage(false) }, 5000);
   }, []);
@@ -46,6 +53,12 @@ export default function LogIn({ csrfToken, providers }) {
     event.preventDefault();
     const username = userData.username;
     const password = userData.password;
+    Swal.fire({
+      title: 'Loading...',
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    })
     signIn('credentials', { username, password });
   };
 

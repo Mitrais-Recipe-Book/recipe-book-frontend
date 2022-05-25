@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import { useEffect, useRef, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
-import Navbar from "../components/Navbar";
+import Navbar from "@components/Navbar";
 import Footer from "../components/Footer";
 import RecipeCard from "../components/RecipeCard";
 import RecipeCardFull from "../components/RecipeCardFull";
@@ -20,8 +20,9 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { getTags, clearQuery } from "../redux/reducers/queryReducer";
 import session from "redux-persist/lib/storage/session";
-// import { useSelector } from "react-redux";
 
 const Home: NextPage = () => {
   // const auth = useSelector((state) =>
@@ -30,11 +31,23 @@ const Home: NextPage = () => {
   // );
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [popularRecipes, setPopularRecipes] = useState<Recipe[]>([]);
-  const [tags, setTags] = useState<Tag[]>([]);
+  // const [tags, setTags] = useState<Tag[]>([]);
+  //@ts-ignore
+  const tags: Tag[] = useSelector((state: State) =>
+    state.query.allTags ? state.query.allTags : []
+  );
+  const dispatch = useDispatch();
+  //@ts-ignore
+  // console.log("query tags: ", useSelector((state) => state.tags.queryTags));
 
   const { data: session } = useSession();
   console.log("Session", session);
 
+  interface State {
+    query: {
+      allTags: Tag[];
+    }
+  }
   interface Recipe {
     recipeName: string;
     description: string;
@@ -52,37 +65,27 @@ const Home: NextPage = () => {
 
   function fetchData() {
     axios
-      .get<Recipe[]>(
+      .get(
         "https://recipyb-dev.herokuapp.com/api/v1/recipe/discover?limit=10"
       )
       .then((res) => {
-        //@ts-ignore
-        // console.log(res.data.payload);
-        //@ts-ignore
         setRecipes(res.data.payload);
       });
     axios
-      .get<Recipe[]>(
+      .get(
         "https://recipyb-dev.herokuapp.com/api/v1/recipe/popular?limit=5"
       )
       .then((res) => {
-        //@ts-ignore
-        // console.log("Popular: ", res.data.payload);
-        //@ts-ignore
         setPopularRecipes(res.data.payload);
       });
-    axios
-      .get<Tag[]>("https://recipyb-dev.herokuapp.com/api/v1/tag")
-      .then((res) => {
-        //@ts-ignore
-        // console.log("Tags: ", res.data.payload);
-        //@ts-ignore
-        setTags(res.data.payload);
-      });
+      //@ts-ignore
+    dispatch(getTags());
+    dispatch(clearQuery());
   }
 
   useEffect(() => {
     fetchData();
+    console.log("tags:", tags);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -129,18 +132,21 @@ const Home: NextPage = () => {
       </style>
 
       <Navbar />
-      {session &&
+      {session && (
         <div className="p-2 text-center bg-blue-200 m-2 md:px-[50px] lg:px-[100px] xl:px-[150px] rounded-xl w-10/12 mx-auto">
           <div>
             {/* @ts-ignore */}
             Hello {session?.user?.username}!
           </div>
 
-          <button onClick={() => signOut()} className="m-1 bg-blue-500 rounded p-2 hover:bg-blue-700 text-white uppercase">
+          <button
+            onClick={() => signOut()}
+            className="m-1 bg-blue-500 rounded p-2 hover:bg-blue-700 text-white uppercase"
+          >
             sign out
           </button>
         </div>
-      }
+      )}
       {/* @ts-ignore */}
       {/* <h1>{session.user ? session.user.name : ""}</h1> */}
       {/* @ts-ignore */}
@@ -277,11 +283,8 @@ const Home: NextPage = () => {
             <h1 className="text-4xl text-center mb-3 font-bold">Tags</h1>
             <div className="flex flex-wrap w-full md:w-3/4 mx-auto justify-center pb-3">
               {tags.map((tag) => {
-                return (
-                  <TagsPill tag={tag} />
-                );
+                return <TagsPill tag={tag} />;
               })}
-
             </div>
           </section>
 
