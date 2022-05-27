@@ -8,6 +8,7 @@ import RecipeCard from "@components/RecipeCard";
 import { FiEye, FiHeart, FiThumbsUp } from "react-icons/fi";
 import { FaRegBookmark, FaRegSurprise } from "react-icons/fa";
 import axios from "axios";
+import YouTube from "react-youtube";
 
 
 export default function RecipeDetail() {
