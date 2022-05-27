@@ -7,9 +7,9 @@ import Footer from "@components/Footer";
 import RecipeCard from "@components/RecipeCard";
 import { FiEye, FiHeart, FiThumbsUp } from "react-icons/fi";
 import { FaRegBookmark, FaRegSurprise } from "react-icons/fa";
+import { BsBookmarkCheck, BsFillBookmarkCheckFill } from "react-icons/bs"
 import axios from "axios";
 import YouTube from "react-youtube";
-
 
 export default function RecipeDetail() {
   interface Recipe {
@@ -47,13 +47,12 @@ export default function RecipeDetail() {
         .then((res) => {
           setIsRender(true);
           setIsExist(true);
-          console.log("HALO")
+          console.log("HALO");
           setRecipe(res.data.payload);
-          try{
+          try {
             setIngredients(JSON.parse(res.data.payload.ingredients));
-          }
-          catch(err){
-            setIngredients([{name: res.data.payload.ingredients, qty: ""}]);
+          } catch (err) {
+            setIngredients([{ name: res.data.payload.ingredients, qty: "" }]);
           }
         })
         .catch((err) => {
@@ -84,7 +83,12 @@ export default function RecipeDetail() {
                     <FiEye className="self-center" /> {recipe?.views}
                   </p>
                   <a className="ml-auto">
-                    <FaRegBookmark />
+                    <BsFillBookmarkCheckFill id="bookmark" 
+                      className="fill-slate-400"
+                      onClick={() => {
+                        document.getElementById("bookmark")?.classList.toggle("fill-red-600");
+                      }}
+                    />
                   </a>
                 </div>
                 <Image
@@ -97,17 +101,35 @@ export default function RecipeDetail() {
                   objectFit="cover"
                 />
                 <div className="mx-2 my-2 flex gap-2">
-                  <a>
-                    <FiHeart />{" "}
+                  <a
+                    onClick={() => {
+                      document
+                        .getElementById("fav-button")
+                        ?.classList.toggle("fill-red-700");
+                    }}
+                  >
+                    <FiHeart id="fav-button" />
                   </a>
-                  <a>
-                    <FiThumbsUp />
+                  <a
+                    onClick={() => {
+                      document
+                        .getElementById("like-button")
+                        ?.classList.toggle("fill-blue-200");
+                    }}
+                  >
+                    <FiThumbsUp id="like-button" />
                   </a>
-                  <a>
-                    <FaRegSurprise />
+                  <a
+                    onClick={() => {
+                      document
+                        .getElementById("surprise-button")
+                        ?.classList.toggle("fill-yellow-700");
+                    }}
+                  >
+                    <FaRegSurprise id="surprise-button" />
                   </a>
                 </div>
-                <h1 className="text-center text-4xl font-bold my-4">
+                <h1 className="text-center text-4xl font-bold my-4 ">
                   {recipe?.title}
                 </h1>
                 <div className="flex flex-wrap gap-x-2 justify-center mx-8">
@@ -124,12 +146,19 @@ export default function RecipeDetail() {
                     {
                       //@ts-ignore
                       ingredients?.map((ingredient) => (
-                        <div className="flex gap-x-1">
+                        <div id={ingredient.name} className="flex gap-x-1 ">
                           <input
                             className="self-center"
                             type="checkbox"
-                            name=""
-                            id=""
+                            onChange={(e) => {
+                              e.target.checked
+                                ? document
+                                    .getElementById(ingredient.name)
+                                    ?.classList.add("line-through")
+                                : document
+                                    .getElementById(ingredient.name)
+                                    ?.classList.remove("line-through");
+                            }}
                           />
                           <p>{ingredient.qty}</p>
                           <p>{ingredient.name}</p>
