@@ -1,11 +1,14 @@
 import React from 'react'
 import Image from "next/image";
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import Swal from 'sweetalert2'
+import { useRouter } from 'next/router';
+import axios from 'axios';
+import { FollowBtn } from './FollowBtn';
+import EditProfileBtn from './EditProfileBtn';
 
 
-export const ProfileInfo = (props:any) => {
-    // console.log("info",props.userData)
- 
+export const ProfileInfo = (props: any) => {
     return (
         <>
             <div className="shadow-md md:shadow-xl rounded-lg pb-6">
@@ -31,15 +34,9 @@ export const ProfileInfo = (props:any) => {
                             <h3>{props?.userData?.response?.recipeLikes} likes</h3>
                             <h3>{props?.userData?.response?.followers} followers</h3>
                         </div>
-                        {/* <p className="my-4 w-3/4 mx-auto four-lines-ellipsis">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Excepturi placeat harum quis vitae soluta quibusdam laboriosam ad minus fugiat ex suscipit quam illum facilis velit, dolorum obcaecati recusandae, hic aut.
-                        </p> */}
-                        {   
-                            props?.dataQueryParam !== undefined && <button className="uppercase transition  bg-gray-800 text-sm text-white hover:bg-gray-600 px-4 py-2 rounded-md ">Follow </button>
-                        } 
-                        {
-                            props?.dataQueryParam == undefined && <button className="uppercase transition  bg-gray-800 text-sm text-white hover:bg-gray-600 px-4 py-2 rounded-md ">Edit Profile </button>
-                        }
+
+                        {props.dataQueryParam ? <FollowBtn session={props?.session} creatorId={props?.userData?.response?.id} /> : <EditProfileBtn />}
+
                     </div>
                 </div>
             </div>
