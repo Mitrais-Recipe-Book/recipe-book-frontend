@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import RecipeCardLong from "../../components/RecipeCardLong";
 import { CreatedRecipeTabs } from "../../components/ProfilePage/CreatedRecipeTabs";
 import { FollowerTabs } from "../../components/ProfilePage/FollowerTabs";
+import Custom404 from "@components/Custom404";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { ProfileInfo } from "../../components/ProfilePage/ProfileInfo";
@@ -25,8 +26,11 @@ export default function ProfilePage() {
     const [incrementNum,setIncrementNum] = useState(0)
     const { data: session }:any = useSession();
     const [userData,setUserData]:any = useState({})
+    const [userDataFound,SetUserDataFound]:any = useState(true)
     const [sessionProfile,setSessionProfile] = useState(false)
     const [isRendered,setIsRendered] = useState(false)
+    const [userFollowers,setUserFollowers] = useState([])
+    const [userFollowings,setUserFollowings] = useState([])
 
     const router = useRouter()
     let routeUserName:any=router.query
@@ -99,6 +103,27 @@ export default function ProfilePage() {
         })
     }
 
+    function getUserFollowers(id?:number){
+        if(!id){
+            axios.get(
+                apiUrl+`/user/${id}/followers`
+            ).then(res=>{
+                const data = res.data.payload
+                setUserFollowers(data)
+            })
+        }
+    }
+
+    function getUserFollowing(id?:number){
+        if(!id){
+            axios.get(
+                apiUrl+`/user/${id}/follow-lists`
+            ).then(res=>{
+                const data = res.data.payload
+                setUserFollowers(data)
+            })
+        }
+    }
     async function getDataProfile(username:any){
         if (username!==undefined) {
             axios.get(
@@ -109,6 +134,7 @@ export default function ProfilePage() {
                 setUserData({...userData,response})
             }).catch((error:any)=>{
                 console.log(error)
+                SetUserDataFound(false)
             })
         }
     }
@@ -145,6 +171,8 @@ export default function ProfilePage() {
         return classes.filter(Boolean).join(' ')
     }
 
+    if(!userDataFound) return <Custom404 />
+
     return (
         <div>
             <Head>
@@ -166,11 +194,49 @@ export default function ProfilePage() {
                             <Tab.Group>
                                 <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 ">
                                     {
-                                        userData?.response?.roles.filter((item:any)=>(item.id!==2)).length > 0 &&
-                                        <>
-                                            <Tab className={({ selected }) =>
+                                        userData?.response?.roles.filter((item:any)=>(item.id==2)).length > 0 ? 
+                                            (
+                                            <>
+                                                <Tab className={({ selected }) =>
+                                                    classNames(
+                                                    'w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                                                    'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                                                    selected
+                                                        ? 'bg-white shadow'
+                                                        : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
+                                                    )
+                                                }>
+                                                    
+                                                    Created Recipe(s)
+                                                </Tab>
+                                                <Tab className={({ selected }) =>
+                                                    classNames(
+                                                    `w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700`,
+                                                    'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                                                    selected
+                                                        ? 'bg-white shadow'
+                                                        : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
+                                                    )
+                                                }>
+                                                    
+                                                    Follower
+                                                </Tab>
+                                                <Tab className={({ selected }) =>
+                                                    classNames(
+                                                    `${userData?.response?.roles.filter((item:any)=>(item.id!==2)).length > 0 ? "w-full" : ""} px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700`,
+                                                    'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                                                    selected
+                                                        ? 'bg-white shadow'
+                                                        : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
+                                                    )
+                                                }>
+                                                    
+                                                    Following
+                                                </Tab>
+                                            </>) : (
+                                                <Tab className={({ selected }) =>
                                                 classNames(
-                                                'w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                                                `${userData?.response?.roles.filter((item:any)=>(item.id!==2)).length > 0 ? "w-full" : ""} px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700`,
                                                 'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
                                                 selected
                                                     ? 'bg-white shadow'
@@ -178,39 +244,16 @@ export default function ProfilePage() {
                                                 )
                                             }>
                                                 
-                                                Created Recipe(s)
+                                                Following
                                             </Tab>
-                                            <Tab className={({ selected }) =>
-                                                classNames(
-                                                `w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700`,
-                                                'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-                                                selected
-                                                    ? 'bg-white shadow'
-                                                    : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
-                                                )
-                                            }>
-                                                
-                                                Follower
-                                            </Tab>
-                                        </>
+                                            )
                                         
                                     }
-                                    <Tab className={({ selected }) =>
-                                        classNames(
-                                        `${userData?.response?.roles.filter((item:any)=>(item.id!==2)).length > 0 ? "w-full" : ""} px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700`,
-                                        'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-                                        selected
-                                            ? 'bg-white shadow'
-                                            : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
-                                        )
-                                    }>
-                                        
-                                        Following
-                                    </Tab>
+                                    
                                 </Tab.List>
                                 <Tab.Panels className="mt-2">
                                     {
-                                        // userData?.response?.roles.filter((item:any)=>(item.id!==2)).length > 0 &&
+                                        userData?.response?.roles.filter((item:any)=>(item.id==2)).length > 0 ? (
                                         <>
                                             <Tab.Panel className={
                                                 `rounded-xl bg-white p-3
@@ -224,15 +267,24 @@ export default function ProfilePage() {
                                             }>
                                                 <FollowerTabs />
                                             </Tab.Panel>
-                                        </>
+                                            <Tab.Panel className={
+                                                `rounded-xl bg-white p-3
+                                                ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 `
+                                            }>
+                                                {/* <FollowerTabs /> */}
+                                                <div className="">Following</div>
+                                            </Tab.Panel>
+                                        </>) : (
+                                            <Tab.Panel className={
+                                                `rounded-xl bg-white p-3
+                                                ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 `
+                                            }>
+                                                {/* <FollowerTabs /> */}
+                                                <div className="">Following</div>
+                                            </Tab.Panel>
+                                        )
                                     }
-                                    <Tab.Panel className={
-                                        `rounded-xl bg-white p-3
-                                        ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 `
-                                    }>
-                                        {/* <FollowerTabs /> */}
-                                        <div className="">Following</div>
-                                    </Tab.Panel>
+                                    
                                 </Tab.Panels>
                             </Tab.Group>                            
                         </div>
