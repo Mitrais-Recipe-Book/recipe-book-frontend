@@ -32,20 +32,33 @@ export default function RecipeDetail() {
   }
   const router = useRouter();
   const recipeId = router.query.recipe_detail;
+  const [isRender, setIsRender] = useState(false);
   const [recipe, setRecipe] = useState<Recipe | undefined>();
   const [ingredients, setIngredients] = useState<Ingredients | undefined>();
+  const [recipeImg, setRecipeImg] = useState("");
+
 
   useEffect(() => {
     axios.get(process.env.API_URL + `recipe/${recipeId}`).then((res) => {
       setRecipe(res.data.payload);
-      setIngredients((JSON.parse(res.data.payload.ingredients)));
+      setIngredients(JSON.parse(res.data.payload.ingredients));
+      setIsRender(true);
     });
+    axios
+      .get(process.env.API_URL + `recipe/${recipeId}/photo`)
+      .then((res) => {
+        setRecipeImg(process.env.API_URL + `recipe/${recipeId}/photo`);
+      })
+      .catch((err) => {
+        setRecipeImg("");
+      });
   }, [recipeId]);
   return (
     <div>
       <Navbar />
       <main className="container mx-auto">
-        <div className="px-10 py-5">
+        {isRender && (
+          <div className="px-10 py-5">
           <div className="grid md:grid-cols-3 gap-4">
             <section className="md:col-span-2  mx-4">
               <div className="flex my-2">
@@ -58,7 +71,7 @@ export default function RecipeDetail() {
               </div>
               <Image
                 className="object-cover rounded-t"
-                src={"/images/bibimbap-image.webp"}
+                src={recipeImg ? recipeImg : "/images/bibimbap-image.webp"}
                 alt="RecipyBook"
                 width={180}
                 height={100}
@@ -84,26 +97,37 @@ export default function RecipeDetail() {
                   <TagsPill key={tag.id} tag={tag} />
                 ))}
               </div>
-              <h3 className="mx-4 my-2">
-                {recipe?.overview}
-              </h3>
+              <h3 className="mx-4 my-2">{recipe?.overview}</h3>
               <div className="flex flex-col mx-8 my-2">
-                <h3 className="ml-8 mb-2 text-lg font-semibold">Ingridients:</h3>
-                <p>{
-                  //@ts-ignore
-                  ingredients?.map((ingredient) => (
-                    <div className="flex gap-x-1">
-                      <input className="self-center" type="checkbox" name="" id="" />
-                      <p>{ingredient.qty}</p>
-                      <p>{ingredient.name}</p>
-                    </div>
-                  ))
-                }</p>
+                <h3 className="ml-8 mb-2 text-lg font-semibold">
+                  Ingridients:
+                </h3>
+                <p>
+                  {
+                    //@ts-ignore
+                    ingredients?.map((ingredient) => (
+                      <div className="flex gap-x-1">
+                        <input
+                          className="self-center"
+                          type="checkbox"
+                          name=""
+                          id=""
+                        />
+                        <p>{ingredient.qty}</p>
+                        <p>{ingredient.name}</p>
+                      </div>
+                    ))
+                  }
+                </p>
               </div>
               <hr className="border-2 border-red-600" />
               <div className="mx-8 my-2">
-              <h3 className="ml-8 mb-2 text-lg font-semibold">Steps:</h3>
-                <p>{recipe?.content}</p>
+                <h3 className="ml-8 mb-2 text-lg font-semibold">Steps:</h3>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: recipe?.content ? recipe?.content : "",
+                  }}
+                ></div>
               </div>
               <hr className="border-2 border-gray-400" />
               <div className="flex flex-col mx-4 my-2">
@@ -169,6 +193,12 @@ export default function RecipeDetail() {
             </section>
           </div>
         </div>
+        )}
+        {!isRender && (
+          <div className="flex justify-center">
+            No Recipe Found
+          </div>
+        )}
       </main>
       <Footer />
     </div>
