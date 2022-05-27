@@ -18,31 +18,31 @@ import { route } from "next/dist/server/router";
 
 export default function ProfilePage() {
     const apiUrl = "https://recipyb-dev.herokuapp.com/api/v1"
-    const [recipesData,setRecipesData] = useState({
-        recipesData:[]
+    const [recipesData, setRecipesData] = useState({
+        recipesData: []
     })
-    const [currentPage,setCurrentPage] = useState(0)
-    const [incrementNum,setIncrementNum] = useState(0)
-    const { data: session }:any = useSession();
-    const [userData,setUserData]:any = useState({})
-    const [sessionProfile,setSessionProfile] = useState(false)
-    const [isRendered,setIsRendered] = useState(false)
+    const [currentPage, setCurrentPage] = useState(0)
+    const [incrementNum, setIncrementNum] = useState(0)
+    const { data: session }: any = useSession();
+    const [userData, setUserData]: any = useState({})
+    const [sessionProfile, setSessionProfile] = useState(false)
+    const [isRendered, setIsRendered] = useState(false)
 
     const router = useRouter()
-    let routeUserName:any=router.query
+    let routeUserName: any = router.query
 
-    async function getRecipes(){
-        if(userData?.response?.username){
+    async function getRecipes() {
+        if (userData?.response?.username) {
             axios.get(
-                apiUrl+`/user/${userData?.response?.username}/recipes?page=${currentPage}`
-              )
-              .then((res) => {
-                //@ts-ignore
-                const data = res.data.payload
-                //@ts-ignore
-                console.log("data resep",data);
-                //@ts-ignore
-                // if(data.currentPage !== recipesData?.currentPage){
+                apiUrl + `/user/${userData?.response?.username}/recipes?page=${currentPage}`
+            )
+                .then((res) => {
+                    //@ts-ignore
+                    const data = res.data.payload
+                    //@ts-ignore
+                    console.log("data resep", data);
+                    //@ts-ignore
+                    // if(data.currentPage !== recipesData?.currentPage){
                     setRecipesData({
                         // @ts-ignore
                         // recipesData: recipesData?.recipesData?.concat(data.data),
@@ -51,18 +51,18 @@ export default function ProfilePage() {
                         currentPage: data.currentPage,
                         totalPages: data.totalPages
                     })
-                // }
-              });
+                    // }
+                });
         }
     }
 
-    function loadMoreRecipes(){
-        getRecipes().then(()=>{
-            setCurrentPage(currentPage+1)
+    function loadMoreRecipes() {
+        getRecipes().then(() => {
+            setCurrentPage(currentPage + 1)
         })
     }
 
-    function deleteRecipe(id?:number){
+    function deleteRecipe(id?: number) {
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -72,76 +72,76 @@ export default function ProfilePage() {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire({
-                title: 'Loading...',
-                didOpen: () => {
-                    Swal.showLoading()
-                }
-            })
-            axios.delete(apiUrl+`/recipe/${id}`)
-            .then((res) => {
+            if (result.isConfirmed) {
                 Swal.fire({
-                    title:'Deleted!',
-                    html:'Your recipe has been deleted.',
-                    icon:'success',
-                    willClose: getRecipes
+                    title: 'Loading...',
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
                 })
-            })
-            .catch(error=>{
-                Swal.fire(
-                    'Error',
-                    'Something gone wrong!.',
-                    'error'
-                )
-            })
-        }
+                axios.delete(apiUrl + `/recipe/${id}`)
+                    .then((res) => {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            html: 'Your recipe has been deleted.',
+                            icon: 'success',
+                            willClose: getRecipes
+                        })
+                    })
+                    .catch(error => {
+                        Swal.fire(
+                            'Error',
+                            'Something gone wrong!.',
+                            'error'
+                        )
+                    })
+            }
         })
     }
 
-    async function getDataProfile(username:any){
-        if (username!==undefined) {
+    async function getDataProfile(username: any) {
+        if (username !== undefined) {
             axios.get(
-                apiUrl+`/user/${username}`
-            ).then((res:any)=>{
+                apiUrl + `/user/${username}`
+            ).then((res: any) => {
                 const response = res.data.payload
                 // console.log(response)
-                setUserData({...userData,response})
-            }).catch((error:any)=>{
+                setUserData({ ...userData, response })
+            }).catch((error: any) => {
                 console.log(error)
             })
         }
     }
 
-    async function checkQueryParam(){
+    async function checkQueryParam() {
         setIsRendered(true)
         return routeUserName = router.query
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         if (session) {
-            checkQueryParam().then(()=>{
-                if (routeUserName.params!==undefined && routeUserName.params.length > 0) {
-                    getDataProfile(routeUserName.params).then(()=>{
+            checkQueryParam().then(() => {
+                if (routeUserName.params !== undefined && routeUserName.params.length > 0) {
+                    getDataProfile(routeUserName.params).then(() => {
                         getRecipes()
                     })
                 } else {
-                    getDataProfile(session.user.username).then(()=>{
+                    getDataProfile(session.user.username).then(() => {
                         getRecipes()
                     })
                 }
             })
-        }  else {
-            checkQueryParam().then(()=>{
-                getDataProfile(routeUserName.params).then(()=>{
+        } else {
+            checkQueryParam().then(() => {
+                getDataProfile(routeUserName.params).then(() => {
                     getRecipes()
                 })
             })
         }
-        
-    },[session,routeUserName,userData?.response?.username])
 
-    function classNames(...classes:any) {
+    }, [session, routeUserName, userData?.response?.username])
+
+    function classNames(...classes: any) {
         return classes.filter(Boolean).join(' ')
     }
 
@@ -150,8 +150,8 @@ export default function ProfilePage() {
             <Head>
                 <title>Profile - John Doe</title>
                 <meta
-                name="description"
-                content="
+                    name="description"
+                    content="
                     Profile - John Doe.
                 "
                 />
@@ -166,45 +166,45 @@ export default function ProfilePage() {
                             <Tab.Group>
                                 <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 ">
                                     {
-                                        userData?.response?.roles.filter((item:any)=>(item.id!==2)).length > 0 &&
+                                        userData?.response?.roles.filter((item: any) => (item.id !== 2)).length > 0 &&
                                         <>
                                             <Tab className={({ selected }) =>
                                                 classNames(
-                                                'w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
-                                                'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-                                                selected
-                                                    ? 'bg-white shadow'
-                                                    : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
+                                                    'w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                                                    'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                                                    selected
+                                                        ? 'bg-white shadow'
+                                                        : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
                                                 )
                                             }>
-                                                
+
                                                 Created Recipe(s)
                                             </Tab>
                                             <Tab className={({ selected }) =>
                                                 classNames(
-                                                `w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700`,
-                                                'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-                                                selected
-                                                    ? 'bg-white shadow'
-                                                    : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
+                                                    `w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700`,
+                                                    'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                                                    selected
+                                                        ? 'bg-white shadow'
+                                                        : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
                                                 )
                                             }>
-                                                
+
                                                 Follower
                                             </Tab>
                                         </>
-                                        
+
                                     }
                                     <Tab className={({ selected }) =>
                                         classNames(
-                                        `${userData?.response?.roles.filter((item:any)=>(item.id!==2)).length > 0 ? "w-full" : ""} px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700`,
-                                        'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-                                        selected
-                                            ? 'bg-white shadow'
-                                            : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
+                                            `${userData?.response?.roles.filter((item: any) => (item.id !== 2)).length > 0 ? "w-full" : ""} px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700`,
+                                            'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                                            selected
+                                                ? 'bg-white shadow'
+                                                : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
                                         )
                                     }>
-                                        
+
                                         Following
                                     </Tab>
                                 </Tab.List>
@@ -234,11 +234,11 @@ export default function ProfilePage() {
                                         <div className="">Following</div>
                                     </Tab.Panel>
                                 </Tab.Panels>
-                            </Tab.Group>                            
+                            </Tab.Group>
                         </div>
                         {/* Column profile card */}
                         <div className="p-4 col-span-4 md:col-span-1 order-1 md:order-2 my-3 md:my-0">
-                            <ProfileInfo userData={userData} dataQueryParam={routeUserName.params}/>
+                            <ProfileInfo userData={userData} dataQueryParam={routeUserName.params} session={session} />
                         </div>
                     </div>
                 </div>
