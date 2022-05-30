@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import RecipeCardLong from "../../components/RecipeCardLong";
 import { CreatedRecipeTabs } from "../../components/ProfilePage/CreatedRecipeTabs";
-import { FollowerTabs } from "../../components/ProfilePage/FollowerTabs";
+import { FollowTabs } from "../../components/ProfilePage/FollowTabs";
 import Custom404 from "@components/Custom404";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
@@ -43,8 +43,6 @@ export default function ProfilePage() {
               .then((res) => {
                 //@ts-ignore
                 const data = res.data.payload
-                //@ts-ignore
-                console.log("data resep",data);
                 //@ts-ignore
                 // if(data.currentPage !== recipesData?.currentPage){
                     setRecipesData({
@@ -104,7 +102,7 @@ export default function ProfilePage() {
     }
 
     function getUserFollowers(id?:number){
-        if(!id){
+        if(id){
             axios.get(
                 apiUrl+`/user/${id}/followers`
             ).then(res=>{
@@ -115,12 +113,12 @@ export default function ProfilePage() {
     }
 
     function getUserFollowing(id?:number){
-        if(!id){
+        if(id){
             axios.get(
-                apiUrl+`/user/${id}/follow-lists`
+                apiUrl+`/user/${id}/follow-list`
             ).then(res=>{
                 const data = res.data.payload
-                setUserFollowers(data)
+                setUserFollowings(data)
             })
         }
     }
@@ -164,7 +162,8 @@ export default function ProfilePage() {
                 })
             })
         }
-        
+        getUserFollowing(userData?.response?.id)
+        getUserFollowers(userData?.response?.id)
     },[session,routeUserName,userData?.response?.username])
 
     function classNames(...classes:any) {
@@ -191,7 +190,7 @@ export default function ProfilePage() {
                     <div className="grid grid-cols-4 gap-5">
                         {/* Column created recipe */}
                         <div className="col-span-4 md:col-span-3 p-4 order-2 md:order-1 shadow-xl rounded-lg">
-                            <Tab.Group>
+                            <Tab.Group selectedIndex={0}>
                                 <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 ">
                                     {
                                         userData?.response?.roles.filter((item:any)=>(item.id==2)).length > 0 ? 
@@ -265,22 +264,20 @@ export default function ProfilePage() {
                                                 `rounded-xl bg-white p-3
                                                 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 `
                                             }>
-                                                <FollowerTabs />
+                                                <FollowTabs key={Math.random()*Math.random()} followList={userFollowers}/>
                                             </Tab.Panel>
                                             <Tab.Panel className={
                                                 `rounded-xl bg-white p-3
                                                 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 `
                                             }>
-                                                {/* <FollowerTabs /> */}
-                                                <div className="">Following</div>
+                                                <FollowTabs key={Math.random()*Math.random()} followList={userFollowings}/>
                                             </Tab.Panel>
                                         </>) : (
                                             <Tab.Panel className={
                                                 `rounded-xl bg-white p-3
                                                 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 `
                                             }>
-                                                {/* <FollowerTabs /> */}
-                                                <div className="">Following</div>
+                                                <FollowTabs key={Math.random()*Math.random()} followList={userFollowings}/>
                                             </Tab.Panel>
                                         )
                                     }
