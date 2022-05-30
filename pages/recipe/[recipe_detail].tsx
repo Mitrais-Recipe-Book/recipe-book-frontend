@@ -132,7 +132,7 @@ export default function RecipeDetail() {
                     <FaRegSurprise id="surprise-button" />
                   </a>
                 </div>
-                <h1 className="text-center text-4xl font-bold my-4 ">
+                <h1 className="text-center text-4xl font-bold my-4 break-words">
                   {recipe?.title}
                 </h1>
                 <div className="flex flex-wrap gap-x-2 justify-center mx-8">
@@ -140,7 +140,7 @@ export default function RecipeDetail() {
                     <TagsPill key={tag.id} tag={tag} />
                   ))}
                 </div>
-                <h3 className="mx-4 my-2">{recipe?.overview}</h3>
+                <h3 className="mx-4 my-2 break-words">{recipe?.overview}</h3>
                 <div className="flex flex-col mx-8 my-2">
                   <h3 className="ml-8 mb-2 text-lg font-semibold">
                     Ingredients:
@@ -149,7 +149,7 @@ export default function RecipeDetail() {
                     {
                       //@ts-ignore
                       ingredients?.map((ingredient) => (
-                        <div id={ingredient.name} className="flex gap-x-1 ">
+                        <div id={ingredient.name} className="flex gap-x-1">
                           <input
                             className="self-center"
                             type="checkbox"
@@ -163,8 +163,8 @@ export default function RecipeDetail() {
                                     ?.classList.remove("line-through");
                             }}
                           />
-                          <p>{ingredient.qty}</p>
-                          <p>{ingredient.name}</p>
+                          <p className="break-words">{ingredient.qty}</p>
+                          <p className="break-all">{ingredient.name}</p>
                         </div>
                       ))
                     }
@@ -174,7 +174,7 @@ export default function RecipeDetail() {
                 <div className="mx-8 my-2">
                   <h3 className="ml-8 mb-2 text-lg font-semibold">Steps:</h3>
                   <div
-                    className="stepsStyle"
+                    className="stepsStyle break-words"
                     dangerouslySetInnerHTML={{
                       __html: recipe?.content ? recipe?.content : "",
                     }}
