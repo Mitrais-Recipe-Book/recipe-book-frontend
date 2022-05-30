@@ -10,6 +10,8 @@ import { FaRegBookmark, FaRegSurprise } from "react-icons/fa";
 import { BsBookmarkCheck, BsFillBookmarkCheckFill } from "react-icons/bs"
 import axios from "axios";
 import YouTube from "react-youtube";
+import { FollowBtn } from "@components/ProfilePage/FollowBtn";
+import { useSession } from "next-auth/react";
 
 export default function RecipeDetail() {
   interface Recipe {
@@ -34,6 +36,7 @@ export default function RecipeDetail() {
   }
   const router = useRouter();
   const recipeId = router.query.recipe_detail;
+  const { data: session }: any = useSession();
   const [isRender, setIsRender] = useState(false);
   const [isExist, setIsExist] = useState(false);
   const [recipe, setRecipe] = useState<Recipe | undefined>();
@@ -212,9 +215,7 @@ export default function RecipeDetail() {
                     cum dolor consequuntur neque. Non fugit asperiores commodi
                     quo accusantium! Quidem, unde tempora.
                   </p>
-                  <button className="bg-red-400 hover:bg-red-600 w-20 py-2 rounded-xl mx-auto text-white">
-                    Follow
-                  </button>
+                  <FollowBtn session={session} creatorId={recipe?.author.id}/>
                 </div>
                 <div className="flex flex-col items-center mt-20">
                   <h2>More from creator</h2>
