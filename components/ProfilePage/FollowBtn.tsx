@@ -1,10 +1,29 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 export const FollowBtn = (props: any) => {
     const apiUrl = "https://recipyb-dev.herokuapp.com/api/v1"
     const router = useRouter()
+    const [isFollowed, setIsFollowed] = useState({});
+
+    if (props.session.user.id && props.creatorId !== undefined) {
+        axios.get(`${apiUrl}/user/${props.session.user.id}/is-following?creator_id=${props.creatorId}`)
+            .then(res => {
+                setIsFollowed(res.data.payload);
+            })
+    }
+
+    const followButton = () => {
+        return (<button className="uppercase transition  bg-gray-800 text-sm text-white hover:bg-gray-600 px-4 py-2 rounded-md "
+            onClick={followCreator}>Follow </button>);
+    }
+
+    const unfollowButton = () => {
+        return (<button className="uppercase transition  bg-red-500 text-sm text-white hover:bg-gray-600 px-4 py-2 rounded-md "
+            onClick={unfollow}>Unfollow </button>);
+    }
 
     const followCreator = () => {
         if (props.session != null) {
@@ -36,6 +55,47 @@ export const FollowBtn = (props: any) => {
         }
     }
 
+    const unfollow = () => {
+        if (props.session != null) {
+            Swal.fire({
+                title: 'Unfollow',
+                text: "Are you sure want to unfollow?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Unfollow',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.delete(`${apiUrl}/user/unfollow`, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json',
+                        },
+                        data: {
+                            userId: props.session.user.id, creatorId: props?.creatorId
+                        }
+                    }).then((res) => {
+                        setIsFollowed(false);
+
+                        Swal.fire({
+                            title: 'Unfollowed!',
+                            html: 'You unfollowed this creator.',
+                            icon: 'success',
+                        })
+                    })
+                        .catch(error => {
+                            Swal.fire(
+                                'Error',
+                                'Something gone wrong!.',
+                                'error'
+                            )
+                        });
+                }
+            })
+        }
+    }
+
+
     type FollowCreator = {
         userId: BigInteger;
         creatorId: BigInteger;
@@ -55,6 +115,7 @@ export const FollowBtn = (props: any) => {
                     },
                 },
             ).then((res) => {
+                setIsFollowed(true);
                 Swal.fire({
                     title: 'Success!',
                     html: 'Follow Success!',
@@ -75,7 +136,6 @@ export const FollowBtn = (props: any) => {
                 })
             }
             );
-            return data;
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.log('error message: ', error.message);
@@ -88,5 +148,14 @@ export const FollowBtn = (props: any) => {
         }
     }
 
-    return (<button className="uppercase transition  bg-gray-800 text-sm text-white hover:bg-gray-600 px-4 py-2 rounded-md " onClick={followCreator}>Follow </button>);
+    // return (
+    //     <button className="uppercase transition  bg-gray-800 text-sm text-white hover:bg-gray-600 px-4 py-2 rounded-md "
+    //         onClick={followCreator}>Follow </button>
+    // );
+
+    if (isFollowed) {
+        return unfollowButton();
+    } else {
+        return followButton();
+    }
 }
