@@ -36,14 +36,14 @@ export default function RecipeCard(props) {
       />
       <div className="px-2 py-1">
         <div
-          className="font-bold text-lg cursor-pointer truncate  text-clip"
+          className="font-bold text-lg cursor-pointer break-words line-clamp-2"
           onClick={pushToRecipe}
           title={props.recipe.recipeName}
         >
           {props.recipe.recipeName}
         </div>
         <div
-          className="text-gray-600 truncate  text-ellipsis"
+          className="text-gray-600 break-words line-clamp-3"
           title={props.recipe.description}
         >
           {props.recipe.description}
