@@ -19,8 +19,8 @@ import { route } from "next/dist/server/router";
 
 export default function ProfilePage() {
     const apiUrl = "https://recipyb-dev.herokuapp.com/api/v1"
-    const [recipesData,setRecipesData] = useState({
-        recipesData:[]
+    const [recipesData, setRecipesData] = useState({
+        recipesData: []
     })
     const [currentPage,setCurrentPage] = useState(0)
     const [incrementNum,setIncrementNum] = useState(0)
@@ -33,10 +33,10 @@ export default function ProfilePage() {
     const [userFollowings,setUserFollowings] = useState([])
 
     const router = useRouter()
-    let routeUserName:any=router.query
+    let routeUserName: any = router.query
 
-    async function getRecipes(){
-        if(userData?.response?.username){
+    async function getRecipes() {
+        if (userData?.response?.username) {
             axios.get(
                 apiUrl+`/user/${userData?.response?.username}/recipes?page=${currentPage}`
               )
@@ -53,18 +53,18 @@ export default function ProfilePage() {
                         currentPage: data.currentPage,
                         totalPages: data.totalPages
                     })
-                // }
-              });
+                    // }
+                });
         }
     }
 
-    function loadMoreRecipes(){
-        getRecipes().then(()=>{
-            setCurrentPage(currentPage+1)
+    function loadMoreRecipes() {
+        getRecipes().then(() => {
+            setCurrentPage(currentPage + 1)
         })
     }
 
-    function deleteRecipe(id?:number){
+    function deleteRecipe(id?: number) {
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -74,30 +74,30 @@ export default function ProfilePage() {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire({
-                title: 'Loading...',
-                didOpen: () => {
-                    Swal.showLoading()
-                }
-            })
-            axios.delete(apiUrl+`/recipe/${id}`)
-            .then((res) => {
+            if (result.isConfirmed) {
                 Swal.fire({
-                    title:'Deleted!',
-                    html:'Your recipe has been deleted.',
-                    icon:'success',
-                    willClose: getRecipes
+                    title: 'Loading...',
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
                 })
-            })
-            .catch(error=>{
-                Swal.fire(
-                    'Error',
-                    'Something gone wrong!.',
-                    'error'
-                )
-            })
-        }
+                axios.delete(apiUrl + `/recipe/${id}`)
+                    .then((res) => {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            html: 'Your recipe has been deleted.',
+                            icon: 'success',
+                            willClose: getRecipes
+                        })
+                    })
+                    .catch(error => {
+                        Swal.fire(
+                            'Error',
+                            'Something gone wrong!.',
+                            'error'
+                        )
+                    })
+            }
         })
     }
 
@@ -125,39 +125,39 @@ export default function ProfilePage() {
     async function getDataProfile(username:any){
         if (username!==undefined) {
             axios.get(
-                apiUrl+`/user/${username}`
-            ).then((res:any)=>{
+                apiUrl + `/user/${username}`
+            ).then((res: any) => {
                 const response = res.data.payload
                 // console.log(response)
-                setUserData({...userData,response})
-            }).catch((error:any)=>{
+                setUserData({ ...userData, response })
+            }).catch((error: any) => {
                 console.log(error)
                 SetUserDataFound(false)
             })
         }
     }
 
-    async function checkQueryParam(){
+    async function checkQueryParam() {
         setIsRendered(true)
         return routeUserName = router.query
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         if (session) {
-            checkQueryParam().then(()=>{
-                if (routeUserName.params!==undefined && routeUserName.params.length > 0) {
-                    getDataProfile(routeUserName.params).then(()=>{
+            checkQueryParam().then(() => {
+                if (routeUserName.params !== undefined && routeUserName.params.length > 0) {
+                    getDataProfile(routeUserName.params).then(() => {
                         getRecipes()
                     })
                 } else {
-                    getDataProfile(session.user.username).then(()=>{
+                    getDataProfile(session.user.username).then(() => {
                         getRecipes()
                     })
                 }
             })
-        }  else {
-            checkQueryParam().then(()=>{
-                getDataProfile(routeUserName.params).then(()=>{
+        } else {
+            checkQueryParam().then(() => {
+                getDataProfile(routeUserName.params).then(() => {
                     getRecipes()
                 })
             })
@@ -166,7 +166,7 @@ export default function ProfilePage() {
         getUserFollowers(userData?.response?.id)
     },[session,routeUserName,userData?.response?.username])
 
-    function classNames(...classes:any) {
+    function classNames(...classes: any) {
         return classes.filter(Boolean).join(' ')
     }
 
@@ -177,8 +177,8 @@ export default function ProfilePage() {
             <Head>
                 <title>Profile - John Doe</title>
                 <meta
-                name="description"
-                content="
+                    name="description"
+                    content="
                     Profile - John Doe.
                 "
                 />
@@ -283,11 +283,11 @@ export default function ProfilePage() {
                                     }
                                     
                                 </Tab.Panels>
-                            </Tab.Group>                            
+                            </Tab.Group>
                         </div>
                         {/* Column profile card */}
                         <div className="p-4 col-span-4 md:col-span-1 order-1 md:order-2 my-3 md:my-0">
-                            <ProfileInfo userData={userData} dataQueryParam={routeUserName.params}/>
+                            <ProfileInfo userData={userData} dataQueryParam={routeUserName.params} session={session} />
                         </div>
                     </div>
                 </div>

@@ -1,13 +1,28 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { SiCodechef } from "react-icons/si";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 // @ts-ignore
 export default function RecipeCardFull(props) {
+  const router = useRouter();
   const [recipeImg, setRecipeImg] = useState("");
-  useEffect(() =>{
-    setRecipeImg(process.env.API_URL + `recipe/${props.recipe.id}/photo`)
-  },[props])
+  useEffect(() => {
+    axios.get(process.env.API_URL + `recipe/${props.recipe.id}/photo`)
+    .then(() =>{
+      setRecipeImg(process.env.API_URL + `recipe/${props.recipe.id}/photo`);
+    })
+    .catch(err =>{
+      setRecipeImg("");
+    }
+    )
+  }, [props]);
+
+  function pushToRecipe() {
+    router.push(`/recipe/${props.recipe.id}`);
+  }
+
   return (
     <div className="mx-2 my-3 sm:w-full xl:w-50 box-border border-1 pb-2 rounded shadow transition-all hover:bg-orange-200 hover:scale-110">
       <Image
@@ -18,9 +33,11 @@ export default function RecipeCardFull(props) {
         height={50}
         layout="responsive"
         objectFit="cover"
+        onClick={pushToRecipe}
       />
       <div className="px-2 py-1">
-        <div className="font-bold text-lg cursor-pointer">
+        <div className="font-bold text-lg cursor-pointer"
+        onClick={pushToRecipe}>
           {props.recipe.recipeName}
         </div>
         <div className="text-gray-600 md:text-ellipsis">
