@@ -84,10 +84,11 @@ export default function RecipeDetail() {
 
   useEffect(() => {
     if (recipe) {
+      // const vidLink = "https://www.youtube.com/watch?v=FqaRCz2IMJY";
+      // const videoId = vidLink.split("?v=")[1].split("&")[0];
+
       // get youtube video id after ?v= and before&
-      const vidLink = "https://www.youtube.com/watch?v=FqaRCz2IMJY";
-      // const videoId = recipe?.videoUrl?.split("?v=")[1].split("&")[0];
-      const videoId = vidLink.split("?v=")[1].split("&")[0];
+      const videoId = recipe?.videoUrl?.split("?v=")[1].split("&")[0];
 
       setRecipe({
         ...recipe,
