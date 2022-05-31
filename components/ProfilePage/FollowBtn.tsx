@@ -1,22 +1,24 @@
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const FollowBtn = (props: any) => {
   const apiUrl = "https://recipyb-dev.herokuapp.com/api/v1";
   const router = useRouter();
   const [isFollowed, setIsFollowed] = useState({});
 
-  if (props.session?.user?.id && props.creatorId !== undefined) {
-    axios
-      .get(
-        `${apiUrl}/user/${props.session.user.id}/is-following?creator_id=${props.creatorId}`
-      )
-      .then((res) => {
-        setIsFollowed(res.data.payload);
-      });
-  }
+  useEffect(() => {
+    if (props.session?.user?.id && props.creatorId !== undefined) {
+      axios
+        .get(
+          `${apiUrl}/user/${props.session.user.id}/is-following?creator_id=${props.creatorId}`
+        )
+        .then((res) => {
+          setIsFollowed(res.data.payload);
+        });
+    }
+  }, [props.session]);
 
   const followButton = () => {
     return (

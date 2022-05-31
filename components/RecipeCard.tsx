@@ -10,15 +10,17 @@ export default function RecipeCard(props) {
   const [recipeImg, setRecipeImg] = useState("");
 
   useEffect(() => {
-    axios
-      .get(process.env.API_URL + `recipe/${props.recipe.id}/photo`)
-      .then((res) => {
-        setRecipeImg(process.env.API_URL + `recipe/${props.recipe.id}/photo`);
-      })
-      .catch((err) => {
-        setRecipeImg("");
-      });
-  }, [props]);
+    if (props.recipe.id) {
+      axios
+        .get(process.env.API_URL + `recipe/${props.recipe.id}/photo`)
+        .then((res) => {
+          setRecipeImg(process.env.API_URL + `recipe/${props.recipe.id}/photo`);
+        })
+        .catch((err) => {
+          setRecipeImg("");
+        });
+    }
+  }, []);
 
   function pushToRecipe() {
     router.push(`/recipe/${props.recipe.id}`);
