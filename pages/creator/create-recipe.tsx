@@ -7,7 +7,7 @@ import { IoIosAdd, IoIosRemove } from "react-icons/io";
 import Select from "react-select";
 import Swal, { SweetAlertResult } from "sweetalert2";
 import { useRouter } from "next/router";
-
+import { convertFromHTML } from "draft-convert";
 import RichTextEditor from "@components/RichTextEditor";
 
 export default function CreateRecipe() {
@@ -19,7 +19,9 @@ export default function CreateRecipe() {
   const [imageFormData, setImageFormData]: any = useState({});
   const [recipeTagsData, setRecipeTagsData]: any = useState([]);
   const [contentValue, setContentValue]: any = useState("");
+  const [rawContentValue, setRawContentValue]: any = useState("");
   const [submitFormState, setSubmitFormState]: any = useState(false);
+
   // const [ingredientFormData, setIngredientFormData]: any = useState({
   //   ingredients: new Array(),
   // });
@@ -39,12 +41,12 @@ export default function CreateRecipe() {
         .get("https://recipyb-dev.herokuapp.com/api/v1/recipe/" + query.id)
         .then((res) => {
           setRecipeForm(res.data.payload);
+          // parse ingredients and save to ingredients
           ingredientFormData.current = JSON.parse(res.data.payload.ingredients);
           for (const index in ingredientFormData) {
             onAddBtnClick();
           }
-          console.log("ingd", ingredientFormData.current);
-          setContentValue(res.data.payload.content);
+          setRawContentValue(convertFromHTML(res.data.payload.content));
           setRecipeTagsData(res.data.payload.tags);
         })
         .catch((err) => {
@@ -302,7 +304,9 @@ export default function CreateRecipe() {
                 <div className="block pl-2 font-semibold text-xl self-start text-gray-700">
                   <h1 className="leading-relaxed">{userInfo.fullName}</h1>
                   <h2 className="leading-relaxed">
-                    {query ? "Edit Recipe" : "Create New Recipe"}
+                    {query.id
+                      ? "Edit Recipe: " + recipeForm?.title
+                      : "Create New Recipe"}
                   </h2>
                 </div>
               </div>
