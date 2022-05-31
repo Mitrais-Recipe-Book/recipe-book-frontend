@@ -21,7 +21,7 @@ export default function RecipeDetail() {
     dateCreated: string;
     ingredients: string;
     content: string;
-    videoUrl: string;
+    videoUrl: any;
     views: number;
     author: {
       id: number;
@@ -60,6 +60,19 @@ export default function RecipeDetail() {
           setIsRender(true);
           setIsExist(true);
           setRecipe(res.data.payload);
+
+          //edit recipe
+          const videoId: string = recipe?.videoUrl?.split("?v=")[1];
+          console.log(recipe?.videoUrl);
+
+          setRecipe(
+            (recipe) =>
+              ({
+                ...recipe,
+                videoUrl: videoId,
+              } as Recipe)
+          );
+
           try {
             setIngredients(JSON.parse(res.data.payload.ingredients));
           } catch (err) {
@@ -86,20 +99,6 @@ export default function RecipeDetail() {
     }
   }, [recipeId]);
 
-  useEffect(() => {
-    if (recipe) {
-      // const vidLink = "https://www.youtube.com/watch?v=FqaRCz2IMJY";
-      // const videoId = vidLink.split("?v=")[1].split("&")[0];
-
-      // get youtube video id after ?v= and before&
-      const videoId = recipe?.videoUrl?.split("?v=")[1].split("&")[0];
-
-      setRecipe({
-        ...recipe,
-        videoUrl: videoId,
-      });
-    }
-  }, [recipe]);
   return (
     <div>
       <Navbar />
@@ -170,27 +169,39 @@ export default function RecipeDetail() {
                     <TagsPill key={tag.id} tag={tag} />
                   ))}
                 </div>
-                <div
-                  className="
-                    w-8/12
-                    mx-auto
-                    h-80
-                "
-                >
-                  <YouTube
-                    className="w-full
-                    h-full
+                {recipe?.videoUrl ? (
+                  <div
+                    className="
+                        w-8/12
+                        mx-auto
+                        h-80
                     "
-                    videoId={recipe?.videoUrl ? recipe?.videoUrl : ""}
-                    opts={{
-                      height: "100%",
-                      width: "100%",
-                      playerVars: {
-                        autoplay: 0,
-                      },
-                    }}
-                  />
-                </div>
+                  >
+                    <YouTube
+                      className="w-full
+                        h-full
+                        "
+                      videoId={recipe?.videoUrl ? recipe?.videoUrl : ""}
+                      opts={{
+                        height: "100%",
+                        width: "100%",
+                        playerVars: {
+                          autoplay: 0,
+                        },
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className="
+                    text-center
+                        mx-auto
+                        py-4
+                  "
+                  >
+                    <p>[No Video Available]</p>
+                  </div>
+                )}
                 <h3 className="mx-4 my-2 break-words">{recipe?.overview}</h3>
                 <div className="flex flex-col mx-8 my-2">
                   <h3 className="ml-8 mb-2 text-lg font-semibold">
