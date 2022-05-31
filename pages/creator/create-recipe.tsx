@@ -40,10 +40,10 @@ export default function CreateRecipe() {
         .then((res) => {
           setRecipeForm(res.data.payload);
           ingredientFormData.current = JSON.parse(res.data.payload.ingredients);
-          console.log(
-            "ingredientFormData.current:",
-            ingredientFormData.current
-          );
+          for (const index in ingredientFormData) {
+            onAddBtnClick();
+          }
+          console.log("ingd", ingredientFormData.current);
           setContentValue(res.data.payload.content);
           setRecipeTagsData(res.data.payload.tags);
         })
@@ -176,6 +176,7 @@ export default function CreateRecipe() {
           style={{ flex: "2 1" }}
           placeholder="Ingredient name"
           required
+          defaultValue={ingredientFormData.current[index].name}
           onChange={(e) =>
             (ingredientFormData.current.ingredients[index] = {
               ...ingredientFormData.current.ingredients[index],
@@ -189,6 +190,7 @@ export default function CreateRecipe() {
           style={{ flex: "1 1" }}
           placeholder="quantity"
           required
+          defaultValue={ingredientFormData.current[index].qty}
           onChange={(e) =>
             (ingredientFormData.current.ingredients[index] = {
               ...ingredientFormData.current.ingredients[index],
@@ -299,7 +301,9 @@ export default function CreateRecipe() {
                 />
                 <div className="block pl-2 font-semibold text-xl self-start text-gray-700">
                   <h1 className="leading-relaxed">{userInfo.fullName}</h1>
-                  <h2 className="leading-relaxed">Create New Recipe</h2>
+                  <h2 className="leading-relaxed">
+                    {query ? "Edit Recipe" : "Create New Recipe"}
+                  </h2>
                 </div>
               </div>
               <div className="divide-y divide-gray-200">
@@ -393,7 +397,7 @@ export default function CreateRecipe() {
                         placeholder="quantity"
                         required
                         style={{ flex: "1 1" }}
-                        defaultValue={ingredientFormData?.current[0]?.quantity}
+                        defaultValue={ingredientFormData?.current[0]?.qty}
                         onChange={(e) =>
                           (ingredientFormData.current.ingredients[0] = {
                             ...ingredientFormData.current.ingredients[0],
