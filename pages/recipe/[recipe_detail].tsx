@@ -7,7 +7,7 @@ import Footer from "@components/Footer";
 import RecipeCard from "@components/RecipeCard";
 import { FiEye, FiHeart, FiThumbsUp } from "react-icons/fi";
 import { FaRegBookmark, FaRegSurprise } from "react-icons/fa";
-import { BsBookmarkCheck, BsFillBookmarkCheckFill } from "react-icons/bs"
+import { BsBookmarkCheck, BsFillBookmarkCheckFill } from "react-icons/bs";
 import axios from "axios";
 import YouTube from "react-youtube";
 import { FollowBtn } from "@components/ProfilePage/FollowBtn";
@@ -34,12 +34,21 @@ export default function RecipeDetail() {
     name: string;
     qty: string;
   }
+  interface UserInfo {
+    id: number;
+    username: string;
+    fullName: string;
+    totalRecipes: number;
+    recipeLikes: number;
+    followers: number;
+  }
   const router = useRouter();
   const recipeId = router.query.recipe_detail;
   const { data: session }: any = useSession();
   const [isRender, setIsRender] = useState(false);
   const [isExist, setIsExist] = useState(false);
   const [recipe, setRecipe] = useState<Recipe | undefined>();
+  const [userInfo, setUserInfo] = useState<UserInfo>();
   const [ingredients, setIngredients] = useState<Ingredients[] | undefined>();
   const [recipeImg, setRecipeImg] = useState("");
 
@@ -50,13 +59,16 @@ export default function RecipeDetail() {
         .then((res) => {
           setIsRender(true);
           setIsExist(true);
-          console.log("HALO");
           setRecipe(res.data.payload);
           try {
             setIngredients(JSON.parse(res.data.payload.ingredients));
           } catch (err) {
             setIngredients([{ name: res.data.payload.ingredients, qty: "" }]);
           }
+          let username = res.data.payload.author.username;
+          axios.get(process.env.API_URL + `user/${username}`).then((res) => {
+            setUserInfo(res.data.payload);
+          });
         })
         .catch((err) => {
           console.log(err.message);
@@ -73,6 +85,20 @@ export default function RecipeDetail() {
         });
     }
   }, [recipeId]);
+
+  useEffect(() => {
+    if (recipe) {
+      // get youtube video id after ?v= and before&
+      const vidLink = "https://www.youtube.com/watch?v=FqaRCz2IMJY";
+      // const videoId = recipe?.videoUrl?.split("?v=")[1].split("&")[0];
+      const videoId = vidLink.split("?v=")[1].split("&")[0];
+
+      setRecipe({
+        ...recipe,
+        videoUrl: videoId,
+      });
+    }
+  }, [recipe]);
   return (
     <div>
       <Navbar />
@@ -86,10 +112,13 @@ export default function RecipeDetail() {
                     <FiEye className="self-center" /> {recipe?.views}
                   </p>
                   <a className="ml-auto">
-                    <BsFillBookmarkCheckFill id="bookmark" 
+                    <BsFillBookmarkCheckFill
+                      id="bookmark"
                       className="fill-slate-400"
                       onClick={() => {
-                        document.getElementById("bookmark")?.classList.toggle("fill-red-600");
+                        document
+                          .getElementById("bookmark")
+                          ?.classList.toggle("fill-red-600");
                       }}
                     />
                   </a>
@@ -139,6 +168,27 @@ export default function RecipeDetail() {
                   {recipe?.tags.map((tag) => (
                     <TagsPill key={tag.id} tag={tag} />
                   ))}
+                </div>
+                <div
+                  className="
+                    w-8/12
+                    mx-auto
+                    h-80
+                "
+                >
+                  <YouTube
+                    className="w-full
+                    h-full
+                    "
+                    videoId={recipe?.videoUrl ? recipe?.videoUrl : ""}
+                    opts={{
+                      height: "100%",
+                      width: "100%",
+                      playerVars: {
+                        autoplay: 0,
+                      },
+                    }}
+                  />
                 </div>
                 <h3 className="mx-4 my-2 break-words">{recipe?.overview}</h3>
                 <div className="flex flex-col mx-8 my-2">
@@ -192,22 +242,30 @@ export default function RecipeDetail() {
                   </h2>
                   <div className="w-1/2 mx-auto">
                     <Image
-                      className="rounded-full"
+                      className="rounded-full cursor-pointer"
                       src={"/images/bibimbap-image.webp"}
                       alt="RecipyBook"
                       width={50}
                       height={50}
                       layout="responsive"
                       objectFit="cover"
+                      onClick={() => {
+                        router.push(`/profile/${userInfo?.username}`);
+                      }}
                     />
                   </div>
-                  <h3 className="text-center my-4  text-3xl">
-                    {recipe?.author.name}
+                  <h3
+                    className="text-center my-4 text-3xl cursor-pointer"
+                    onClick={() => {
+                      router.push(`/profile/${userInfo?.username}`);
+                    }}
+                  >
+                    {userInfo?.fullName}
                   </h3>
                   <div className="flex gap-x-2 mx-auto">
-                    <p>recipes</p>
-                    <p>like</p>
-                    <p>followers</p>
+                    <p>{userInfo?.totalRecipes} recipes</p>
+                    <p>{userInfo?.recipeLikes} like</p>
+                    <p>{userInfo?.followers} followers</p>
                   </div>
                   <p className="text-center my-4">
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut
@@ -215,7 +273,7 @@ export default function RecipeDetail() {
                     cum dolor consequuntur neque. Non fugit asperiores commodi
                     quo accusantium! Quidem, unde tempora.
                   </p>
-                  <FollowBtn session={session} creatorId={recipe?.author.id}/>
+                  <FollowBtn session={session} creatorId={userInfo?.id} />
                 </div>
                 <div className="flex flex-col items-center mt-20">
                   <h2>More from creator</h2>
