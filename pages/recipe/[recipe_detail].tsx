@@ -34,12 +34,21 @@ export default function RecipeDetail() {
     name: string;
     qty: string;
   }
+  interface UserInfo {
+    id: number;
+    username: string;
+    fullName: string;
+    totalRecipes: number;
+    recipeLikes: number;
+    followers: number;
+  }
   const router = useRouter();
   const recipeId = router.query.recipe_detail;
   const { data: session }: any = useSession();
   const [isRender, setIsRender] = useState(false);
   const [isExist, setIsExist] = useState(false);
   const [recipe, setRecipe] = useState<Recipe | undefined>();
+  const [userInfo, setUserInfo] = useState<UserInfo>();
   const [ingredients, setIngredients] = useState<Ingredients[] | undefined>();
   const [recipeImg, setRecipeImg] = useState("");
 
@@ -50,7 +59,6 @@ export default function RecipeDetail() {
         .then((res) => {
           setIsRender(true);
           setIsExist(true);
-          console.log("HALO");
           setRecipe(res.data.payload);
           try {
             setIngredients(JSON.parse(res.data.payload.ingredients));
@@ -171,7 +179,7 @@ export default function RecipeDetail() {
                       height: "100%",
                       width: "100%",
                       playerVars: {
-                        autoplay: 1,
+                        autoplay: 0,
                       },
                     }}
                   />
