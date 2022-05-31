@@ -21,7 +21,7 @@ export default function RecipeDetail() {
     dateCreated: string;
     ingredients: string;
     content: string;
-    videoUrl: any;
+    videoUrl: string;
     views: number;
     author: {
       id: number;
@@ -62,7 +62,7 @@ export default function RecipeDetail() {
           setRecipe(res.data.payload);
 
           //edit recipe
-          const videoId: string = recipe?.videoUrl?.split("?v=")[1];
+          const videoId = recipe?.videoUrl?.split("?v=")[1];
           console.log(recipe?.videoUrl);
 
           setRecipe(
