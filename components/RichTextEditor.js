@@ -24,6 +24,13 @@ class RichTextEditor extends React.Component {
     this.mapKeyToEditorCommand = this._mapKeyToEditorCommand.bind(this);
     this.toggleBlockType = this._toggleBlockType.bind(this);
     this.toggleInlineStyle = this._toggleInlineStyle.bind(this);
+
+    //set state to value if state is not empty
+    // if (this.props.value) {
+    //   this.state = {
+    //     editorState: EditorState.createWithContent(this.props.value),
+    //   };
+    // }
   }
 
   _handleKeyCommand(command, editorState) {
