@@ -65,6 +65,10 @@ export default function RecipeDetail() {
           } catch (err) {
             setIngredients([{ name: res.data.payload.ingredients, qty: "" }]);
           }
+          let username = res.data.payload.author.username;
+          axios.get(process.env.API_URL + `user/${username}`).then((res) => {
+            setUserInfo(res.data.payload);
+          });
         })
         .catch((err) => {
           console.log(err.message);
@@ -239,22 +243,30 @@ export default function RecipeDetail() {
                   </h2>
                   <div className="w-1/2 mx-auto">
                     <Image
-                      className="rounded-full"
+                      className="rounded-full cursor-pointer"
                       src={"/images/bibimbap-image.webp"}
                       alt="RecipyBook"
                       width={50}
                       height={50}
                       layout="responsive"
                       objectFit="cover"
+                      onClick={() => {
+                        router.push(`/profile/${userInfo?.username}`);
+                      }}
                     />
                   </div>
-                  <h3 className="text-center my-4  text-3xl">
-                    {recipe?.author.name}
+                  <h3
+                    className="text-center my-4 text-3xl cursor-pointer"
+                    onClick={() => {
+                      router.push(`/profile/${userInfo?.username}`);
+                    }}
+                  >
+                    {userInfo?.fullName}
                   </h3>
                   <div className="flex gap-x-2 mx-auto">
-                    <p>recipes</p>
-                    <p>like</p>
-                    <p>followers</p>
+                    <p>{userInfo?.totalRecipes} recipes</p>
+                    <p>{userInfo?.recipeLikes} like</p>
+                    <p>{userInfo?.followers} followers</p>
                   </div>
                   <p className="text-center my-4">
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut
@@ -262,7 +274,7 @@ export default function RecipeDetail() {
                     cum dolor consequuntur neque. Non fugit asperiores commodi
                     quo accusantium! Quidem, unde tempora.
                   </p>
-                  <FollowBtn session={session} creatorId={recipe?.author?.id} />
+                  <FollowBtn session={session} creatorId={userInfo?.id} />
                 </div>
                 <div className="flex flex-col items-center mt-20">
                   <h2>More from creator</h2>
