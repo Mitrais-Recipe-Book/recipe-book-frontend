@@ -7,7 +7,7 @@ import Footer from "@components/Footer";
 import RecipeCard from "@components/RecipeCard";
 import { FiEye, FiHeart, FiThumbsUp } from "react-icons/fi";
 import { FaRegBookmark, FaRegSurprise } from "react-icons/fa";
-import { BsBookmarkCheck, BsFillBookmarkCheckFill } from "react-icons/bs"
+import { BsBookmarkCheck, BsFillBookmarkCheckFill } from "react-icons/bs";
 import axios from "axios";
 import YouTube from "react-youtube";
 import { FollowBtn } from "@components/ProfilePage/FollowBtn";
@@ -73,6 +73,17 @@ export default function RecipeDetail() {
         });
     }
   }, [recipeId]);
+
+  useEffect(() => {
+    if (recipe) {
+      //find youtube video id
+      const videoId = recipe?.videoUrl?.split("=")[1];
+      setRecipe({
+        ...recipe,
+        videoUrl: videoId,
+      });
+    }
+  }, [recipe]);
   return (
     <div>
       <Navbar />
@@ -86,10 +97,13 @@ export default function RecipeDetail() {
                     <FiEye className="self-center" /> {recipe?.views}
                   </p>
                   <a className="ml-auto">
-                    <BsFillBookmarkCheckFill id="bookmark" 
+                    <BsFillBookmarkCheckFill
+                      id="bookmark"
                       className="fill-slate-400"
                       onClick={() => {
-                        document.getElementById("bookmark")?.classList.toggle("fill-red-600");
+                        document
+                          .getElementById("bookmark")
+                          ?.classList.toggle("fill-red-600");
                       }}
                     />
                   </a>
@@ -139,6 +153,28 @@ export default function RecipeDetail() {
                   {recipe?.tags.map((tag) => (
                     <TagsPill key={tag.id} tag={tag} />
                   ))}
+                </div>
+                <div
+                  className="
+                    w-8/12
+                    mx-auto
+                "
+                >
+                  <YouTube
+                    className="w-full
+                    h-full
+                    "
+                    videoId={
+                      recipe?.videoUrl ? recipe?.videoUrl : "FqaRCz2IMJY"
+                    }
+                    opts={{
+                      height: "100%",
+                      width: "100%",
+                      playerVars: {
+                        autoplay: 1,
+                      },
+                    }}
+                  />
                 </div>
                 <h3 className="mx-4 my-2 break-words">{recipe?.overview}</h3>
                 <div className="flex flex-col mx-8 my-2">
@@ -215,7 +251,7 @@ export default function RecipeDetail() {
                     cum dolor consequuntur neque. Non fugit asperiores commodi
                     quo accusantium! Quidem, unde tempora.
                   </p>
-                  <FollowBtn session={session} creatorId={recipe?.author.id}/>
+                  <FollowBtn session={session} creatorId={recipe?.author.id} />
                 </div>
                 <div className="flex flex-col items-center mt-20">
                   <h2>More from creator</h2>
