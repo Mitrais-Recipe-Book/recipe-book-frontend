@@ -9,6 +9,15 @@ export default function SignUp() {
     const [password, setPassword] = useState("");
     const [passwordConf, setPasswordConf] = useState("");
     const [userData, setUserData] = useState({ email: "", username: "", fullName: "", password: "" });
+    const [passwordValid, setPasswordValid] = useState(false);
+
+    //RegEx
+    //Password must contain at least one lowercase letter, one number, and one special character
+    const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    const validatePassword = (pass: string) => {
+        passwordRegex.test(pass) ? setPasswordValid(true) : setPasswordValid(false);
+    }
 
     const createUser = (event: React.SyntheticEvent) => {
         event.preventDefault();
@@ -25,7 +34,12 @@ export default function SignUp() {
 
     async function submitForm() {
         try {
-            // 👇️ const data: CreateUserResponse
+            Swal.fire({
+                title: 'Loading...',
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            })
             //@ts-ignore
             const { data } = await axios.post<CreateUserResponse>(
                 'https://recipyb-dev.herokuapp.com/auth/sign-up',
@@ -57,6 +71,12 @@ export default function SignUp() {
                         )
                     });
 
+            }).catch(error => {
+                Swal.fire(
+                    'Error',
+                    error.response.data.message,
+                    'error'
+                )
             });
 
             return data;
@@ -160,7 +180,8 @@ export default function SignUp() {
                                 required
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                     setPassword(e.target.value);
-                                    setUserData({ ...userData, ["password"]: e.target.value })
+                                    setUserData({ ...userData, ["password"]: e.target.value });
+                                    validatePassword(e.target.value);
                                 }}
                                 placeholder="Password"
                             />
@@ -169,10 +190,11 @@ export default function SignUp() {
                             <div className="text-red-600">
                                 <small>The password confirmation does not match</small>
                             </div>}
-                        {(password.length > 0 && password.length < 6) &&
+                        {(password.length > 0 && password.length < 8) &&
                             <div className="text-red-600">
-                                <small>Password must contain at least 6 character</small>
+                                <small>Password must contain at least 8 character</small>
                             </div>}
+                        {(!passwordValid && password.length > 0) && <div className="text-red-600"><small>Password must contain at least one letter, one number, and one special character</small></div>}
                         <div className="pb-2 pt-4">
                             <input
                                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
