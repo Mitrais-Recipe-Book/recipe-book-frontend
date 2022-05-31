@@ -158,6 +158,7 @@ export default function RecipeDetail() {
                   className="
                     w-8/12
                     mx-auto
+                    h-80
                 "
                 >
                   <YouTube
