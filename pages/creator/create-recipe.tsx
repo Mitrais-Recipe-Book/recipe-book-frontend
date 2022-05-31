@@ -35,27 +35,33 @@ export default function CreateRecipe() {
   // also fetch userID from username saved in localstorage
   useEffect(() => {
     if (query.id) {
-      console.log(query.id);
       axios
         .get("https://recipyb-dev.herokuapp.com/api/v1/recipe/" + query.id)
         .then((res) => {
-          console.log(res.data);
-          setRecipeForm(res.data.data);
-          setContentValue(res.data.data.content);
-          setIngredientList(res.data.data.ingredients);
-          setRecipeTagsData(res.data.data.tags);
-          setUserInfo(res.data.data.user);
+          setRecipeForm(res.data.payload);
+          ingredientFormData.current = JSON.parse(res.data.payload.ingredients);
+          console.log(
+            "ingredientFormData.current:",
+            ingredientFormData.current
+          );
+          setContentValue(res.data.payload.content);
+          setRecipeTagsData(res.data.payload.tags);
         })
         .catch((err) => {
           console.log(err);
         });
+      console.log(recipeForm);
     }
+    // eslint-disable-next-line
+  }, [query]);
+
+  useEffect(() => {
     axios
       .get("https://recipyb-dev.herokuapp.com/api/v1/user/" + username)
       .then((res) => {
         //@ts-ignore
         setUserInfo(res.data.payload);
-        console.log("User Info: ", res.data.payload);
+        // console.log("User Info: ", res.data.payload);
         setRecipeForm({
           ...recipeForm,
           userId: res.data.payload.id,
@@ -304,6 +310,7 @@ export default function CreateRecipe() {
                       type="text"
                       className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-full sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                       placeholder="Recipe Title"
+                      defaultValue={recipeForm?.title}
                       onChange={(e) =>
                         setRecipeForm({ ...recipeForm, title: e.target.value })
                       }
@@ -315,6 +322,7 @@ export default function CreateRecipe() {
                       type="text"
                       className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-full sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                       placeholder="Recipe Overview"
+                      defaultValue={recipeForm?.overview}
                       onChange={(e) =>
                         setRecipeForm({
                           ...recipeForm,
@@ -370,6 +378,7 @@ export default function CreateRecipe() {
                         placeholder="Ingredient name"
                         required
                         style={{ flex: "2 1" }}
+                        defaultValue={ingredientFormData?.current[0]?.name}
                         onChange={(e) =>
                           (ingredientFormData.current.ingredients[0] = {
                             ...ingredientFormData.current.ingredients[0],
@@ -384,6 +393,7 @@ export default function CreateRecipe() {
                         placeholder="quantity"
                         required
                         style={{ flex: "1 1" }}
+                        defaultValue={ingredientFormData?.current[0]?.quantity}
                         onChange={(e) =>
                           (ingredientFormData.current.ingredients[0] = {
                             ...ingredientFormData.current.ingredients[0],
@@ -411,6 +421,7 @@ export default function CreateRecipe() {
                       type={"url"}
                       className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-full sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                       placeholder="Link to Video"
+                      defaultValue={recipeForm?.videoUrl}
                       onChange={(e) =>
                         setRecipeForm({
                           ...recipeForm,
@@ -422,6 +433,7 @@ export default function CreateRecipe() {
                   <div className="flex flex-col">
                     <label className="leading-loose"> Content</label>
                     <RichTextEditor
+                      value={recipeForm?.content}
                       className="pb-14"
                       getHtmlContent={getHtmlContent}
                     />
