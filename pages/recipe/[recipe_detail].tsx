@@ -76,8 +76,11 @@ export default function RecipeDetail() {
 
   useEffect(() => {
     if (recipe) {
-      //find youtube video id
-      const videoId = recipe?.videoUrl?.split("=")[1];
+      // get youtube video id after ?v= and before&
+      const vidLink = "https://www.youtube.com/watch?v=FqaRCz2IMJY";
+      // const videoId = recipe?.videoUrl?.split("?v=")[1].split("&")[0];
+      const videoId = vidLink.split("?v=")[1].split("&")[0];
+
       setRecipe({
         ...recipe,
         videoUrl: videoId,
@@ -165,14 +168,12 @@ export default function RecipeDetail() {
                     className="w-full
                     h-full
                     "
-                    videoId={
-                      recipe?.videoUrl ? recipe?.videoUrl : "FqaRCz2IMJY"
-                    }
+                    videoId={recipe?.videoUrl ? recipe?.videoUrl : ""}
                     opts={{
                       height: "100%",
                       width: "100%",
                       playerVars: {
-                        autoplay: 1,
+                        autoplay: 0,
                       },
                     }}
                   />
@@ -252,7 +253,7 @@ export default function RecipeDetail() {
                     cum dolor consequuntur neque. Non fugit asperiores commodi
                     quo accusantium! Quidem, unde tempora.
                   </p>
-                  <FollowBtn session={session} creatorId={recipe?.author.id} />
+                  <FollowBtn session={session} creatorId={recipe?.author?.id} />
                 </div>
                 <div className="flex flex-col items-center mt-20">
                   <h2>More from creator</h2>
