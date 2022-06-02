@@ -68,6 +68,7 @@ export default function RecipeDetail() {
           setIsRender(true);
           setIsExist(true);
           setRecipe(res.data.payload);
+
           try {
             setIngredients(JSON.parse(res.data.payload.ingredients));
           } catch (err) {
