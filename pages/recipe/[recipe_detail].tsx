@@ -201,28 +201,25 @@ export default function RecipeDetail() {
                     Ingredients:
                   </h3>
                   <p>
-                    {
-                      //@ts-ignore
-                      ingredients?.map((ingredient) => (
-                        <div id={ingredient.name} className="flex gap-x-1">
-                          <input
-                            className="self-center"
-                            type="checkbox"
-                            onChange={(e) => {
-                              e.target.checked
-                                ? document
-                                    .getElementById(ingredient.name)
-                                    ?.classList.add("line-through")
-                                : document
-                                    .getElementById(ingredient.name)
-                                    ?.classList.remove("line-through");
-                            }}
-                          />
-                          <p className="break-words">{ingredient.qty}</p>
-                          <p className="break-all">{ingredient.name}</p>
-                        </div>
-                      ))
-                    }
+                    {ingredients?.map((ingredient) => (
+                      <div id={ingredient.name} className="flex gap-x-1">
+                        <input
+                          className="self-center"
+                          type="checkbox"
+                          onChange={(e) => {
+                            e.target.checked
+                              ? document
+                                  .getElementById(ingredient.name)
+                                  ?.classList.add("line-through")
+                              : document
+                                  .getElementById(ingredient.name)
+                                  ?.classList.remove("line-through");
+                          }}
+                        />
+                        <p className="break-words">{ingredient.qty}</p>
+                        <p className="break-all">{ingredient.name}</p>
+                      </div>
+                    ))}
                   </p>
                 </div>
                 <hr className="border-2 border-red-600" />
@@ -268,9 +265,13 @@ export default function RecipeDetail() {
                     {userInfo?.fullName}
                   </h3>
                   <div className="flex gap-x-2 mx-auto">
-                    <p>{userInfo?.totalRecipes} recipes</p>
-                    <p>{userInfo?.recipeLikes} like</p>
-                    <p>{userInfo?.followers} followers</p>
+                    <p className="text-center">
+                      {userInfo?.totalRecipes} recipes
+                    </p>
+                    <p className="text-center">{userInfo?.recipeLikes} likes</p>
+                    <p className="text-center">
+                      {userInfo?.followers} followers
+                    </p>
                   </div>
                   <p className="text-center my-4">
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut
@@ -280,16 +281,24 @@ export default function RecipeDetail() {
                   </p>
                   <FollowBtn session={session} creatorId={userInfo?.id} />
                 </div>
-                <div className="flex flex-col items-center mt-20">
-                  <h2 className="font-bold text-2xl mb-4">More from creator</h2>
-                  {otherRecipes?.map((recipe) => {
-                    const toRecipeCard = {
-                      recipeName: recipe.title,
-                      id: recipe.id,
-                      description: recipe.overview,
-                    };
-                    return <RecipeCard recipe={toRecipeCard} key={recipe.id} />;
-                  })}
+                <div className="grid grid-cols-1 justify-center mt-20">
+                  <h2 className="font-bold text-center text-2xl mb-4">
+                    More from creator
+                  </h2>
+                  <div className="  flex flex-wrap justify-center">
+                    {otherRecipes?.map((recipe) => {
+                      const toRecipeCard = {
+                        recipeName: recipe.title,
+                        id: recipe.id,
+                        description: recipe.overview,
+                      };
+                      return (
+                        <div className="w-40 sm:w-auto">
+                          <RecipeCard recipe={toRecipeCard} key={recipe.id} />
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </section>
             </div>

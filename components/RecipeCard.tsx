@@ -28,11 +28,12 @@ export default function RecipeCard(props) {
   return (
     <div className="mx-2 my-3 sm:w-40 xl:w-50 box-border border-1 pb-2 rounded shadow transition-all hover:bg-orange-200 hover:scale-110">
       <Image
-        className="w-full rounded-t cursor-pointer"
+        className=" rounded-t cursor-pointer"
         src={recipeImg ? recipeImg : "/images/bibimbap-image.webp"}
         alt="RecipyBook"
         width={200}
         height={130}
+        layout="responsive"
         objectFit="cover"
         onClick={pushToRecipe}
       />
