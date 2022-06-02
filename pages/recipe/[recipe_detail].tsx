@@ -49,6 +49,7 @@ export default function RecipeDetail() {
   const [isRender, setIsRender] = useState(false);
   const [isExist, setIsExist] = useState(false);
   const [recipe, setRecipe] = useState<Recipe | undefined>();
+  const [otherRecipes, setOtherRecipes] = useState<Recipe[] | undefined>();
   const [userInfo, setUserInfo] = useState<UserInfo>();
   const [ingredients, setIngredients] = useState<Ingredients[] | undefined>();
   const [recipeImg, setRecipeImg] = useState("");
@@ -94,6 +95,14 @@ export default function RecipeDetail() {
         });
     }
   }, [recipeId]);
+
+  useEffect(() => {
+    axios
+      .get(process.env.API_URL + `user/${recipe?.author.username}/recipes`)
+      .then((res) => {
+        setOtherRecipes(res.data.payload.data);
+      });
+  }, [recipe]);
 
   return (
     <>
@@ -273,28 +282,19 @@ export default function RecipeDetail() {
                     <FollowBtn session={session} creatorId={userInfo?.id} />
                   </div>
                   <div className="flex flex-col items-center mt-20">
-                    <h2>More from creator</h2>
-                    <RecipeCard
-                      recipe={{
-                        id: 1,
-                        recipeName: "Test",
-                        description: "Test",
-                      }}
-                    />
-                    <RecipeCard
-                      recipe={{
-                        id: 1,
-                        recipeName: "Test",
-                        description: "Test",
-                      }}
-                    />
-                    <RecipeCard
-                      recipe={{
-                        id: 1,
-                        recipeName: "Test",
-                        description: "Test",
-                      }}
-                    />
+                    <h2 className="font-bold text-2xl mb-4">
+                      More from creator
+                    </h2>
+                    {otherRecipes?.map((recipe) => {
+                      const toRecipeCard = {
+                        recipeName: recipe.title,
+                        id: recipe.id,
+                        description: recipe.overview,
+                      };
+                      return (
+                        <RecipeCard recipe={toRecipeCard} key={recipe.id} />
+                      );
+                    })}
                   </div>
                 </section>
               </div>
