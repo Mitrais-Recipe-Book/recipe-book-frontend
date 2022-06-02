@@ -114,8 +114,8 @@ export default function RecipeDetail() {
       <main className="container mx-auto">
         {isRender && isExist && (
           <div className="px-10 py-5">
-            <div className="grid md:grid-cols-3 gap-4">
-              <section className="md:col-span-2  mx-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <section className="col-span-1 md:col-span-2  mx-4">
                 <div className="flex my-2">
                   <p className="flex gap-x-2">
                     <FiEye className="self-center" /> {recipe?.views}
