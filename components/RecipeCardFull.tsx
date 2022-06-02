@@ -9,14 +9,14 @@ export default function RecipeCardFull(props) {
   const router = useRouter();
   const [recipeImg, setRecipeImg] = useState("");
   useEffect(() => {
-    axios.get(process.env.API_URL + `recipe/${props.recipe.id}/photo`)
-    .then(() =>{
-      setRecipeImg(process.env.API_URL + `recipe/${props.recipe.id}/photo`);
-    })
-    .catch(err =>{
-      setRecipeImg("");
-    }
-    )
+    axios
+      .get(process.env.API_URL + `recipe/${props.recipe.id}/photo`)
+      .then(() => {
+        setRecipeImg(process.env.API_URL + `recipe/${props.recipe.id}/photo`);
+      })
+      .catch((err) => {
+        setRecipeImg("");
+      });
   }, [props]);
 
   function pushToRecipe() {
@@ -36,16 +36,29 @@ export default function RecipeCardFull(props) {
         onClick={pushToRecipe}
       />
       <div className="px-2 py-1">
-        <div className="font-bold text-lg cursor-pointer"
-        onClick={pushToRecipe}>
+        <div
+          className="font-bold text-lg cursor-pointer break-words line-clamp-2"
+          onClick={pushToRecipe}
+        >
           {props.recipe.recipeName}
         </div>
-        <div className="text-gray-600 md:text-ellipsis">
+        <div className="text-gray-600 break-words line-clamp-3">
           {props.recipe.description}
         </div>
         <div className="flex py-2">
           <div className="py-2 cursor-pointer ml-1 mr-2">
-          {props.recipe.authorImage ? <Image src={props.recipe.authorImage} className="rounded-full" width={24} height={24} objectFit="cover" alt="author profile" /> : <SiCodechef className="rounded-full" size={24} />}
+            {props.recipe.authorImage ? (
+              <Image
+                src={props.recipe.authorImage}
+                className="rounded-full"
+                width={24}
+                height={24}
+                objectFit="cover"
+                alt="author profile"
+              />
+            ) : (
+              <SiCodechef className="rounded-full" size={24} />
+            )}
           </div>
           <div>
             <div className="font-semibold text-sm cursor-pointer">
@@ -58,7 +71,10 @@ export default function RecipeCardFull(props) {
         </div>
       </div>
       <div className="text-center pt-1">
-        <div className="text-sm text-gray-600"> {props.recipe.recipeViews} </div>
+        <div className="text-sm text-gray-600">
+          {" "}
+          {props.recipe.recipeViews}{" "}
+        </div>
       </div>
     </div>
   );

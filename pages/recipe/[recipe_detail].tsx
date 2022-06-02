@@ -1,18 +1,23 @@
-import Navbar from "@components/Navbar";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import TagsPill from "@components/TagsPill";
-import Footer from "@components/Footer";
-import RecipeCard from "@components/RecipeCard";
 import { FiEye, FiHeart, FiThumbsUp } from "react-icons/fi";
-import { FaRegBookmark, FaRegSurprise } from "react-icons/fa";
-import { BsBookmarkCheck, BsFillBookmarkCheckFill } from "react-icons/bs";
+import { FaRegSurprise } from "react-icons/fa";
+import { BsFillBookmarkCheckFill } from "react-icons/bs";
 import axios from "axios";
 import YouTube from "react-youtube";
 import { FollowBtn } from "@components/ProfilePage/FollowBtn";
 import { useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
 
+const Navbar = dynamic(() => import("@components/Navbar"));
+const Footer = dynamic(() => import("@components/Footer"));
+const TagsPill = dynamic(() => import("@components/TagsPill"), {
+  loading: () => <div>Loading Tags...</div>,
+});
+const RecipeCard = dynamic(() => import("@components/RecipeCard"), {
+  loading: () => <div>Loading Recipe...</div>,
+});
 export default function RecipeDetail() {
   interface Recipe {
     id: number;
@@ -21,7 +26,7 @@ export default function RecipeDetail() {
     dateCreated: string;
     ingredients: string;
     content: string;
-    videoUrl: string;
+    videoURL: string;
     views: number;
     author: {
       id: number;
@@ -48,6 +53,7 @@ export default function RecipeDetail() {
   const [isRender, setIsRender] = useState(false);
   const [isExist, setIsExist] = useState(false);
   const [recipe, setRecipe] = useState<Recipe | undefined>();
+  const [otherRecipes, setOtherRecipes] = useState<Recipe[] | undefined>();
   const [userInfo, setUserInfo] = useState<UserInfo>();
   const [ingredients, setIngredients] = useState<Ingredients[] | undefined>();
   const [recipeImg, setRecipeImg] = useState("");
@@ -57,9 +63,17 @@ export default function RecipeDetail() {
       axios
         .get(process.env.API_URL + `recipe/+${recipeId}`)
         .then((res) => {
+          try {
+            res.data.payload.videoURL = res.data.payload.videoURL
+              .split("?v=")[1]
+              .split("&")[0];
+          } catch (error) {
+            res.data.payload.videoURL = null;
+          }
           setIsRender(true);
           setIsExist(true);
           setRecipe(res.data.payload);
+
           try {
             setIngredients(JSON.parse(res.data.payload.ingredients));
           } catch (err) {
@@ -87,26 +101,21 @@ export default function RecipeDetail() {
   }, [recipeId]);
 
   useEffect(() => {
-    if (recipe) {
-      // get youtube video id after ?v= and before&
-      const vidLink = "https://www.youtube.com/watch?v=FqaRCz2IMJY";
-      // const videoId = recipe?.videoUrl?.split("?v=")[1].split("&")[0];
-      const videoId = vidLink.split("?v=")[1].split("&")[0];
-
-      setRecipe({
-        ...recipe,
-        videoUrl: videoId,
+    axios
+      .get(process.env.API_URL + `user/${recipe?.author.username}/recipes`)
+      .then((res) => {
+        setOtherRecipes(res.data.payload.data);
       });
-    }
   }, [recipe]);
+
   return (
-    <div>
+    <>
       <Navbar />
       <main className="container mx-auto">
         {isRender && isExist && (
           <div className="px-10 py-5">
-            <div className="grid md:grid-cols-3 gap-4">
-              <section className="md:col-span-2  mx-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <section className="col-span-1 md:col-span-2  mx-4">
                 <div className="flex my-2">
                   <p className="flex gap-x-2">
                     <FiEye className="self-center" /> {recipe?.views}
@@ -169,55 +178,48 @@ export default function RecipeDetail() {
                     <TagsPill key={tag.id} tag={tag} />
                   ))}
                 </div>
-                <div
-                  className="
-                    w-8/12
-                    mx-auto
-                    h-80
-                "
-                >
-                  <YouTube
-                    className="w-full
-                    h-full
-                    "
-                    videoId={recipe?.videoUrl ? recipe?.videoUrl : ""}
-                    opts={{
-                      height: "100%",
-                      width: "100%",
-                      playerVars: {
-                        autoplay: 0,
-                      },
-                    }}
-                  />
-                </div>
+
+                {recipe?.videoURL && (
+                  <div className=" w-8/12 mx-auto h-80">
+                    <YouTube
+                      className="w-full h-full"
+                      videoId={recipe?.videoURL ? recipe?.videoURL : ""}
+                      opts={{
+                        height: "100%",
+                        width: "100%",
+                        playerVars: {
+                          autoplay: 0,
+                        },
+                      }}
+                    />
+                  </div>
+                )}
+
                 <h3 className="mx-4 my-2 break-words">{recipe?.overview}</h3>
                 <div className="flex flex-col mx-8 my-2">
                   <h3 className="ml-8 mb-2 text-lg font-semibold">
                     Ingredients:
                   </h3>
                   <p>
-                    {
-                      //@ts-ignore
-                      ingredients?.map((ingredient) => (
-                        <div id={ingredient.name} className="flex gap-x-1">
-                          <input
-                            className="self-center"
-                            type="checkbox"
-                            onChange={(e) => {
-                              e.target.checked
-                                ? document
-                                    .getElementById(ingredient.name)
-                                    ?.classList.add("line-through")
-                                : document
-                                    .getElementById(ingredient.name)
-                                    ?.classList.remove("line-through");
-                            }}
-                          />
-                          <p className="break-words">{ingredient.qty}</p>
-                          <p className="break-all">{ingredient.name}</p>
-                        </div>
-                      ))
-                    }
+                    {ingredients?.map((ingredient) => (
+                      <div id={ingredient.name} className="flex gap-x-1">
+                        <input
+                          className="self-center"
+                          type="checkbox"
+                          onChange={(e) => {
+                            e.target.checked
+                              ? document
+                                  .getElementById(ingredient.name)
+                                  ?.classList.add("line-through")
+                              : document
+                                  .getElementById(ingredient.name)
+                                  ?.classList.remove("line-through");
+                          }}
+                        />
+                        <p className="break-words">{ingredient.qty}</p>
+                        <p className="break-all">{ingredient.name}</p>
+                      </div>
+                    ))}
                   </p>
                 </div>
                 <hr className="border-2 border-red-600" />
@@ -263,9 +265,13 @@ export default function RecipeDetail() {
                     {userInfo?.fullName}
                   </h3>
                   <div className="flex gap-x-2 mx-auto">
-                    <p>{userInfo?.totalRecipes} recipes</p>
-                    <p>{userInfo?.recipeLikes} like</p>
-                    <p>{userInfo?.followers} followers</p>
+                    <p className="text-center">
+                      {userInfo?.totalRecipes} recipes
+                    </p>
+                    <p className="text-center">{userInfo?.recipeLikes} likes</p>
+                    <p className="text-center">
+                      {userInfo?.followers} followers
+                    </p>
                   </div>
                   <p className="text-center my-4">
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut
@@ -275,29 +281,24 @@ export default function RecipeDetail() {
                   </p>
                   <FollowBtn session={session} creatorId={userInfo?.id} />
                 </div>
-                <div className="flex flex-col items-center mt-20">
-                  <h2>More from creator</h2>
-                  <RecipeCard
-                    recipe={{
-                      id: 1,
-                      recipeName: "Test",
-                      description: "Test",
-                    }}
-                  />
-                  <RecipeCard
-                    recipe={{
-                      id: 1,
-                      recipeName: "Test",
-                      description: "Test",
-                    }}
-                  />
-                  <RecipeCard
-                    recipe={{
-                      id: 1,
-                      recipeName: "Test",
-                      description: "Test",
-                    }}
-                  />
+                <div className="grid grid-cols-1 justify-center mt-20">
+                  <h2 className="font-bold text-center text-2xl mb-4">
+                    More from creator
+                  </h2>
+                  <div className="  flex flex-wrap justify-center">
+                    {otherRecipes?.map((recipe) => {
+                      const toRecipeCard = {
+                        recipeName: recipe.title,
+                        id: recipe.id,
+                        description: recipe.overview,
+                      };
+                      return (
+                        <div className="w-40 sm:w-auto">
+                          <RecipeCard recipe={toRecipeCard} key={recipe.id} />
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </section>
             </div>
@@ -326,6 +327,6 @@ export default function RecipeDetail() {
           }
         `}
       </style>
-    </div>
+    </>
   );
 }
