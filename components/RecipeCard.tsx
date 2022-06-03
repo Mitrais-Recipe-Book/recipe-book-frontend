@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { SiCodechef } from "react-icons/si";
-import axios from "axios";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 
@@ -11,6 +8,12 @@ const BannerImage = dynamic(
     loading: () => (
       <div className="flex self-center">Loading Banner Image...</div>
     ),
+  }
+);
+const ProfileImage = dynamic(
+  () => import("@components/RecipeDetail/ProfileImage"),
+  {
+    loading: () => <div>Loading Profile Image...</div>,
   }
 );
 
@@ -29,13 +32,21 @@ export default function RecipeCard(props) {
     router.push(`/recipe/${props.recipe.id}`);
   }
   return (
-    <div className="mx-2 my-3 sm:w-40 xl:w-50 box-border border-1 pb-2 rounded shadow transition-all hover:bg-orange-200 hover:scale-110">
-      <BannerImage
-        src={recipeImg}
-        alt={`banner-recipe-${props.recipe.recipeName}`}
-        href={props.recipe.id}
-      />
-      <div className="px-2 py-1">
+    <div
+      className={`grid grid-flow-row grid-flow-row-col grid-rows-3 grid-cols-1 mx-2 my-3 sm:w-40 xl:w-50 box-border border-1 pb-2 rounded shadow transition-all hover:bg-orange-200 hover:scale-110`}
+    >
+      <section>
+        <BannerImage
+          id={props.recipe.id}
+          alt={`banner-recipe-${props.recipe.recipeName}`}
+          href={true}
+        />
+      </section>
+      <section
+        className={`mx-2 my-1 ${
+          props.recipe.author ? "row-span-1" : "row-span-2"
+        }`}
+      >
         <div
           className="font-bold text-lg cursor-pointer break-words line-clamp-2"
           onClick={pushToRecipe}
@@ -49,23 +60,18 @@ export default function RecipeCard(props) {
         >
           {props.recipe.description}
         </div>
-        {props.recipe.author ? (
-          <div className="flex py-2">
-            <div className="py-2 cursor-pointer ml-1 mr-2">
-              {props.recipe.authorImage ? (
-                <Image
-                  src={props.recipe.authorImage}
-                  className="rounded-full"
-                  width={24}
-                  height={24}
-                  objectFit="cover"
-                  alt="author profile"
-                />
-              ) : (
-                <SiCodechef className="rounded-full" size={24} />
-              )}
+      </section>
+
+      {props.recipe.author ? (
+        <section className="object-bottom">
+          <div className="grid grid-cols-4 my-4">
+            <div className="w-3/4 m-auto">
+              <ProfileImage
+                src={props.recipe.author.username}
+                alt={`${props.recipe.author.username}-pp`}
+              />
             </div>
-            <div>
+            <div className="col-span-3">
               <div className="font-semibold text-sm cursor-pointer">
                 {props.recipe.author}
               </div>
@@ -74,14 +80,14 @@ export default function RecipeCard(props) {
               </div>
             </div>
           </div>
-        ) : null}
-      </div>
-      <div className="text-center pt-1">
-        <div className="text-sm text-gray-600">
-          {" "}
-          {props.recipe.recipeViews}{" "}
-        </div>
-      </div>
+          <div className="text-center pt-1">
+            <div className="text-sm text-gray-600">
+              {" "}
+              {props.recipe.recipeViews}{" "}
+            </div>
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }

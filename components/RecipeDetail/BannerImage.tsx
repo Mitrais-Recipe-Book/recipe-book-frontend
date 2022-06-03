@@ -3,22 +3,22 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
 interface ImgInfo {
-  src: string;
+  id: string | undefined;
   alt: string;
-  href?: string;
+  href?: boolean;
 }
 
 export default function BannerImage(props: ImgInfo) {
-  const [img, setImg] = useState(props.src);
+  const [img, setImg] = useState("");
   const defaultImage = "/images/bibimbap-image.webp";
   const router = useRouter();
 
   useEffect(() => {
-    setImg(props.src);
-  }, [props.src]);
+    setImg(`${process.env.API_URL}recipe/${props?.id}/photo`);
+  }, [props.id]);
 
   function pushTo(): undefined {
-    router.push(`/recipe/${props.href}`);
+    router.push(`/recipe/${props.id}`);
     return;
   }
   return props.href ? (
