@@ -18,6 +18,9 @@ const TagsPill = dynamic(() => import("@components/TagsPill"), {
 const RecipeCard = dynamic(() => import("@components/RecipeCard"), {
   loading: () => <div>Loading Recipe...</div>,
 });
+const BannerImage = dynamic(
+  () => import("@components/RecipeDetail/BannerImage")
+);
 export default function RecipeDetail() {
   interface Recipe {
     id: number;
@@ -89,14 +92,7 @@ export default function RecipeDetail() {
           setIsRender(true);
           setIsExist(false);
         });
-      axios
-        .get(process.env.API_URL + `recipe/${recipeId}/photo`)
-        .then((res) => {
-          setRecipeImg(process.env.API_URL + `recipe/${recipeId}/photo`);
-        })
-        .catch((err) => {
-          setRecipeImg("");
-        });
+      setRecipeImg(process.env.API_URL + `recipe/${recipeId}/photo`);
     }
   }, [recipeId]);
 
@@ -132,7 +128,11 @@ export default function RecipeDetail() {
                     />
                   </a>
                 </div>
-                <Image
+                <BannerImage
+                  src={recipeImg}
+                  alt={`banner-recipe-${recipe?.title}`}
+                />
+                {/* <Image
                   className="object-cover rounded-t"
                   src={recipeImg ? recipeImg : "/images/bibimbap-image.webp"}
                   alt="RecipyBook"
@@ -140,7 +140,10 @@ export default function RecipeDetail() {
                   height={100}
                   layout="responsive"
                   objectFit="cover"
-                />
+                  onErrorCapture={() => {
+                    setRecipeImg("/images/bibimbap-image.webp");
+                  }}
+                /> */}
                 <div className="mx-2 my-2 flex gap-2">
                   <a
                     onClick={() => {

@@ -3,6 +3,16 @@ import Image from "next/image";
 import { SiCodechef } from "react-icons/si";
 import axios from "axios";
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
+
+const BannerImage = dynamic(
+  () => import("@components/RecipeDetail/BannerImage"),
+  {
+    loading: () => (
+      <div className="flex self-center">Loading Banner Image...</div>
+    ),
+  }
+);
 
 // @ts-ignore
 export default function RecipeCard(props) {
@@ -11,31 +21,19 @@ export default function RecipeCard(props) {
 
   useEffect(() => {
     if (props.recipe.id) {
-      axios
-        .get(process.env.API_URL + `recipe/${props.recipe.id}/photo`)
-        .then((res) => {
-          setRecipeImg(process.env.API_URL + `recipe/${props.recipe.id}/photo`);
-        })
-        .catch((err) => {
-          setRecipeImg("");
-        });
+      setRecipeImg(process.env.API_URL + `recipe/${props.recipe.id}/photo`);
     }
-  }, []);
+  }, [props.recipe.id]);
 
   function pushToRecipe() {
     router.push(`/recipe/${props.recipe.id}`);
   }
   return (
     <div className="mx-2 my-3 sm:w-40 xl:w-50 box-border border-1 pb-2 rounded shadow transition-all hover:bg-orange-200 hover:scale-110">
-      <Image
-        className=" rounded-t cursor-pointer"
-        src={recipeImg ? recipeImg : "/images/bibimbap-image.webp"}
-        alt="RecipyBook"
-        width={200}
-        height={130}
-        layout="responsive"
-        objectFit="cover"
-        onClick={pushToRecipe}
+      <BannerImage
+        src={recipeImg}
+        alt={`banner-recipe-${props.recipe.recipeName}`}
+        href={props.recipe.id}
       />
       <div className="px-2 py-1">
         <div
