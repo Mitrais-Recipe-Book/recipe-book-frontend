@@ -78,12 +78,14 @@ export default function RecipeCardLong(prop) {
             </Menu>
           }
         </div>
-        <h1 className="text-2xl text-center md:text-left my-3 font-semibold text-ellipsis overflow-hidden">
-          {
-            //@ts-ignore
-            prop.recipe.title
-          }
-        </h1>
+        <Link href={`/recipe/${prop.recipe.id}`}>
+          <h1 className="text-2xl text-center md:text-left my-3 font-semibold text-ellipsis overflow-hidden hover:cursor-pointer">
+            {
+              //@ts-ignore
+              prop.recipe.title
+            }
+          </h1>
+        </Link>
         <div className="grid grid-cols-4 my-3">
           <div className="order-2 md:order-1 col-span-4 md:col-span-3">
             <p className="text-justify md:text-left four-lines-ellipsis">

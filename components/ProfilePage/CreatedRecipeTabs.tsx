@@ -1,5 +1,6 @@
 import React from 'react'
 import RecipeCardLong from '../RecipeCardLong'
+import Link from 'next/link'
 
 export const CreatedRecipeTabs = (props:any) => {
     return (
