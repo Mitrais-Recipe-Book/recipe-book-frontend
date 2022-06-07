@@ -67,7 +67,6 @@ export default function RecipeDetail() {
   const [otherRecipes, setOtherRecipes] = useState<Recipe[] | undefined>();
   const [userInfo, setUserInfo] = useState<UserInfo>();
   const [ingredients, setIngredients] = useState<Ingredients[] | undefined>();
-  const [recipeImg, setRecipeImg] = useState("");
 
   useEffect(() => {
     if (recipeId) {
@@ -100,7 +99,9 @@ export default function RecipeDetail() {
           setIsRender(true);
           setIsExist(false);
         });
-      setRecipeImg(process.env.API_URL + `recipe/${recipeId}/photo`);
+      setTimeout(() => {
+        axios.put(process.env.API_URL + `recipe/addview?recipeId=${recipeId}`);
+      }, 30000);
     }
   }, [recipeId]);
 
