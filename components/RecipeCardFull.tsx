@@ -20,9 +20,6 @@ const ProfileImage = dynamic(
 // @ts-ignore
 export default function RecipeCardFull(props) {
   const router = useRouter();
-  useEffect(() => {
-    console.log("info long: ", props.recipe.author.username);
-  }, [props]);
 
   function pushToRecipe() {
     router.push(`/recipe/${props.recipe.id}`);
