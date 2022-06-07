@@ -20,11 +20,10 @@ const ProfileImage = dynamic(
 // @ts-ignore
 export default function RecipeCard(props) {
   const router = useRouter();
-  const [recipeImg, setRecipeImg] = useState("");
 
   useEffect(() => {
     if (props.recipe.id) {
-      setRecipeImg(process.env.API_URL + `recipe/${props.recipe.id}/photo`);
+      console.log("info: ", props.recipe.author.username);
     }
   }, [props.recipe.id]);
 
@@ -77,10 +76,10 @@ export default function RecipeCard(props) {
             </div>
             <div className="col-span-3">
               <div className="font-semibold text-sm cursor-pointer">
-                {props.recipe.author}
+                {props.recipe.author.fullName}
               </div>
               <div className="text-xs pl-1 text-gray-600 cursor-pointer">
-                {props.recipe.authorFollower}
+                {props.recipe.author.authorFollowers}
               </div>
             </div>
           </div>

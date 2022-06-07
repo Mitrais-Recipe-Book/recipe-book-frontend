@@ -46,16 +46,18 @@ const Home: NextPage = () => {
   interface State {
     query: {
       allTags: Tag[];
-    }
+    };
   }
   interface Recipe {
     recipeName: string;
     description: string;
     recipeImage: string;
     recipeViews: number;
-    author: string;
-    authorImage: string;
-    authorFollower: number;
+    author: {
+      username: string;
+      fullname: string;
+      authorFollowers: number;
+    };
   }
 
   interface Tag {
@@ -65,20 +67,16 @@ const Home: NextPage = () => {
 
   function fetchData() {
     axios
-      .get(
-        "https://recipyb-dev.herokuapp.com/api/v1/recipe/discover?limit=10"
-      )
+      .get("https://recipyb-dev.herokuapp.com/api/v1/recipe/discover?limit=10")
       .then((res) => {
         setRecipes(res.data.payload);
       });
     axios
-      .get(
-        "https://recipyb-dev.herokuapp.com/api/v1/recipe/popular?limit=5"
-      )
+      .get("https://recipyb-dev.herokuapp.com/api/v1/recipe/popular?limit=5")
       .then((res) => {
         setPopularRecipes(res.data.payload);
       });
-      //@ts-ignore
+    //@ts-ignore
     dispatch(getTags());
     dispatch(clearQuery());
   }
