@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { SiCodechef } from "react-icons/si";
-import axios from "axios";
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
+
+const BannerImage = dynamic(
+  () => import("@components/RecipeDetail/BannerImage"),
+  {
+    loading: () => (
+      <div className="flex self-center">Loading Banner Image...</div>
+    ),
+  }
+);
+const ProfileImage = dynamic(
+  () => import("@components/RecipeDetail/ProfileImage"),
+  {
+    loading: () => <div>Loading Profile Image...</div>,
+  }
+);
 
 // @ts-ignore
 export default function RecipeCardFull(props) {
   const router = useRouter();
-  const [recipeImg, setRecipeImg] = useState("");
-  useEffect(() => {
-    axios
-      .get(process.env.API_URL + `recipe/${props.recipe.id}/photo`)
-      .then(() => {
-        setRecipeImg(process.env.API_URL + `recipe/${props.recipe.id}/photo`);
-      })
-      .catch((err) => {
-        setRecipeImg("");
-      });
-  }, [props]);
 
   function pushToRecipe() {
     router.push(`/recipe/${props.recipe.id}`);
@@ -25,15 +27,10 @@ export default function RecipeCardFull(props) {
 
   return (
     <div className="mx-2 my-3 sm:w-full xl:w-50 box-border border-1 pb-2 rounded shadow transition-all hover:bg-orange-200 hover:scale-110">
-      <Image
-        className="w-full rounded-t cursor-pointer"
-        src={recipeImg ? recipeImg : "/images/bibimbap-image.webp"}
-        alt="RecipyBook"
-        width={100}
-        height={50}
-        layout="responsive"
-        objectFit="cover"
-        onClick={pushToRecipe}
+      <BannerImage
+        id={props.recipe.id}
+        alt={`banner-recipe-${props.recipe.recipeName}`}
+        href={true}
       />
       <div className="px-2 py-1">
         <div
@@ -45,27 +42,21 @@ export default function RecipeCardFull(props) {
         <div className="text-gray-600 break-words line-clamp-3">
           {props.recipe.description}
         </div>
-        <div className="flex py-2">
+        <div className="grid grid-cols-4 py-2">
           <div className="py-2 cursor-pointer ml-1 mr-2">
-            {props.recipe.authorImage ? (
-              <Image
-                src={props.recipe.authorImage}
-                className="rounded-full"
-                width={24}
-                height={24}
-                objectFit="cover"
-                alt="author profile"
+            <div className="w-3/4 m-auto">
+              <ProfileImage
+                src={props.recipe.author.username}
+                alt={`${props.recipe.author.username}-pp`}
               />
-            ) : (
-              <SiCodechef className="rounded-full" size={24} />
-            )}
+            </div>
           </div>
           <div>
-            <div className="font-semibold text-sm cursor-pointer">
-              {props.recipe.author}
+            <div className="col-span-3 font-semibold text-sm cursor-pointer">
+              {props.recipe.author.fullName}
             </div>
             <div className="text-xs pl-1 text-gray-600 cursor-pointer">
-              {props.recipe.authorFollower}
+              {props.recipe.authorFollowers}
             </div>
           </div>
         </div>
