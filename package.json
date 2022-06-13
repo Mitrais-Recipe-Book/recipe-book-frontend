@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest"
   },
   "dependencies": {
     "@headlessui/react": "^1.6.1",
@@ -15,6 +16,8 @@
     "@prisma/client": "^3.14.0",
     "@reduxjs/toolkit": "^1.8.1",
     "@tailwindcss/line-clamp": "^0.4.0",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
     "@types/draft-js": "^0.11.9",
     "axios": "^0.26.1",
     "draft-convert": "^2.1.12",
@@ -47,6 +50,8 @@
     "autoprefixer": "^10.4.4",
     "eslint": "8.13.0",
     "eslint-config-next": "12.1.5",
+    "jest": "^28.1.0",
+    "jest-environment-jsdom": "^28.1.0",
     "postcss": "^8.4.12",
     "prisma": "^3.14.0",
     "tailwindcss": "^3.0.24",
