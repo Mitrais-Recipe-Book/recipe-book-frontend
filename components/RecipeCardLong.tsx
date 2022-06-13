@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import { CgMenu } from "react-icons/cg";
 import { Menu, Transition } from "@headlessui/react";
 import TagsPill from "./TagsPill";
+import Link from "next/link";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -37,17 +38,19 @@ export default function RecipeCardLong(prop) {
                   <div className="py-1">
                     <Menu.Item>
                       {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active
-                              ? "bg-gray-100 text-gray-900"
-                              : "text-gray-700",
-                            "block px-4 py-2 text-sm"
-                          )}
-                        >
-                          Edit
-                        </a>
+                        <Link href={`/creator/create-recipe?recipeId=${prop.recipe.id}`}>
+                          <a
+                            href="#"
+                            className={classNames(
+                              active
+                                ? "bg-gray-100 text-gray-900"
+                                : "text-gray-700",
+                              "block px-4 py-2 text-sm"
+                            )}
+                          >
+                            Edit
+                          </a>
+                        </Link>
                       )}
                     </Menu.Item>
                     <Menu.Item>
@@ -75,12 +78,14 @@ export default function RecipeCardLong(prop) {
             </Menu>
           }
         </div>
-        <h1 className="text-2xl text-center md:text-left my-3 font-semibold">
-          {
-            //@ts-ignore
-            prop.recipe.title
-          }
-        </h1>
+        <Link href={`/recipe/${prop.recipe.id}`}>
+          <h1 className="text-2xl text-center md:text-left my-3 font-semibold text-ellipsis overflow-hidden hover:cursor-pointer">
+            {
+              //@ts-ignore
+              prop.recipe.title
+            }
+          </h1>
+        </Link>
         <div className="grid grid-cols-4 my-3">
           <div className="order-2 md:order-1 col-span-4 md:col-span-3">
             <p className="text-justify md:text-left four-lines-ellipsis">

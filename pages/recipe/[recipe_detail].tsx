@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { FiEye, FiHeart, FiThumbsUp } from "react-icons/fi";
 import { FaRegSurprise } from "react-icons/fa";
@@ -18,6 +17,18 @@ const TagsPill = dynamic(() => import("@components/TagsPill"), {
 const RecipeCard = dynamic(() => import("@components/RecipeCard"), {
   loading: () => <div>Loading Recipe...</div>,
 });
+const BannerImage = dynamic(
+  () => import("@components/RecipeDetail/BannerImage"),
+  {
+    loading: () => <div>Loading Banner Image...</div>,
+  }
+);
+const ProfileImage = dynamic(
+  () => import("@components/RecipeDetail/ProfileImage"),
+  {
+    loading: () => <div>Loading Profile Image...</div>,
+  }
+);
 export default function RecipeDetail() {
   interface Recipe {
     id: number;
@@ -56,7 +67,6 @@ export default function RecipeDetail() {
   const [otherRecipes, setOtherRecipes] = useState<Recipe[] | undefined>();
   const [userInfo, setUserInfo] = useState<UserInfo>();
   const [ingredients, setIngredients] = useState<Ingredients[] | undefined>();
-  const [recipeImg, setRecipeImg] = useState("");
 
   useEffect(() => {
     if (recipeId) {
@@ -89,14 +99,9 @@ export default function RecipeDetail() {
           setIsRender(true);
           setIsExist(false);
         });
-      axios
-        .get(process.env.API_URL + `recipe/${recipeId}/photo`)
-        .then((res) => {
-          setRecipeImg(process.env.API_URL + `recipe/${recipeId}/photo`);
-        })
-        .catch((err) => {
-          setRecipeImg("");
-        });
+      setTimeout(() => {
+        axios.put(process.env.API_URL + `recipe/addview?recipeId=${recipeId}`);
+      }, 30000);
     }
   }, [recipeId]);
 
@@ -132,14 +137,9 @@ export default function RecipeDetail() {
                     />
                   </a>
                 </div>
-                <Image
-                  className="object-cover rounded-t"
-                  src={recipeImg ? recipeImg : "/images/bibimbap-image.webp"}
-                  alt="RecipyBook"
-                  width={180}
-                  height={100}
-                  layout="responsive"
-                  objectFit="cover"
+                <BannerImage
+                  id={`${recipeId}`}
+                  alt={`banner-recipe-${recipe?.title}`}
                 />
                 <div className="mx-2 my-2 flex gap-2">
                   <a
@@ -243,17 +243,9 @@ export default function RecipeDetail() {
                     Content Creator
                   </h2>
                   <div className="w-1/2 mx-auto">
-                    <Image
-                      className="rounded-full cursor-pointer"
-                      src={"/images/bibimbap-image.webp"}
-                      alt="RecipyBook"
-                      width={50}
-                      height={50}
-                      layout="responsive"
-                      objectFit="cover"
-                      onClick={() => {
-                        router.push(`/profile/${userInfo?.username}`);
-                      }}
+                    <ProfileImage
+                      src={userInfo?.username}
+                      alt={`${userInfo?.username}-pp`}
                     />
                   </div>
                   <h3
