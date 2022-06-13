@@ -1,0 +1,211 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test BannerImage that do not have href match the snapshot 1`] = `
+<span
+  style={
+    Object {
+      "background": "none",
+      "border": 0,
+      "boxSizing": "border-box",
+      "display": "block",
+      "height": "initial",
+      "margin": 0,
+      "opacity": 1,
+      "overflow": "hidden",
+      "padding": 0,
+      "position": "relative",
+      "width": "initial",
+    }
+  }
+>
+  <span
+    style={
+      Object {
+        "background": "none",
+        "border": 0,
+        "boxSizing": "border-box",
+        "display": "block",
+        "height": "initial",
+        "margin": 0,
+        "opacity": 1,
+        "padding": 0,
+        "paddingTop": "55.55555555555556%",
+        "width": "initial",
+      }
+    }
+  />
+  <img
+    alt="banner-recipe-es-teh-anget"
+    className="object-cover rounded-t"
+    data-nimg="responsive"
+    decoding="async"
+    onError={[Function]}
+    onErrorCapture={[Function]}
+    onLoad={[Function]}
+    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+    style={
+      Object {
+        "border": "none",
+        "bottom": 0,
+        "boxSizing": "border-box",
+        "display": "block",
+        "height": 0,
+        "left": 0,
+        "margin": "auto",
+        "maxHeight": "100%",
+        "maxWidth": "100%",
+        "minHeight": "100%",
+        "minWidth": "100%",
+        "objectFit": "cover",
+        "objectPosition": undefined,
+        "padding": 0,
+        "position": "absolute",
+        "right": 0,
+        "top": 0,
+        "width": 0,
+      }
+    }
+  />
+  <noscript>
+    <img
+      alt="banner-recipe-es-teh-anget"
+      className="object-cover rounded-t"
+      data-nimg="responsive"
+      decoding="async"
+      loading="lazy"
+      onErrorCapture={[Function]}
+      sizes="100vw"
+      src="/_next/image?url=https%3A%2F%2Frecipyb-dev.herokuapp.com%2Fapi%2Fv1%2Frecipe%2F1%2Fphoto&w=3840&q=75"
+      srcSet="/_next/image?url=https%3A%2F%2Frecipyb-dev.herokuapp.com%2Fapi%2Fv1%2Frecipe%2F1%2Fphoto&w=640&q=75 640w, /_next/image?url=https%3A%2F%2Frecipyb-dev.herokuapp.com%2Fapi%2Fv1%2Frecipe%2F1%2Fphoto&w=750&q=75 750w, /_next/image?url=https%3A%2F%2Frecipyb-dev.herokuapp.com%2Fapi%2Fv1%2Frecipe%2F1%2Fphoto&w=828&q=75 828w, /_next/image?url=https%3A%2F%2Frecipyb-dev.herokuapp.com%2Fapi%2Fv1%2Frecipe%2F1%2Fphoto&w=1080&q=75 1080w, /_next/image?url=https%3A%2F%2Frecipyb-dev.herokuapp.com%2Fapi%2Fv1%2Frecipe%2F1%2Fphoto&w=1200&q=75 1200w, /_next/image?url=https%3A%2F%2Frecipyb-dev.herokuapp.com%2Fapi%2Fv1%2Frecipe%2F1%2Fphoto&w=1920&q=75 1920w, /_next/image?url=https%3A%2F%2Frecipyb-dev.herokuapp.com%2Fapi%2Fv1%2Frecipe%2F1%2Fphoto&w=2048&q=75 2048w, /_next/image?url=https%3A%2F%2Frecipyb-dev.herokuapp.com%2Fapi%2Fv1%2Frecipe%2F1%2Fphoto&w=3840&q=75 3840w"
+      style={
+        Object {
+          "border": "none",
+          "bottom": 0,
+          "boxSizing": "border-box",
+          "display": "block",
+          "height": 0,
+          "left": 0,
+          "margin": "auto",
+          "maxHeight": "100%",
+          "maxWidth": "100%",
+          "minHeight": "100%",
+          "minWidth": "100%",
+          "objectFit": "cover",
+          "objectPosition": undefined,
+          "padding": 0,
+          "position": "absolute",
+          "right": 0,
+          "top": 0,
+          "width": 0,
+        }
+      }
+    />
+  </noscript>
+</span>
+`;
+
+exports[`Test BannerImage that have href match the snapshot 1`] = `
+<span
+  style={
+    Object {
+      "background": "none",
+      "border": 0,
+      "boxSizing": "border-box",
+      "display": "block",
+      "height": "initial",
+      "margin": 0,
+      "opacity": 1,
+      "overflow": "hidden",
+      "padding": 0,
+      "position": "relative",
+      "width": "initial",
+    }
+  }
+>
+  <span
+    style={
+      Object {
+        "background": "none",
+        "border": 0,
+        "boxSizing": "border-box",
+        "display": "block",
+        "height": "initial",
+        "margin": 0,
+        "opacity": 1,
+        "padding": 0,
+        "paddingTop": "65%",
+        "width": "initial",
+      }
+    }
+  />
+  <img
+    alt="banner-recipe-es-teh-anget"
+    className=" rounded-t cursor-pointer"
+    data-nimg="responsive"
+    decoding="async"
+    onClick={[Function]}
+    onError={[Function]}
+    onErrorCapture={[Function]}
+    onLoad={[Function]}
+    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+    style={
+      Object {
+        "border": "none",
+        "bottom": 0,
+        "boxSizing": "border-box",
+        "display": "block",
+        "height": 0,
+        "left": 0,
+        "margin": "auto",
+        "maxHeight": "100%",
+        "maxWidth": "100%",
+        "minHeight": "100%",
+        "minWidth": "100%",
+        "objectFit": "cover",
+        "objectPosition": undefined,
+        "padding": 0,
+        "position": "absolute",
+        "right": 0,
+        "top": 0,
+        "width": 0,
+      }
+    }
+  />
+  <noscript>
+    <img
+      alt="banner-recipe-es-teh-anget"
+      className=" rounded-t cursor-pointer"
+      data-nimg="responsive"
+      decoding="async"
+      loading="lazy"
+      onClick={[Function]}
+      onErrorCapture={[Function]}
+      sizes="100vw"
+      src="/_next/image?url=%2Fimages%2Fbibimbap-image.webp&w=3840&q=75"
+      srcSet="/_next/image?url=%2Fimages%2Fbibimbap-image.webp&w=640&q=75 640w, /_next/image?url=%2Fimages%2Fbibimbap-image.webp&w=750&q=75 750w, /_next/image?url=%2Fimages%2Fbibimbap-image.webp&w=828&q=75 828w, /_next/image?url=%2Fimages%2Fbibimbap-image.webp&w=1080&q=75 1080w, /_next/image?url=%2Fimages%2Fbibimbap-image.webp&w=1200&q=75 1200w, /_next/image?url=%2Fimages%2Fbibimbap-image.webp&w=1920&q=75 1920w, /_next/image?url=%2Fimages%2Fbibimbap-image.webp&w=2048&q=75 2048w, /_next/image?url=%2Fimages%2Fbibimbap-image.webp&w=3840&q=75 3840w"
+      style={
+        Object {
+          "border": "none",
+          "bottom": 0,
+          "boxSizing": "border-box",
+          "display": "block",
+          "height": 0,
+          "left": 0,
+          "margin": "auto",
+          "maxHeight": "100%",
+          "maxWidth": "100%",
+          "minHeight": "100%",
+          "minWidth": "100%",
+          "objectFit": "cover",
+          "objectPosition": undefined,
+          "padding": 0,
+          "position": "absolute",
+          "right": 0,
+          "top": 0,
+          "width": 0,
+        }
+      }
+    />
+  </noscript>
+</span>
+`;
