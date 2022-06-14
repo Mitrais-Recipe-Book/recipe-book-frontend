@@ -10,13 +10,20 @@ export default function SignUp() {
     const [passwordConf, setPasswordConf] = useState("");
     const [userData, setUserData] = useState({ email: "", username: "", fullName: "", password: "" });
     const [passwordValid, setPasswordValid] = useState(false);
+    const [formValid, setFormValid] = useState(false);
 
     //RegEx
     //Password must contain at least one lowercase letter, one number, and one special character
     const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
     const validatePassword = (pass: string) => {
-        passwordRegex.test(pass) ? setPasswordValid(true) : setPasswordValid(false);
+        if (passwordRegex.test(pass)) {
+            setPasswordValid(true);
+            setFormValid(true);
+        } else {
+            setPasswordValid(false)
+            setFormValid(false);
+        }
     }
 
     const createUser = (event: React.SyntheticEvent) => {
@@ -212,9 +219,11 @@ export default function SignUp() {
                             <a href="/sign-in">Already have account? Sign in here</a>
                         </div>
                         <div className="px-4 pb-2 pt-4">
-                            <button type="submit" className="uppercase block w-full p-4 text-lg rounded-full bg-orange-400 hover:bg-orange-500 focus:outline-none">
+                            {formValid ? <button type="submit" className="uppercase block w-full p-4 text-lg rounded-full bg-orange-400 hover:bg-orange-500 focus:outline-none">
                                 sign up
-                            </button>
+                            </button> : <button disabled={true} className="uppercase block w-full p-4 text-lg rounded-full bg-slate-400">
+                                Sign Up
+                            </button>}
                         </div>
 
                         <div className="p-4 text-center right-0 left-0 flex justify-center space-x-4 mt-16 lg:hidden ">
