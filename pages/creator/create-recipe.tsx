@@ -28,7 +28,8 @@ export default function CreateRecipe() {
   const ingredientFormData: any = useRef({
     ingredients: [],
   });
-  let tagOptions: any = [];
+  const tagOptionsDefault: any = useRef([]);
+  const tagOptions: any = useRef([]);
   const tagInput: any = [];
   const username = "user1";
   const ingredientListCount: any = useRef(0);
@@ -47,15 +48,29 @@ export default function CreateRecipe() {
             onAddBtnClick();
           }
           setRawContentValue(convertFromHTML(res.data.payload.content));
-          setRecipeTagsData(res.data.payload.tags);
+          res.data.payload.tags.map((tag: any) => {
+            tagInput.push(tag.id);
+            tagOptionsDefault.current.push(tagOptions[tag.id]);
+            console.log(tagOptionsDefault.current);
+            setRecipeForm((prevState: any) => ({
+              ...prevState,
+              tagIds: tagInput,
+            }));
+          });
         })
         .catch((err) => {
           console.log(err);
+          router.replace("/creator/create-recipe", undefined, {
+            shallow: true,
+          });
         });
-      console.log(recipeForm);
     }
     // eslint-disable-next-line
   }, [query]);
+
+  useEffect(() => {
+    console.log("recipeForm", recipeForm);
+  }, [recipeForm]);
 
   useEffect(() => {
     axios
@@ -81,6 +96,7 @@ export default function CreateRecipe() {
       .catch((err) => {
         console.log(err);
       });
+    // eslint-disable-next-line
   }, []);
 
   //add new ingredient input form
@@ -178,7 +194,11 @@ export default function CreateRecipe() {
           style={{ flex: "2 1" }}
           placeholder="Ingredient name"
           required
-          defaultValue={ingredientFormData.current[index].name}
+          defaultValue={
+            ingredientFormData.current?.name
+              ? ingredientFormData.current[index]?.name
+              : ""
+          }
           onChange={(e) =>
             (ingredientFormData.current.ingredients[index] = {
               ...ingredientFormData.current.ingredients[index],
@@ -192,7 +212,11 @@ export default function CreateRecipe() {
           style={{ flex: "1 1" }}
           placeholder="quantity"
           required
-          defaultValue={ingredientFormData.current[index].qty}
+          defaultValue={
+            ingredientFormData.current?.qty
+              ? ingredientFormData.current[index]?.qty
+              : ""
+          }
           onChange={(e) =>
             (ingredientFormData.current.ingredients[index] = {
               ...ingredientFormData.current.ingredients[index],
@@ -205,7 +229,7 @@ export default function CreateRecipe() {
   };
 
   //map recipe tags into tag options
-  tagOptions = recipeTagsData.map((tag: { id: any; name: any }) => {
+  tagOptions.current = recipeTagsData.map((tag: { id: any; name: any }) => {
     return {
       label: tag.name,
       value: tag.id,
@@ -236,19 +260,36 @@ export default function CreateRecipe() {
   }
 
   function uploadDatabase() {
-    axios
-      .post("https://recipyb-dev.herokuapp.com/api/v1/recipe/add", recipeForm)
-      .then((res) => {
-        console.log("uploaded recipe, now uploading image");
-        uploadImage(res.data.payload);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    setSubmitFormState(false);
+    if (query.id) {
+      axios
+        .put(
+          "https://recipyb-dev.herokuapp.com/api/v1/recipe/" +
+            query.id +
+            "/edit",
+          recipeForm
+        )
+        .then((res) => {
+          console.log("Recipe Updated, now uploading image");
+          uploadImage(query.id);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      axios
+        .post("https://recipyb-dev.herokuapp.com/api/v1/recipe/add", recipeForm)
+        .then((res) => {
+          console.log("uploaded recipe, now uploading image");
+          uploadImage(res.data.payload);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      setSubmitFormState(false);
+    }
   }
   //upload image form function
-  function uploadImage(recipeId: number) {
+  function uploadImage(recipeId: any) {
     const formData: any = new FormData();
     console.log(imageFormData);
     formData.append("photo", imageFormData, imageFormData.name);
@@ -347,7 +388,7 @@ export default function CreateRecipe() {
                       isMulti
                       className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-full sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                       placeholder="Choose Recipe Tags"
-                      options={tagOptions}
+                      options={tagOptions.current}
                       onChange={(e) => (
                         e.map((tag: any) => {
                           tagInput.push(tag.value);
@@ -386,7 +427,11 @@ export default function CreateRecipe() {
                         placeholder="Ingredient name"
                         required
                         style={{ flex: "2 1" }}
-                        defaultValue={ingredientFormData?.current[0]?.name}
+                        defaultValue={
+                          ingredientFormData?.current?.name
+                            ? ingredientFormData?.current[0]?.name
+                            : ""
+                        }
                         onChange={(e) =>
                           (ingredientFormData.current.ingredients[0] = {
                             ...ingredientFormData.current.ingredients[0],
@@ -401,7 +446,11 @@ export default function CreateRecipe() {
                         placeholder="quantity"
                         required
                         style={{ flex: "1 1" }}
-                        defaultValue={ingredientFormData?.current[0]?.qty}
+                        defaultValue={
+                          ingredientFormData?.current?.qty
+                            ? ingredientFormData?.current[0]?.qty
+                            : ""
+                        }
                         onChange={(e) =>
                           (ingredientFormData.current.ingredients[0] = {
                             ...ingredientFormData.current.ingredients[0],
@@ -429,7 +478,7 @@ export default function CreateRecipe() {
                       type={"url"}
                       className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-full sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
                       placeholder="Link to Video"
-                      defaultValue={recipeForm?.videoUrl}
+                      defaultValue={recipeForm?.videoURL}
                       onChange={(e) =>
                         setRecipeForm({
                           ...recipeForm,
