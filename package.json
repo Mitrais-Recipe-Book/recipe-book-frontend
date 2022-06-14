@@ -2,9 +2,6 @@
   "name": "recipe-book",
   "version": "0.1.0",
   "private": true,
-  "jest": {
-    "testEnvironment": "jsdom"
-  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
