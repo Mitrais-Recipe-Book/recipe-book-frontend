@@ -14,7 +14,7 @@ export const CreatedRecipeTabs = (props:any) => {
                         <RecipeCardLong key={Math.random()*Math.random()} recipe={recipe} deleteAction={props.deleteRecipe} dataQueryParam={props.dataQueryParam} />
                     ))
                 ) : (
-                    <p className="p-4 text-center">
+                    <p className="p-4 text-center" id="no-recipe-text">
                         You don't have recipe(s) yet, <a href="#" className="transition  bg-gray-800 text-sm text-white hover:bg-gray-600 px-4 py-2 rounded-md ">Create one</a> now!
                     </p>
                 )
