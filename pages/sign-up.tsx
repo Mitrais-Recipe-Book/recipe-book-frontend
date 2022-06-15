@@ -13,8 +13,9 @@ export default function SignUp() {
     const [formValid, setFormValid] = useState(false);
 
     //RegEx
-    //Password must contain at least one lowercase letter, one number, and one special character
-    const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    //Password must contain at least one lowecase letter, and one number with eight characters
+    const passwordRegex = /^(?=.*[a-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
     const validatePassword = (pass: string) => {
         if (passwordRegex.test(pass)) {
@@ -201,7 +202,7 @@ export default function SignUp() {
                             <div className="text-red-600">
                                 <small>Password must contain at least 8 character</small>
                             </div>}
-                        {(!passwordValid && password.length > 0) && <div className="text-red-600"><small>Password must contain at least one letter, one number, and one special character</small></div>}
+                        {(!passwordValid && password.length > 0) && <div className="text-red-600"><small>Password must contain at least one letter, and one number</small></div>}
                         <div className="pb-2 pt-4">
                             <input
                                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
