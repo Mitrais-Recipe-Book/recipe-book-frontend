@@ -44,6 +44,7 @@ export default function CreateRecipe() {
           setRecipeForm(res.data.payload);
           // parse ingredients and save to ingredients
           ingredientFormData.current = JSON.parse(res.data.payload.ingredients);
+          console.log("ingredients", ingredientFormData.current);
           for (const index in ingredientFormData) {
             onAddBtnClick();
           }
@@ -260,32 +261,39 @@ export default function CreateRecipe() {
   }
 
   function uploadDatabase() {
-    if (query.id) {
-      axios
-        .put(
-          "https://recipyb-dev.herokuapp.com/api/v1/recipe/" +
-            query.id +
-            "/edit",
-          recipeForm
-        )
-        .then((res) => {
-          console.log("Recipe Updated, now uploading image");
-          uploadImage(query.id);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      axios
-        .post("https://recipyb-dev.herokuapp.com/api/v1/recipe/add", recipeForm)
-        .then((res) => {
-          console.log("uploaded recipe, now uploading image");
-          uploadImage(res.data.payload);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      setSubmitFormState(false);
+    // run formValidation function
+    let valid = formValidation();
+    if (valid) {
+      if (query.id) {
+        axios
+          .put(
+            "https://recipyb-dev.herokuapp.com/api/v1/recipe/" +
+              query.id +
+              "/edit",
+            recipeForm
+          )
+          .then((res) => {
+            console.log("Recipe Updated, now uploading image");
+            uploadImage(query.id);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        axios
+          .post(
+            "https://recipyb-dev.herokuapp.com/api/v1/recipe/add",
+            recipeForm
+          )
+          .then((res) => {
+            console.log("uploaded recipe, now uploading image");
+            uploadImage(res.data.payload);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        setSubmitFormState(false);
+      }
     }
   }
   //upload image form function
@@ -321,6 +329,75 @@ export default function CreateRecipe() {
   // translate content value to html and save it to content form
   function getHtmlContent(value: any) {
     setContentValue(value);
+  }
+
+  function formValidation() {
+    let form = true;
+    let missingFields = "There is an error with your form:";
+    if (recipeForm.title === "") {
+      missingFields += "<br>Title is Empty";
+      form = false;
+    }
+    if (recipeForm?.title?.length > 140) {
+      missingFields += "<br>Title has to be less than 140 characters";
+      form = false;
+    }
+    if (recipeForm.overview === "") {
+      missingFields += "<br>Overview is Empty";
+      form = false;
+    }
+    if (recipeForm?.overview?.length > 280) {
+      missingFields += "<br>Overview has to be less than 280 characters";
+      form = false;
+    }
+    if (recipeForm.description === "") {
+      missingFields += "<br>Description is Empty";
+      form = false;
+    }
+    if (recipeForm.ingredients === "") {
+      missingFields += "<br>Ingredients are Empty";
+      form = false;
+    }
+    if (recipeForm?.tagIds?.length === 0) {
+      missingFields += "<br>Tags are Empty";
+      form = false;
+    }
+    if (recipeForm.content === "") {
+      missingFields += "<br>Content is Empty";
+      form = false;
+    }
+    // check if imageFormData uploaded is not image file
+    if (
+      imageFormData.type !== "image/jpeg" &&
+      imageFormData.type !== "image/png"
+    ) {
+      missingFields += "<br>Image is not a valid image file";
+      form = false;
+    }
+    if (imageFormData.size === 0) {
+      missingFields += "<br>Image is Empty";
+      form = false;
+    }
+    if (recipeForm.videoURL === "") {
+      missingFields += "<br>Video URL is Empty";
+      form = false;
+    }
+    // check if videoURL is a valid youtube url
+    if (
+      recipeForm?.videoURL?.indexOf("https://www.youtube.com/watch?v=") === -1
+    ) {
+      missingFields += "<br>Video URL is not a valid youtube url";
+      form = false;
+    }
+    if (form === false) {
+      Swal.fire({
+        title: "Faile to Submit Recipe",
+        html: missingFields,
+        icon: "error",
+      });
+      return false;
+    }
+    return true;
   }
 
   return (
