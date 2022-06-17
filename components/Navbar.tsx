@@ -5,7 +5,15 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { clearQueryExceptName, sendQuery, setQueryRecipeName } from "../redux/reducers/queryReducer";
 import { getSession, useSession } from "next-auth/react";
+import { Fragment } from "react";
+import { CgMenu } from "react-icons/cg";
+import { Menu, Transition } from "@headlessui/react";
+import { signOut } from "next-auth/react";
 
+
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}
   
   export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -47,7 +55,7 @@ import { getSession, useSession } from "next-auth/react";
             <input
               type="text"
               id="search-bar"
-              className="block p-2 pl-10 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="block p-2 pl-10 w-full mb-2 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search Recipe..."
               value={searchItem}
               onChange={(event) => {
@@ -63,7 +71,7 @@ import { getSession, useSession } from "next-auth/react";
             />
           </div>
           <div className="rounded-lg px-1 flex align-middle md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-            <button>
+            {/* <button>
               <a href="#">
                 <svg
                   className="w-5 h-5 text-gray-500"
@@ -78,8 +86,9 @@ import { getSession, useSession } from "next-auth/react";
                   ></path>
                 </svg>
               </a>
-            </button>
+            </button> */}
           </div>
+          
           <button
             id="triggerEl"
             data-collapse-toggle="mobile-menu-3"
@@ -116,14 +125,81 @@ import { getSession, useSession } from "next-auth/react";
             </svg>
           </button>
           <div className="hidden md:block md:ml-4 md:mr-4 md:items-center md:w-auto">
-            <Image
+            {/* <Image
               className="w-8 h-8 rounded-full"
               src="/images/user-profile.png"
               alt="user-profile"
               width={40}
               height={40}
               objectFit="cover"
-            />
+            /> */}
+            {
+              session ? (
+                <Menu as="div" className="relative inline-block text-left">
+                  <Menu.Button className="inline-flex justify-center w-full rounded-md  shadow-sm ">
+                    <Image
+                      className="w-8 h-8 rounded-full"
+                      src="/images/user-profile.png"
+                      alt="user-profile"
+                      width={40}
+                      height={40}
+                      objectFit="cover"
+                    />
+                  </Menu.Button>
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items className="z-10 origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <div className="py-1">
+                        <Menu.Item>
+                            <Link href={`/profile`}>
+                              <a
+                                href="#"
+                                className={"bg-white text-gray-900 hover:bg-gray-900 duration-150 hover:text-white  block px-4 py-2 text-sm cursor-pointer" }
+                              >
+                                Profile
+                              </a>
+                            </Link>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <a
+                              className={ "bg-white text-gray-900 hover:bg-gray-900 duration-150 hover:text-white  block px-4 py-2 text-sm cursor-pointer" }
+                            >
+                              Edit Profile
+                            </a>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <a
+                              onClick={(e) =>{ 
+                                e.preventDefault()
+                                signOut()
+                              }}
+                              className={ "bg-white text-gray-900 hover:bg-gray-900 duration-150 hover:text-white  block px-4 py-2 text-sm cursor-pointer" }
+                            >
+                              Logout
+                            </a>
+                        </Menu.Item>
+                      </div>
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
+              ) : (
+                <Link href="/sign-in">
+                  <button
+                    className="border-2 hover:border-gray-200 hover:bg-gray-800  hover:text-white duration-150 rounded py-1 px-3 bg-gray-200 border-gray-700  text-gray-800 font-semibold  text-md "
+                  >
+                    Login
+                  </button>
+                </Link>
+              )
+            }
+            
           </div>
         </div>
         <div
@@ -150,19 +226,6 @@ import { getSession, useSession } from "next-auth/react";
                 Create Recipe
               </a>
             </li>
-            {
-              session &&
-              <li>
-                <Link href="/profile">
-                  <a
-                    className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                  >
-                    Profile
-                  </a>
-                </Link>
-                
-              </li>
-            }
             <li>
               <a
                 href="/admin"
