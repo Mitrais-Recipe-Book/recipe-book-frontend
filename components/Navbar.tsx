@@ -20,7 +20,7 @@ function classNames(...classes: string[]) {
     let searchItem = useSelector((state: any) => state.query.queryRecipeName);
     const dispatch = useDispatch();
     const { data: session }:any = useSession();
-
+    console.log("session data",session)
   return (
     <nav className="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-800">
       <div className="container flex flex-wrap justify-around items-center mx-auto">
@@ -157,6 +157,11 @@ function classNames(...classes: string[]) {
                   >
                     <Menu.Items className="z-10 origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <div className="py-1">
+                      <Menu.Item>
+                            <h2 className="block px-4 py-2 font-bold">
+                              Halo, {session.user.username}!
+                            </h2>
+                        </Menu.Item>
                         <Menu.Item>
                             <Link href={`/profile`}>
                               <a
