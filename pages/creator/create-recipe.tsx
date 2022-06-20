@@ -10,6 +10,11 @@ import { useRouter } from "next/router";
 import { convertFromHTML } from "draft-convert";
 import RichTextEditor from "@components/RichTextEditor";
 
+// 1. conditional editorstate kl ada value biar keisi
+// 2. conditional ingredientlist
+// 3. form validation biar gk error
+// 4. make banner image optional
+
 export default function CreateRecipe() {
   const { query } = useRouter();
   const router = useRouter();
@@ -31,6 +36,7 @@ export default function CreateRecipe() {
   const tagOptionsDefault: any = useRef([]);
   const tagOptions: any = useRef([]);
   const tagInput: any = [];
+  // note: use session from next to change the username
   const username = "user1";
   const ingredientListCount: any = useRef(0);
 
@@ -43,12 +49,14 @@ export default function CreateRecipe() {
         .then((res) => {
           setRecipeForm(res.data.payload);
           // parse ingredients and save to ingredients
+          // note: use .map to fill in the useRef value if you prefer
           ingredientFormData.current = JSON.parse(res.data.payload.ingredients);
-          console.log("ingredients", ingredientFormData.current);
+          console.log("ingredientFormData", ingredientFormData.current);
           for (const index in ingredientFormData) {
             onAddBtnClick();
           }
-          setRawContentValue(convertFromHTML(res.data.payload.content));
+          // note: convert from ContentState data form into EditorState (look for lib to change to editorstate)
+          console.log("rawValue:", convertFromHTML(res.data.payload.content));
           res.data.payload.tags.map((tag: any) => {
             tagInput.push(tag.id);
             tagOptionsDefault.current.push(tagOptions[tag.id]);
@@ -195,6 +203,7 @@ export default function CreateRecipe() {
           style={{ flex: "2 1" }}
           placeholder="Ingredient name"
           required
+          // note for Naufal: use conditional rendering if value of ingredientFormData exist from db. if theres no value or null, don't use default value
           defaultValue={
             ingredientFormData.current?.name
               ? ingredientFormData.current[index]?.name
@@ -213,6 +222,7 @@ export default function CreateRecipe() {
           style={{ flex: "1 1" }}
           placeholder="quantity"
           required
+          // note for Naufal: use conditional rendering if value of ingredientFormData exist from db. if theres no value or null, don't use default value
           defaultValue={
             ingredientFormData.current?.qty
               ? ingredientFormData.current[index]?.qty
@@ -331,6 +341,7 @@ export default function CreateRecipe() {
     setContentValue(value);
   }
 
+  // note: jalan cuman sekali
   function formValidation() {
     let form = true;
     let missingFields = "There is an error with your form:";
@@ -497,6 +508,7 @@ export default function CreateRecipe() {
                     </div>
 
                     <div className="pb-2 flex flex-row pr-[55px]">
+                      {/* 2 input dibawah kalau mau pake conditional rendering, kalau mau di jadiin component pisah biar gk kepanjangan*/}
                       <input
                         type="text"
                         className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
@@ -504,10 +516,11 @@ export default function CreateRecipe() {
                         placeholder="Ingredient name"
                         required
                         style={{ flex: "2 1" }}
+                        // note for Naufal: use conditional rendering if value of ingredientFormData exist from db. if theres no value or null, don't use default value
                         defaultValue={
-                          ingredientFormData?.current?.name
-                            ? ingredientFormData?.current[0]?.name
-                            : ""
+                          // ingredientFormData?.current?.name
+                          ingredientFormData?.current[0]?.name
+                          // : ""
                         }
                         onChange={(e) =>
                           (ingredientFormData.current.ingredients[0] = {
@@ -523,6 +536,7 @@ export default function CreateRecipe() {
                         placeholder="quantity"
                         required
                         style={{ flex: "1 1" }}
+                        // note for Naufal: use conditional rendering if value of ingredientFormData exist from db. if theres no value or null, don't use default value
                         defaultValue={
                           ingredientFormData?.current?.qty
                             ? ingredientFormData?.current[0]?.qty
@@ -566,7 +580,9 @@ export default function CreateRecipe() {
                   </div>
                   <div className="flex flex-col">
                     <label className="leading-loose"> Content</label>
+                    {/* {recipeForm.content? pake RCE pass props value: pake RCE ga pass props} */}
                     <RichTextEditor
+                      // note for Naufal: dont forget to use conditional rendering if recipeForm.content value exist from database. check RichTextEditor line 29.
                       value={recipeForm?.content}
                       className="pb-14"
                       getHtmlContent={getHtmlContent}

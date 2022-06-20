@@ -18,6 +18,7 @@ class RichTextEditor extends React.Component {
     this.onChange = (editorState) => {
       this.setState({ editorState });
       this.getHtmlContent(convertToHTML(editorState.getCurrentContent()));
+      console.log("richTextEditor", editorState);
     };
 
     this.handleKeyCommand = this._handleKeyCommand.bind(this);
