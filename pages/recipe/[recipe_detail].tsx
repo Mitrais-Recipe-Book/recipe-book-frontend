@@ -8,6 +8,7 @@ import YouTube from "react-youtube";
 import { FollowBtn } from "@components/ProfilePage/FollowBtn";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
+import CommentForm from "@components/Comment/CommentForm";
 
 const Navbar = dynamic(() => import("@components/Navbar"));
 const Footer = dynamic(() => import("@components/Footer"));
@@ -234,7 +235,8 @@ export default function RecipeDetail() {
                 </div>
                 <hr className="border-2 border-gray-400" />
                 <div className="flex flex-col mx-4 my-2">
-                  <h2 className="text-2xl">Comment</h2>
+                  <h2 className="text-2xl mb-4">Comment</h2>
+                  <CommentForm />
                 </div>
               </section>
               <section className="col-span-1">
