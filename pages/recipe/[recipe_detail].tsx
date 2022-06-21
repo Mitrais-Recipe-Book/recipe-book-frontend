@@ -241,14 +241,18 @@ export default function RecipeDetail() {
                   <CommentForm />
                   <div className="container">
                     {/* Maps goes here */}
-                    <div className="flex flex-row gap-2">
+                    <CommentCard
+                      username="user1"
+                      comment="jvbjkdbgkjr jhergherhgiorh eghbhegibheikgiklergerglbjkrdegk egrjgbnerujwebg"
+                    />
+                    {/* <div className="flex flex-row gap-2">
                       <div>
-                        <ProfileBedge />
+                        <ProfileBedge username="user1" />
                       </div>
                       <div className="grow">
-                        <CommentCard />
+                        
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </section>
