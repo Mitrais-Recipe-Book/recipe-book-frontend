@@ -18,7 +18,9 @@ export const FollowBtn = (props: any) => {
           setIsFollowed(res.data.payload);
         });
     }
-  }, [props.session]);
+  });
+
+  console.log(isFollowed);
 
   const followButton = () => {
     return (
