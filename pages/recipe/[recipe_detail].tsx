@@ -238,7 +238,10 @@ export default function RecipeDetail() {
                 <hr className="border-2 border-gray-400" />
                 <div className="flex flex-col mx-4 my-2">
                   <h2 className="text-2xl mb-4">Comment</h2>
-                  <CommentForm />
+                  <CommentForm
+                    recipeId={recipe?.id}
+                    username={session?.user.username}
+                  />
                   <div className="container">
                     {/* Maps goes here */}
                     <CommentCard

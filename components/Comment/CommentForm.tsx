@@ -1,13 +1,28 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
 
-export default function CommentForm() {
+interface CommentFormProps {
+  recipeId: number | undefined;
+  username: string;
+}
+
+export default function CommentForm(props: CommentFormProps) {
   return (
     <Formik
       initialValues={{ comment: "" }}
       onSubmit={(values) => {
-        console.log(values);
+        axios
+          .post(process.env.API_URL + `recipe/${props.recipeId}/comment/add`, {
+            comment: values.comment,
+            username: props.username,
+          })
+          .then((res) => {
+            console.log(res);
+            console.log(props.username);
+          });
+        console.log(values.comment);
       }}
       validationSchema={Yup.object({
         comment: Yup.string()
