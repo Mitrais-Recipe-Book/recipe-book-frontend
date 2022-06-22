@@ -168,7 +168,9 @@ export default function RecipeDetail() {
             `recipe/${recipeId}/reaction?username=${username}`
         )
         .then((res) => {
-          setUserReaction(res.data.payload.userReaction.reaction);
+          res.data.payload.userReaction
+            ? setUserReaction(res.data.payload.userReaction.reaction)
+            : null;
         });
     }
   }
