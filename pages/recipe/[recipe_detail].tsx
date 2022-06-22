@@ -161,13 +161,16 @@ export default function RecipeDetail() {
   }
 
   function getReactions(username: string, recipeId: number | undefined) {
-    axios
-      .get(
-        process.env.API_URL + `recipe/${recipeId}/reaction?username=${username}`
-      )
-      .then((res) => {
-        setUserReaction(res.data.payload.userReaction.reaction);
-      });
+    if (username && recipeId) {
+      axios
+        .get(
+          process.env.API_URL +
+            `recipe/${recipeId}/reaction?username=${username}`
+        )
+        .then((res) => {
+          setUserReaction(res.data.payload.userReaction.reaction);
+        });
+    }
   }
 
   return (
@@ -217,7 +220,7 @@ export default function RecipeDetail() {
                     <FiHeart
                       id="fav-button"
                       className={
-                        userReaction
+                        userReaction !== undefined
                           ? userReaction === "LIKED"
                             ? "fill-red-700"
                             : ""
@@ -243,7 +246,7 @@ export default function RecipeDetail() {
                     <FaRegSurprise
                       id="surprise-button"
                       className={
-                        userReaction
+                        userReaction !== undefined
                           ? userReaction === "DISLIKED"
                             ? "fill-yellow-700"
                             : ""
