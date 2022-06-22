@@ -248,14 +248,6 @@ export default function RecipeDetail() {
                       username="user1"
                       comment="jvbjkdbgkjr jhergherhgiorh eghbhegibheikgiklergerglbjkrdegk egrjgbnerujwebg"
                     />
-                    {/* <div className="flex flex-row gap-2">
-                      <div>
-                        <ProfileBedge username="user1" />
-                      </div>
-                      <div className="grow">
-                        
-                      </div>
-                    </div> */}
                   </div>
                 </div>
               </section>
