@@ -8,6 +8,7 @@ import YouTube from "react-youtube";
 import { FollowBtn } from "@components/ProfilePage/FollowBtn";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
+import Swal from "sweetalert2";
 
 const Navbar = dynamic(() => import("@components/Navbar"));
 const Footer = dynamic(() => import("@components/Footer"));
@@ -58,6 +59,12 @@ export default function RecipeDetail() {
     recipeLikes: number;
     followers: number;
   }
+
+  enum Reaction {
+    Like = "LIKED",
+    Dislike = "DISLIKED",
+  }
+
   const router = useRouter();
   const recipeId = router.query.recipe_detail;
   const { data: session }: any = useSession();
@@ -67,6 +74,7 @@ export default function RecipeDetail() {
   const [otherRecipes, setOtherRecipes] = useState<Recipe[] | undefined>();
   const [userInfo, setUserInfo] = useState<UserInfo>();
   const [ingredients, setIngredients] = useState<Ingredients[] | undefined>();
+  const [userReaction, setUserReaction] = useState<Reaction>();
 
   useEffect(() => {
     if (recipeId) {
@@ -95,10 +103,10 @@ export default function RecipeDetail() {
           });
         })
         .catch((err) => {
-          console.log(err.message);
           setIsRender(true);
           setIsExist(false);
         });
+
       setTimeout(() => {
         axios.put(process.env.API_URL + `recipe/addview?recipeId=${recipeId}`);
       }, 30000);
@@ -112,6 +120,55 @@ export default function RecipeDetail() {
         setOtherRecipes(res.data.payload.data);
       });
   }, [recipe]);
+
+  useEffect(() => {
+    getReactions(session?.user.username, recipe?.id);
+  });
+
+  function giveReaction(
+    username: string,
+    recipeId: number | undefined,
+    reaction: Reaction
+  ) {
+    recipeId
+      ? username
+        ? axios.post(process.env.API_URL + `recipe/${recipeId}/reaction`, {
+            username: username,
+            reaction: reaction,
+          })
+        : Swal.fire({
+            title: "Please Login",
+            text: "You need to login to like this recipe",
+            icon: "warning",
+            confirmButtonText: "Login",
+            showCancelButton: true,
+            cancelButtonText: "Cancel",
+            reverseButtons: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            allowEnterKey: false,
+            showLoaderOnConfirm: true,
+          }).then((result) => {
+            if (result.value) {
+              window.location.href = "/sign-in";
+            }
+          })
+      : Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong!",
+        });
+  }
+
+  function getReactions(username: string, recipeId: number | undefined) {
+    axios
+      .get(
+        process.env.API_URL + `recipe/${recipeId}/reaction?username=${username}`
+      )
+      .then((res) => {
+        setUserReaction(res.data.payload.userReaction.reaction);
+      });
+  }
 
   return (
     <>
@@ -144,30 +201,55 @@ export default function RecipeDetail() {
                 <div className="mx-2 my-2 flex gap-2">
                   <a
                     onClick={() => {
+                      giveReaction(
+                        session?.user.username,
+                        recipe?.id,
+                        Reaction.Like
+                      );
                       document
                         .getElementById("fav-button")
-                        ?.classList.toggle("fill-red-700");
-                    }}
-                  >
-                    <FiHeart id="fav-button" />
-                  </a>
-                  <a
-                    onClick={() => {
-                      document
-                        .getElementById("like-button")
-                        ?.classList.toggle("fill-blue-200");
-                    }}
-                  >
-                    <FiThumbsUp id="like-button" />
-                  </a>
-                  <a
-                    onClick={() => {
+                        ?.classList.add("fill-red-700");
                       document
                         .getElementById("surprise-button")
-                        ?.classList.toggle("fill-yellow-700");
+                        ?.classList.remove("fill-yellow-700");
                     }}
                   >
-                    <FaRegSurprise id="surprise-button" />
+                    <FiHeart
+                      id="fav-button"
+                      className={
+                        userReaction
+                          ? userReaction === "LIKED"
+                            ? "fill-red-700"
+                            : ""
+                          : ""
+                      }
+                    />
+                  </a>
+                  <a
+                    onClick={() => {
+                      giveReaction(
+                        session?.user.username,
+                        recipe?.id,
+                        Reaction.Dislike
+                      );
+                      document
+                        .getElementById("surprise-button")
+                        ?.classList.add("fill-yellow-700");
+                      document
+                        .getElementById("fav-button")
+                        ?.classList.remove("fill-red-700");
+                    }}
+                  >
+                    <FaRegSurprise
+                      id="surprise-button"
+                      className={
+                        userReaction
+                          ? userReaction === "DISLIKED"
+                            ? "fill-yellow-700"
+                            : ""
+                          : ""
+                      }
+                    />
                   </a>
                 </div>
                 <h1 className="text-center text-4xl font-bold my-4 break-words">
