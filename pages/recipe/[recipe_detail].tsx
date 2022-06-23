@@ -63,6 +63,13 @@ export default function RecipeDetail() {
     followers: number;
   }
 
+  interface CommentContent {
+    username: string;
+    fullname: string;
+    date: string;
+    comment: string;
+  }
+
   enum Reaction {
     Like = "LIKED",
     Dislike = "DISLIKED",
@@ -79,6 +86,7 @@ export default function RecipeDetail() {
   const [userInfo, setUserInfo] = useState<UserInfo>();
   const [ingredients, setIngredients] = useState<Ingredients[] | undefined>();
   const [userReaction, setUserReaction] = useState<Reaction>();
+  const [comments, setComments] = useState<CommentContent[]>([]);
 
   useEffect(() => {
     if (recipeId) {
@@ -222,6 +230,15 @@ export default function RecipeDetail() {
             : null;
         });
     }
+  }
+
+  function getComments() {
+    let data: CommentContent[] = [];
+    axios
+      .get(process.env.API_URL + `recipe/${recipeId}/comments?page=0`)
+      .then((res) => {
+        setComments([...comments, ...res.data.payload.content]);
+      });
   }
 
   return (
@@ -397,12 +414,30 @@ export default function RecipeDetail() {
                     recipeId={recipe?.id}
                     username={session?.user.username}
                   />
-                  <div className="container">
-                    {/* Maps goes here */}
-                    <CommentCard
-                      username="user1"
-                      comment="jvbjkdbgkjr jhergherhgiorh eghbhegibheikgiklergerglbjkrdegk egrjgbnerujwebg"
-                    />
+                  <div className="container flex flex-col">
+                    <div className="my-4">
+                      {comments
+                        ? comments?.map(
+                            (comment) => (
+                              console.log("comment=", comment.username),
+                              (
+                                <CommentCard
+                                  username={comment.username}
+                                  comment={comment.comment}
+                                />
+                              )
+                            )
+                          )
+                        : ""}
+                    </div>
+                    <button
+                      onClick={() => {
+                        getComments();
+                        console.log(comments);
+                      }}
+                    >
+                      Load More
+                    </button>
                   </div>
                 </div>
               </section>
