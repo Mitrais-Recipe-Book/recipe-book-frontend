@@ -147,7 +147,7 @@ export default function RecipeDetail() {
   });
 
   useEffect(() => {
-    recipeId ? getComments() : null;
+    pageInfo.page === 0 ? (recipeId ? getComments() : null) : null;
   }, [recipeId]);
 
   function giveReaction(
@@ -254,7 +254,6 @@ export default function RecipeDetail() {
       .then((res) => {
         setComments([...comments, ...res.data.payload.content]);
         setPageInfo({ last: res.data.payload.last, page: pageInfo.page + 1 });
-        console.log(res.data.payload.last);
       });
   }
 
@@ -434,26 +433,21 @@ export default function RecipeDetail() {
                   <div className="container flex flex-col">
                     <div className="my-4">
                       {comments
-                        ? comments?.map(
-                            (comment) => (
-                              console.log("comment=", comment.username),
-                              (
-                                <CommentCard
-                                  username={comment.username}
-                                  comment={comment.comment}
-                                />
-                              )
-                            )
-                          )
+                        ? comments?.map((comment) => (
+                            <CommentCard
+                              username={comment.username}
+                              comment={comment.comment}
+                            />
+                          ))
                         : ""}
                     </div>
                     <button
+                      disabled={pageInfo.last}
                       onClick={() => {
                         getComments();
-                        console.log(comments);
                       }}
                     >
-                      Load More
+                      {pageInfo.last ? "No more comments" : "Load more"}
                     </button>
                   </div>
                 </div>
