@@ -70,6 +70,11 @@ export default function RecipeDetail() {
     comment: string;
   }
 
+  interface PageInfo {
+    page: number;
+    last: boolean;
+  }
+
   enum Reaction {
     Like = "LIKED",
     Dislike = "DISLIKED",
@@ -87,6 +92,10 @@ export default function RecipeDetail() {
   const [ingredients, setIngredients] = useState<Ingredients[] | undefined>();
   const [userReaction, setUserReaction] = useState<Reaction>();
   const [comments, setComments] = useState<CommentContent[]>([]);
+  const [pageInfo, setPageInfo] = useState<PageInfo>({
+    page: 0,
+    last: false,
+  });
 
   useEffect(() => {
     if (recipeId) {
@@ -237,12 +246,15 @@ export default function RecipeDetail() {
   }
 
   function getComments() {
-    let page = 0;
     axios
-      .get(process.env.API_URL + `recipe/${recipeId}/comments?page=${page}`)
+      .get(
+        process.env.API_URL +
+          `recipe/${recipeId}/comments?page=${pageInfo.page}`
+      )
       .then((res) => {
         setComments([...comments, ...res.data.payload.content]);
-        page += 1;
+        setPageInfo({ last: res.data.payload.last, page: pageInfo.page + 1 });
+        console.log(res.data.payload.last);
       });
   }
 
