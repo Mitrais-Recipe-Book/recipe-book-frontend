@@ -20,8 +20,6 @@ export const FollowBtn = (props: any) => {
     }
   });
 
-  console.log(isFollowed);
-
   const followButton = () => {
     return (
       <button
@@ -151,7 +149,6 @@ export const FollowBtn = (props: any) => {
         });
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log("error message: ", error.message);
         // 👇️ error: AxiosError<any, any>
         return error.message;
       } else {

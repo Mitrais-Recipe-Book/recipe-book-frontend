@@ -8,6 +8,7 @@ import YouTube from "react-youtube";
 import { FollowBtn } from "@components/ProfilePage/FollowBtn";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
+import Swal from "sweetalert2";
 import CommentForm from "@components/Comment/CommentForm";
 import ProfileBedge from "@components/Comment/ProfileBedge";
 import CommentCard from "@components/Comment/CommentCard";
@@ -61,6 +62,13 @@ export default function RecipeDetail() {
     recipeLikes: number;
     followers: number;
   }
+
+  enum Reaction {
+    Like = "LIKED",
+    Dislike = "DISLIKED",
+    None = "",
+  }
+
   const router = useRouter();
   const recipeId = router.query.recipe_detail;
   const { data: session }: any = useSession();
@@ -70,6 +78,7 @@ export default function RecipeDetail() {
   const [otherRecipes, setOtherRecipes] = useState<Recipe[] | undefined>();
   const [userInfo, setUserInfo] = useState<UserInfo>();
   const [ingredients, setIngredients] = useState<Ingredients[] | undefined>();
+  const [userReaction, setUserReaction] = useState<Reaction>();
 
   useEffect(() => {
     if (recipeId) {
@@ -98,10 +107,10 @@ export default function RecipeDetail() {
           });
         })
         .catch((err) => {
-          console.log(err.message);
           setIsRender(true);
           setIsExist(false);
         });
+
       setTimeout(() => {
         axios.put(process.env.API_URL + `recipe/addview?recipeId=${recipeId}`);
       }, 30000);
@@ -115,6 +124,105 @@ export default function RecipeDetail() {
         setOtherRecipes(res.data.payload.data);
       });
   }, [recipe]);
+
+  useEffect(() => {
+    getReactions(session?.user.username, recipe?.id);
+  });
+
+  function giveReaction(
+    username: string,
+    recipeId: number | undefined,
+    reaction: Reaction
+  ) {
+    recipeId
+      ? username
+        ? axios
+            .post(process.env.API_URL + `recipe/${recipeId}/reaction`, {
+              username: username,
+              reaction: reaction,
+            })
+            .then(() => {
+              setUserReaction(reaction);
+            })
+        : Swal.fire({
+            title: "Please Login",
+            text: "You need to login to like this recipe",
+            icon: "warning",
+            confirmButtonText: "Login",
+            showCancelButton: true,
+            cancelButtonText: "Cancel",
+            reverseButtons: true,
+            allowOutsideClick: true,
+            allowEscapeKey: false,
+            allowEnterKey: false,
+            showLoaderOnConfirm: true,
+          }).then((result) => {
+            if (result.value) {
+              window.location.href = "/sign-in";
+            }
+          })
+      : Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong!",
+        });
+  }
+
+  function removeReaction(
+    username: string,
+    recipeId: number | undefined,
+    reaction: Reaction
+  ) {
+    recipeId
+      ? username
+        ? axios
+            .delete(process.env.API_URL + `recipe/${recipeId}/reaction`, {
+              data: {
+                username: username,
+                reaction: reaction,
+              },
+            })
+            .then(() => {
+              setUserReaction(Reaction.None);
+            })
+        : Swal.fire({
+            title: "Please Login",
+            text: "You need to login to like this recipe",
+            icon: "warning",
+            confirmButtonText: "Login",
+            showCancelButton: true,
+            cancelButtonText: "Cancel",
+            reverseButtons: true,
+            allowOutsideClick: true,
+            allowEscapeKey: false,
+            allowEnterKey: false,
+            showLoaderOnConfirm: true,
+          }).then((result) => {
+            if (result.value) {
+              window.location.href = "/sign-in";
+            }
+          })
+      : Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong!",
+        });
+  }
+
+  function getReactions(username: string, recipeId: number | undefined) {
+    if (username && recipeId) {
+      axios
+        .get(
+          process.env.API_URL +
+            `recipe/${recipeId}/reaction?username=${username}`
+        )
+        .then((res) => {
+          res.data.payload.userReaction
+            ? setUserReaction(res.data.payload.userReaction.reaction)
+            : null;
+        });
+    }
+  }
 
   return (
     <>
@@ -147,30 +255,77 @@ export default function RecipeDetail() {
                 <div className="mx-2 my-2 flex gap-2">
                   <a
                     onClick={() => {
-                      document
-                        .getElementById("fav-button")
-                        ?.classList.toggle("fill-red-700");
+                      if (userReaction !== "LIKED") {
+                        giveReaction(
+                          session?.user.username,
+                          recipe?.id,
+                          Reaction.Like
+                        );
+                        document
+                          .getElementById("fav-button")
+                          ?.classList.add("fill-red-700");
+                        document
+                          .getElementById("surprise-button")
+                          ?.classList.remove("fill-yellow-700");
+                      } else {
+                        removeReaction(
+                          session?.user.username,
+                          recipe?.id,
+                          Reaction.Like
+                        );
+                        document
+                          .getElementById("fav-button")
+                          ?.classList.remove("fill-red-700");
+                      }
                     }}
                   >
-                    <FiHeart id="fav-button" />
+                    <FiHeart
+                      id="fav-button"
+                      className={
+                        userReaction !== undefined
+                          ? userReaction === "LIKED"
+                            ? "fill-red-700"
+                            : ""
+                          : ""
+                      }
+                    />
                   </a>
                   <a
                     onClick={() => {
-                      document
-                        .getElementById("like-button")
-                        ?.classList.toggle("fill-blue-200");
+                      if (userReaction !== "DISLIKED") {
+                        giveReaction(
+                          session?.user.username,
+                          recipe?.id,
+                          Reaction.Dislike
+                        );
+                        document
+                          .getElementById("surprise-button")
+                          ?.classList.add("fill-yellow-700");
+                        document
+                          .getElementById("fav-button")
+                          ?.classList.remove("fill-red-700");
+                      } else {
+                        removeReaction(
+                          session?.user.username,
+                          recipe?.id,
+                          Reaction.Dislike
+                        );
+                        document
+                          .getElementById("surprise-button")
+                          ?.classList.remove("fill-yellow-700");
+                      }
                     }}
                   >
-                    <FiThumbsUp id="like-button" />
-                  </a>
-                  <a
-                    onClick={() => {
-                      document
-                        .getElementById("surprise-button")
-                        ?.classList.toggle("fill-yellow-700");
-                    }}
-                  >
-                    <FaRegSurprise id="surprise-button" />
+                    <FaRegSurprise
+                      id="surprise-button"
+                      className={
+                        userReaction !== undefined
+                          ? userReaction === "DISLIKED"
+                            ? "fill-yellow-700"
+                            : ""
+                          : ""
+                      }
+                    />
                   </a>
                 </div>
                 <h1 className="text-center text-4xl font-bold my-4 break-words">

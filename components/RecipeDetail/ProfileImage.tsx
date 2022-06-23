@@ -13,7 +13,6 @@ export default function ProfileImage(props: ImgInfo) {
   const router = useRouter();
 
   useEffect(() => {
-    console.log(props.src);
     setImg(`${process.env.API_URL}user/${props?.src}/photo`);
   }, [props.src]);
 
