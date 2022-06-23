@@ -9,5 +9,7 @@ module.exports = {
       logo: ["Damion", "cursive"],
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/line-clamp'),
+  ],
 };

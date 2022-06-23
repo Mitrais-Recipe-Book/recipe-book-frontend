@@ -43,19 +43,21 @@ const Home: NextPage = () => {
   const { data: session } = useSession();
   console.log("Session", session);
 
-  interface State{
+  interface State {
     query: {
       allTags: Tag[];
-    }
+    };
   }
   interface Recipe {
     recipeName: string;
     description: string;
     recipeImage: string;
     recipeViews: number;
-    author: string;
-    authorImage: string;
-    authorFollower: number;
+    author: {
+      username: string;
+      fullname: string;
+      authorFollowers: number;
+    };
   }
 
   interface Tag {
@@ -65,23 +67,13 @@ const Home: NextPage = () => {
 
   function fetchData() {
     axios
-      .get<Recipe[]>(
-        "https://recipyb-dev.herokuapp.com/api/v1/recipe/discover?limit=10"
-      )
+      .get("https://recipyb-dev.herokuapp.com/api/v1/recipe/discover?limit=10")
       .then((res) => {
-        //@ts-ignore
-        // console.log(res.data.payload);
-        //@ts-ignore
         setRecipes(res.data.payload);
       });
     axios
-      .get<Recipe[]>(
-        "https://recipyb-dev.herokuapp.com/api/v1/recipe/popular?limit=5"
-      )
+      .get("https://recipyb-dev.herokuapp.com/api/v1/recipe/popular?limit=5")
       .then((res) => {
-        //@ts-ignore
-        // console.log("Popular: ", res.data.payload);
-        //@ts-ignore
         setPopularRecipes(res.data.payload);
       });
     //@ts-ignore
@@ -95,7 +87,7 @@ const Home: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  SwiperCore.use([Autoplay]);
+  // SwiperCore.use([Autoplay]);
   return (
     <div>
       <Head>
@@ -138,25 +130,6 @@ const Home: NextPage = () => {
       </style>
 
       <Navbar />
-      {session && (
-        <div className="p-2 text-center bg-blue-200 m-2 md:px-[50px] lg:px-[100px] xl:px-[150px] rounded-xl w-10/12 mx-auto">
-          <div>
-            {/* @ts-ignore */}
-            Hello {session?.user?.username}!
-          </div>
-
-          <button
-            onClick={() => signOut()}
-            className="m-1 bg-blue-500 rounded p-2 hover:bg-blue-700 text-white uppercase"
-          >
-            sign out
-          </button>
-        </div>
-      )}
-      {/* @ts-ignore */}
-      {/* <h1>{session.user ? session.user.name : ""}</h1> */}
-      {/* @ts-ignore */}
-      {/* <h1>{session.user ? session.user.roles[0] : ""}</h1> */}
       <main className="container mx-auto pt-1">
         <div className="container md:px-[50px] lg:px-[100px] xl:px-[150px]">
           {/* Carousel */}
@@ -174,15 +147,6 @@ const Home: NextPage = () => {
               pagination={{ clickable: true }}
             >
               <SwiperSlide>
-                {/* <Image
-                  layout="responsive"
-                  className="w-full rounded-md cursor-pointer"
-                  src="/images/bibimbap-image.webp"
-                  alt="RecipyBook"
-                  width={100}
-                  height={35}
-                  objectFit="cover"
-                /> */}
                 <div
                   className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent"
                   style={{

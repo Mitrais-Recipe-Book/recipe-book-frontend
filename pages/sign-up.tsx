@@ -2,12 +2,30 @@ import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+import Swal from 'sweetalert2'
 
 export default function SignUp() {
     const router = useRouter();
     const [password, setPassword] = useState("");
     const [passwordConf, setPasswordConf] = useState("");
     const [userData, setUserData] = useState({ email: "", username: "", fullName: "", password: "" });
+    const [passwordValid, setPasswordValid] = useState(false);
+    const [formValid, setFormValid] = useState(false);
+
+    //RegEx
+
+    //Password must contain at least one lowecase letter, and one number with eight characters
+    const passwordRegex = /^(?=.*[a-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+    const validatePassword = (pass: string) => {
+        if (passwordRegex.test(pass)) {
+            setPasswordValid(true);
+            setFormValid(true);
+        } else {
+            setPasswordValid(false)
+            setFormValid(false);
+        }
+    }
 
     const createUser = (event: React.SyntheticEvent) => {
         event.preventDefault();
@@ -24,7 +42,13 @@ export default function SignUp() {
 
     async function submitForm() {
         try {
-            // 👇️ const data: CreateUserResponse
+            Swal.fire({
+                title: 'Loading...',
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            })
+            //@ts-ignore
             const { data } = await axios.post<CreateUserResponse>(
                 'https://recipyb-dev.herokuapp.com/auth/sign-up',
                 { email: userData.email, username: userData.username, password: userData.password, fullName: userData.fullName },
@@ -34,14 +58,33 @@ export default function SignUp() {
                         Accept: 'application/json',
                     },
                 },
-            );
+            ).then((res) => {
+                Swal.fire({
+                    title: 'Success!',
+                    html: 'Sign-up success, please sign-in.',
+                    icon: 'success',
+                })
+                router.push({
+                    pathname: "/sign-in",
+                    query: {
+                        create: "success"
+                    }
 
-            console.log(JSON.stringify(data, null, 4));
-            router.push({
-                pathname: "/sign-in",
-                query: {
-                    create: "success"
-                }
+                })
+                    .catch(error => {
+                        Swal.fire(
+                            'Error',
+                            'Sign-up error please check your data',
+                            'error'
+                        )
+                    });
+
+            }).catch(error => {
+                Swal.fire(
+                    'Error',
+                    error.response.data.message,
+                    'error'
+                )
             });
 
             return data;
@@ -145,15 +188,21 @@ export default function SignUp() {
                                 required
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                     setPassword(e.target.value);
-                                    setUserData({ ...userData, ["password"]: e.target.value })
+                                    setUserData({ ...userData, ["password"]: e.target.value });
+                                    validatePassword(e.target.value);
                                 }}
                                 placeholder="Password"
                             />
                         </div>
-                        {password != passwordConf &&
+                        {(password != passwordConf && passwordConf.length > 0) &&
                             <div className="text-red-600">
                                 <small>The password confirmation does not match</small>
                             </div>}
+                        {(password.length > 0 && password.length < 8) &&
+                            <div className="text-red-600">
+                                <small>Password must contain at least 8 character</small>
+                            </div>}
+                        {(!passwordValid && password.length > 0) && <div className="text-red-600"><small>Password must contain at least one letter, and one number</small></div>}
                         <div className="pb-2 pt-4">
                             <input
                                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
@@ -171,9 +220,11 @@ export default function SignUp() {
                             <a href="/sign-in">Already have account? Sign in here</a>
                         </div>
                         <div className="px-4 pb-2 pt-4">
-                            <button type="submit" className="uppercase block w-full p-4 text-lg rounded-full bg-orange-400 hover:bg-orange-500 focus:outline-none">
+                            {formValid ? <button type="submit" className="uppercase block w-full p-4 text-lg rounded-full bg-orange-400 hover:bg-orange-500 focus:outline-none">
                                 sign up
-                            </button>
+                            </button> : <button disabled={true} className="uppercase block w-full p-4 text-lg rounded-full bg-slate-400">
+                                Sign Up
+                            </button>}
                         </div>
 
                         <div className="p-4 text-center right-0 left-0 flex justify-center space-x-4 mt-16 lg:hidden ">

@@ -6,6 +6,7 @@ import { signIn, useSession, getProviders, signOut, ClientSafeProvider, LiteralU
 import { GetServerSideProps } from "next";
 import jsCookie from "js-cookie";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import Swal from 'sweetalert2'
 
 export default function LogIn({ csrfToken, providers }) {
   const session = useSession();
@@ -22,6 +23,17 @@ export default function LogIn({ csrfToken, providers }) {
   const [passwordType, setPasswordType] = useState("password");
   const [showPassword, setShowPassword] = useState(true);
 
+  const [usernameFilled, setUsernameFilled] = useState(true);
+  const [passwordFilled, setPasswordFilled] = useState(true);
+
+  const [allFilled, setAllFilled] = useState(false);
+
+  useEffect(() => {
+    if ((usernameFilled && userData.username.length > 0) && (passwordFilled && userData.password.length > 0)) {
+      setAllFilled(true);
+    }
+  });
+
   const togglePassword = () => {
     if (showPassword) {
       setShowPassword(false);
@@ -32,20 +44,53 @@ export default function LogIn({ csrfToken, providers }) {
     }
   }
 
+  const usernameBlank = () => {
+    //Swal alert for username
+    Swal.fire({
+      title: 'Username is required',
+      text: 'Please enter your username',
+      icon: 'warning',
+      confirmButtonText: 'OK'
+    })
+  }
+
+  const passwordBlank = () => {
+    //Swal alert for username
+    Swal.fire({
+      title: 'Password is required',
+      text: 'Please enter your username',
+      icon: 'warning',
+      confirmButtonText: 'OK'
+    })
+  }
+
   useEffect(() => {
     if (jsCookie.get("next-auth.csrf-token")) {
       router.push("/");
     }
     if (router.query.create) { setMessage(router.query.create), setNotif(true) };
-    if (router.query.error) { setError(router.query.error), setErrMessage(true) };
+    if (router.query.error) {
+      Swal.fire(
+        'Sign-in Error',
+        'check your username or password!',
+        'error'
+      )
+    };
     setTimeout(() => { setNotif(false) }, 5000);
     setTimeout(() => { setErrMessage(false) }, 5000);
   }, []);
 
   const login = async (event) => {
     event.preventDefault();
+
     const username = userData.username;
     const password = userData.password;
+    Swal.fire({
+      title: 'Loading...',
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    })
     signIn('credentials', { username, password });
   };
 
@@ -126,20 +171,34 @@ export default function LogIn({ csrfToken, providers }) {
                 name="username"
                 id="username"
                 placeholder="Username"
-                onChange={(e) =>
-                  setUserData({ ...userData, [e.target.name]: e.target.value })
+                onChange={(e) => {
+                  setUserData({ ...userData, [e.target.name]: e.target.value });
+                  setUsernameFilled(true);
+                  if (e.target.value.length == 0) {
+                    setUsernameFilled(false);
+                  }
+                }
                 }
                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
               />
             </div>
+            {usernameFilled == false &&
+              <div className="text-red-600">
+                <small>Username can't be blank</small>
+              </div>}
             <div className="pb-2 pt-4 flex">
               <input
                 className="block w-full p-4 text-lg text-gray-900 leading-tight focus:outline-orange-400 rounded-l-sm bg-slate"
                 type={passwordType}
                 name="password"
                 id="password"
-                onChange={(e) =>
-                  setUserData({ ...userData, [e.target.name]: e.target.value })
+                onChange={(e) => {
+                  setUserData({ ...userData, [e.target.name]: e.target.value });
+                  setPasswordFilled(true);
+                  if (e.target.value.length == 0) {
+                    setPasswordFilled(false);
+                  }
+                }
                 }
                 placeholder="Password"
               />
@@ -149,16 +208,25 @@ export default function LogIn({ csrfToken, providers }) {
                   : <FaEyeSlash />}
               </span>
             </div>
+            {passwordFilled == false &&
+              <div className="text-red-600">
+                <small>Password can't be blank</small>
+              </div>}
             <div className="text-right text-gray-400 hover:underline hover:text-gray-100">
               <a href="/sign-up">Sign up here</a>
             </div>
             <div className="px-4 pb-2 pt-4">
-              <button
+              {allFilled ? <button
                 type="submit"
                 className="uppercase block w-full p-4 text-lg rounded-full bg-orange-400 hover:bg-orange-500 focus:outline-none"
               >
                 sign in
-              </button>
+              </button> : <button
+                disabled={true}
+                className="uppercase block w-full p-4 text-lg rounded-full bg-slate-400"
+              >
+                sign in
+              </button>}
             </div>
 
             <div className="p-4 text-center right-0 left-0 flex justify-center space-x-4 mt-16 lg:hidden ">

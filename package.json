@@ -6,14 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest"
   },
   "dependencies": {
     "@headlessui/react": "^1.6.1",
-    "@material-tailwind/react": "0.3.4",
+    "@material-tailwind/react": "^1.0.3",
     "@next-auth/prisma-adapter": "^0.5.2-next.19",
     "@prisma/client": "^3.14.0",
     "@reduxjs/toolkit": "^1.8.1",
+    "@tailwindcss/line-clamp": "^0.4.0",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
     "@types/draft-js": "^0.11.9",
     "axios": "^0.26.1",
     "draft-convert": "^2.1.12",
@@ -30,11 +34,13 @@
     "react-icons": "^4.3.1",
     "react-redux": "^8.0.1",
     "react-select": "^5.3.2",
+    "react-youtube": "^9.0.2",
     "redux": "^4.2.0",
     "redux-persist": "^6.0.0",
     "styled-components": "^5.3.5",
     "sweetalert2": "^11.4.14",
-    "swiper": "^8.1.4"
+    "swiper": "^8.1.4",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@types/draft-convert": "^2.1.4",
@@ -46,6 +52,8 @@
     "autoprefixer": "^10.4.4",
     "eslint": "8.13.0",
     "eslint-config-next": "12.1.5",
+    "jest": "^28.1.0",
+    "jest-environment-jsdom": "^28.1.0",
     "postcss": "^8.4.12",
     "prisma": "^3.14.0",
     "tailwindcss": "^3.0.24",
