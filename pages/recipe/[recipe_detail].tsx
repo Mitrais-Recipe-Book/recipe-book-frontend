@@ -66,6 +66,7 @@ export default function RecipeDetail() {
   enum Reaction {
     Like = "LIKED",
     Dislike = "DISLIKED",
+    None = "",
   }
 
   const router = useRouter();
@@ -135,10 +136,14 @@ export default function RecipeDetail() {
   ) {
     recipeId
       ? username
-        ? axios.post(process.env.API_URL + `recipe/${recipeId}/reaction`, {
-            username: username,
-            reaction: reaction,
-          })
+        ? axios
+            .post(process.env.API_URL + `recipe/${recipeId}/reaction`, {
+              username: username,
+              reaction: reaction,
+            })
+            .then(() => {
+              setUserReaction(reaction);
+            })
         : Swal.fire({
             title: "Please Login",
             text: "You need to login to like this recipe",
@@ -147,7 +152,48 @@ export default function RecipeDetail() {
             showCancelButton: true,
             cancelButtonText: "Cancel",
             reverseButtons: true,
-            allowOutsideClick: false,
+            allowOutsideClick: true,
+            allowEscapeKey: false,
+            allowEnterKey: false,
+            showLoaderOnConfirm: true,
+          }).then((result) => {
+            if (result.value) {
+              window.location.href = "/sign-in";
+            }
+          })
+      : Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong!",
+        });
+  }
+
+  function removeReaction(
+    username: string,
+    recipeId: number | undefined,
+    reaction: Reaction
+  ) {
+    recipeId
+      ? username
+        ? axios
+            .delete(process.env.API_URL + `recipe/${recipeId}/reaction`, {
+              data: {
+                username: username,
+                reaction: reaction,
+              },
+            })
+            .then(() => {
+              setUserReaction(Reaction.None);
+            })
+        : Swal.fire({
+            title: "Please Login",
+            text: "You need to login to like this recipe",
+            icon: "warning",
+            confirmButtonText: "Login",
+            showCancelButton: true,
+            cancelButtonText: "Cancel",
+            reverseButtons: true,
+            allowOutsideClick: true,
             allowEscapeKey: false,
             allowEnterKey: false,
             showLoaderOnConfirm: true,
@@ -209,17 +255,28 @@ export default function RecipeDetail() {
                 <div className="mx-2 my-2 flex gap-2">
                   <a
                     onClick={() => {
-                      giveReaction(
-                        session?.user.username,
-                        recipe?.id,
-                        Reaction.Like
-                      );
-                      document
-                        .getElementById("fav-button")
-                        ?.classList.add("fill-red-700");
-                      document
-                        .getElementById("surprise-button")
-                        ?.classList.remove("fill-yellow-700");
+                      if (userReaction !== "LIKED") {
+                        giveReaction(
+                          session?.user.username,
+                          recipe?.id,
+                          Reaction.Like
+                        );
+                        document
+                          .getElementById("fav-button")
+                          ?.classList.add("fill-red-700");
+                        document
+                          .getElementById("surprise-button")
+                          ?.classList.remove("fill-yellow-700");
+                      } else {
+                        removeReaction(
+                          session?.user.username,
+                          recipe?.id,
+                          Reaction.Like
+                        );
+                        document
+                          .getElementById("fav-button")
+                          ?.classList.remove("fill-red-700");
+                      }
                     }}
                   >
                     <FiHeart
@@ -235,17 +292,28 @@ export default function RecipeDetail() {
                   </a>
                   <a
                     onClick={() => {
-                      giveReaction(
-                        session?.user.username,
-                        recipe?.id,
-                        Reaction.Dislike
-                      );
-                      document
-                        .getElementById("surprise-button")
-                        ?.classList.add("fill-yellow-700");
-                      document
-                        .getElementById("fav-button")
-                        ?.classList.remove("fill-red-700");
+                      if (userReaction !== "DISLIKED") {
+                        giveReaction(
+                          session?.user.username,
+                          recipe?.id,
+                          Reaction.Dislike
+                        );
+                        document
+                          .getElementById("surprise-button")
+                          ?.classList.add("fill-yellow-700");
+                        document
+                          .getElementById("fav-button")
+                          ?.classList.remove("fill-red-700");
+                      } else {
+                        removeReaction(
+                          session?.user.username,
+                          recipe?.id,
+                          Reaction.Dislike
+                        );
+                        document
+                          .getElementById("surprise-button")
+                          ?.classList.remove("fill-yellow-700");
+                      }
                     }}
                   >
                     <FaRegSurprise
