@@ -33,7 +33,7 @@ export default function CreateRecipe() {
   const ingredientFormData: any = useRef({
     ingredients: [],
   });
-  const tagOptionsDefault: any = useRef([]);
+  const [tagOptionsDefault, setTagOptionsDefault]: any = useState([]);
   const tagOptions: any = useRef([]);
   const tagInput: any = [];
   // note: use session from next to change the username
@@ -42,71 +42,75 @@ export default function CreateRecipe() {
 
   // fetch tags from db and add it to the tag options
   // also fetch userID from username saved in localstorage
+
   useEffect(() => {
-    if (query.id) {
+    const fetchData = async () => {
       axios
-        .get("https://recipyb-dev.herokuapp.com/api/v1/recipe/" + query.id)
+        .get("https://recipyb-dev.herokuapp.com/api/v1/user/" + username)
         .then((res) => {
-          setRecipeForm(res.data.payload);
-          // parse ingredients and save to ingredients
-          // note: use .map to fill in the useRef value if you prefer
-          ingredientFormData.current = JSON.parse(res.data.payload.ingredients);
-          console.log("ingredientFormData", ingredientFormData.current);
-          for (const index in ingredientFormData) {
-            onAddBtnClick();
-          }
-          // note: convert from ContentState data form into EditorState (look for lib to change to editorstate)
-          console.log("rawValue:", convertFromHTML(res.data.payload.content));
-          res.data.payload.tags.map((tag: any) => {
-            tagInput.push(tag.id);
-            tagOptionsDefault.current.push(tagOptions[tag.id]);
-            console.log(tagOptionsDefault.current);
-            setRecipeForm((prevState: any) => ({
-              ...prevState,
-              tagIds: tagInput,
-            }));
+          //@ts-ignore
+          setUserInfo(res.data.payload);
+          // console.log("User Info: ", res.data.payload);
+          setRecipeForm({
+            ...recipeForm,
+            userId: res.data.payload.id,
           });
         })
         .catch((err) => {
           console.log(err);
-          router.replace("/creator/create-recipe", undefined, {
-            shallow: true,
-          });
         });
+      const tagss = await axios
+        .get("https://recipyb-dev.herokuapp.com/api/v1/tag")
+        .then((res) => {
+          // setRecipeTagsData(res.data.payload);
+          // console.log("Tags: ", res.data.payload);
+          return res.data.payload
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      // eslint-disable-next-line
+      setRecipeTagsData(tagss)
+
+      tagOptions.current = tagss.map((tag: { id: any; name: any }) => {
+        return {
+          label: tag.name,
+          value: tag.id,
+        };
+      });
+
+      if (query.id) {
+        const editRecipe = await axios
+          .get("https://recipyb-dev.herokuapp.com/api/v1/recipe/" + query.id)
+          .then((res) => {
+            for (const index in ingredientFormData) {
+              onAddBtnClick();
+            }
+            return res.data.payload
+          })
+
+          setRecipeForm(editRecipe)
+
+          const recipeTags = editRecipe.tags
+          let defaultTags = []
+          
+          for (let i in tagOptions.current) {
+            for (let j in recipeTags) {
+              if (tagOptions.current[i].label == recipeTags[j].name) {
+                defaultTags.push({
+                  label: recipeTags[i].name,
+                  value: tagOptions.current[i].value
+                })
+              }
+            }
+          }
+
+          setTagOptionsDefault(defaultTags)
+      }
     }
-    // eslint-disable-next-line
+
+    fetchData()
   }, [query]);
-
-  useEffect(() => {
-    console.log("recipeForm", recipeForm);
-  }, [recipeForm]);
-
-  useEffect(() => {
-    axios
-      .get("https://recipyb-dev.herokuapp.com/api/v1/user/" + username)
-      .then((res) => {
-        //@ts-ignore
-        setUserInfo(res.data.payload);
-        // console.log("User Info: ", res.data.payload);
-        setRecipeForm({
-          ...recipeForm,
-          userId: res.data.payload.id,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    axios
-      .get("https://recipyb-dev.herokuapp.com/api/v1/tag")
-      .then((res) => {
-        setRecipeTagsData(res.data.payload);
-        console.log("Tags: ", res.data.payload);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    // eslint-disable-next-line
-  }, []);
 
   //add new ingredient input form
   function onAddBtnClick() {
@@ -240,12 +244,12 @@ export default function CreateRecipe() {
   };
 
   //map recipe tags into tag options
-  tagOptions.current = recipeTagsData.map((tag: { id: any; name: any }) => {
-    return {
-      label: tag.name,
-      value: tag.id,
-    };
-  });
+  // tagOptions.current = recipeTagsData.map((tag: { id: any; name: any }) => {
+  //   return {
+  //     label: tag.name,
+  //     value: tag.id,
+  //   };
+  // });
 
   useEffect(() => {
     if (submitFormState) {
@@ -411,6 +415,29 @@ export default function CreateRecipe() {
     return true;
   }
 
+  function tagSelect(tags: any) {
+    return (
+      <Select
+          id="tags"
+          name="tags"
+          isMulti
+          className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-full sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+          placeholder="Choose Recipe Tags"
+          defaultValue={tags}
+          options={tagOptions.current}
+          onChange={(e) => (
+            e.map((tag: any) => {
+              tagInput.push(tag.value);
+            }),
+            setRecipeForm({
+              ...recipeForm,
+              tagIds: tagInput,
+            })
+          )}
+        />
+    )
+  }
+
   return (
     <>
       <Navbar />
@@ -470,23 +497,7 @@ export default function CreateRecipe() {
                   </div>
                   <div className="flex flex-col">
                     <label className="leading-loose">Recipe Tags</label>
-                    <Select
-                      id="tags"
-                      name="tags"
-                      isMulti
-                      className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-full sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
-                      placeholder="Choose Recipe Tags"
-                      options={tagOptions.current}
-                      onChange={(e) => (
-                        e.map((tag: any) => {
-                          tagInput.push(tag.value);
-                        }),
-                        setRecipeForm({
-                          ...recipeForm,
-                          tagIds: tagInput,
-                        })
-                      )}
-                    />
+                    {tagOptionsDefault.length == 0 ? "Loading.." : tagSelect(tagOptionsDefault)}
                   </div>
                   <div className="flex flex-col">
                     <div className="flex flex-row">
