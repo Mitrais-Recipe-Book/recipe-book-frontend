@@ -8,7 +8,7 @@ interface CommentCardProps {
 
 export default function CommentCard(props: CommentCardProps) {
   return (
-    <div>
+    <div className="py-3">
       <div className="flex flex-col ">
         <div>
           <ProfileBedge username={props.username} />

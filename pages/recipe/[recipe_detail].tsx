@@ -63,6 +63,18 @@ export default function RecipeDetail() {
     followers: number;
   }
 
+  interface CommentContent {
+    username: string;
+    fullname: string;
+    date: string;
+    comment: string;
+  }
+
+  interface PageInfo {
+    page: number;
+    last: boolean;
+  }
+
   enum Reaction {
     Like = "LIKED",
     Dislike = "DISLIKED",
@@ -79,6 +91,11 @@ export default function RecipeDetail() {
   const [userInfo, setUserInfo] = useState<UserInfo>();
   const [ingredients, setIngredients] = useState<Ingredients[] | undefined>();
   const [userReaction, setUserReaction] = useState<Reaction>();
+  const [comments, setComments] = useState<CommentContent[]>([]);
+  const [pageInfo, setPageInfo] = useState<PageInfo>({
+    page: 0,
+    last: false,
+  });
 
   useEffect(() => {
     if (recipeId) {
@@ -128,6 +145,10 @@ export default function RecipeDetail() {
   useEffect(() => {
     getReactions(session?.user.username, recipe?.id);
   });
+
+  useEffect(() => {
+    pageInfo.page === 0 ? (recipeId ? getComments() : null) : null;
+  }, [recipeId, pageInfo.page]);
 
   function giveReaction(
     username: string,
@@ -222,6 +243,22 @@ export default function RecipeDetail() {
             : null;
         });
     }
+  }
+
+  function getComments() {
+    axios
+      .get(
+        process.env.API_URL +
+          `recipe/${recipeId}/comments?page=${pageInfo.page}`
+      )
+      .then((res) => {
+        setComments([...comments, ...res.data.payload.content]);
+        setPageInfo({ last: res.data.payload.last, page: pageInfo.page + 1 });
+      });
+  }
+  function refreshComment() {
+    setComments([]);
+    setPageInfo({ page: 0, last: false });
   }
 
   return (
@@ -396,13 +433,28 @@ export default function RecipeDetail() {
                   <CommentForm
                     recipeId={recipe?.id}
                     username={session?.user.username}
+                    refreshComment={refreshComment}
                   />
-                  <div className="container">
-                    {/* Maps goes here */}
-                    <CommentCard
-                      username="user1"
-                      comment="jvbjkdbgkjr jhergherhgiorh eghbhegibheikgiklergerglbjkrdegk egrjgbnerujwebg"
-                    />
+                  <div className="container flex flex-col">
+                    <div className="my-4">
+                      {comments
+                        ? comments?.map((comment) => (
+                            <CommentCard
+                              username={comment.username}
+                              comment={comment.comment}
+                            />
+                          ))
+                        : ""}
+                    </div>
+                    <button
+                      className="bg-red-600 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+                      disabled={pageInfo.last}
+                      onClick={() => {
+                        getComments();
+                      }}
+                    >
+                      {pageInfo.last ? "No more comments" : "Load more"}
+                    </button>
                   </div>
                 </div>
               </section>
