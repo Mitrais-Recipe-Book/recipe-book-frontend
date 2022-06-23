@@ -2,10 +2,12 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import { waitFor } from "@testing-library/react";
 
 interface CommentFormProps {
   recipeId: number | undefined;
   username: string | undefined;
+  refreshComment: () => void;
 }
 
 export default function CommentForm(props: CommentFormProps) {
@@ -14,7 +16,7 @@ export default function CommentForm(props: CommentFormProps) {
       {props.username ? (
         <Formik
           initialValues={{ comment: "" }}
-          onSubmit={(values) => {
+          onSubmit={(values, { resetForm }) => {
             axios
               .post(
                 process.env.API_URL + `recipe/${props.recipeId}/comment/add`,
@@ -24,10 +26,9 @@ export default function CommentForm(props: CommentFormProps) {
                 }
               )
               .then((res) => {
-                console.log(res);
-                console.log(props.username);
+                resetForm();
+                props.refreshComment();
               });
-            console.log(values.comment);
           }}
           validationSchema={Yup.object({
             comment: Yup.string()

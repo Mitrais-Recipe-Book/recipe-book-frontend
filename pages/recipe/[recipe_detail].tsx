@@ -148,7 +148,7 @@ export default function RecipeDetail() {
 
   useEffect(() => {
     pageInfo.page === 0 ? (recipeId ? getComments() : null) : null;
-  }, [recipeId]);
+  }, [recipeId, pageInfo.page]);
 
   function giveReaction(
     username: string,
@@ -255,6 +255,10 @@ export default function RecipeDetail() {
         setComments([...comments, ...res.data.payload.content]);
         setPageInfo({ last: res.data.payload.last, page: pageInfo.page + 1 });
       });
+  }
+  function refreshComment() {
+    setComments([]);
+    setPageInfo({ page: 0, last: false });
   }
 
   return (
@@ -429,6 +433,7 @@ export default function RecipeDetail() {
                   <CommentForm
                     recipeId={recipe?.id}
                     username={session?.user.username}
+                    refreshComment={refreshComment}
                   />
                   <div className="container flex flex-col">
                     <div className="my-4">
@@ -442,6 +447,7 @@ export default function RecipeDetail() {
                         : ""}
                     </div>
                     <button
+                      className="bg-red-600 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-2 px-4 rounded"
                       disabled={pageInfo.last}
                       onClick={() => {
                         getComments();
