@@ -137,6 +137,10 @@ export default function RecipeDetail() {
     getReactions(session?.user.username, recipe?.id);
   });
 
+  useEffect(() => {
+    recipeId ? getComments() : null;
+  }, [recipeId]);
+
   function giveReaction(
     username: string,
     recipeId: number | undefined,
@@ -233,11 +237,12 @@ export default function RecipeDetail() {
   }
 
   function getComments() {
-    let data: CommentContent[] = [];
+    let page = 0;
     axios
-      .get(process.env.API_URL + `recipe/${recipeId}/comments?page=0`)
+      .get(process.env.API_URL + `recipe/${recipeId}/comments?page=${page}`)
       .then((res) => {
         setComments([...comments, ...res.data.payload.content]);
+        page += 1;
       });
   }
 
