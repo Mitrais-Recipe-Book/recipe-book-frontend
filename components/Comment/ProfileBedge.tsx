@@ -1,4 +1,4 @@
-import ProfileImage from "@components/RecipeDetail/ProfileImage";
+import ProfileImage from "../RecipeDetail/ProfileImage";
 import React from "react";
 
 interface ProfileBedgeProps {
