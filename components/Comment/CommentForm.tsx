@@ -39,6 +39,7 @@ export default function CommentForm(props: CommentFormProps) {
             <Form className="flex flex-col gap-2">
               <div className="flex flex-row">
                 <Field
+                  data-testid="comment-field"
                   name="comment"
                   as="textarea"
                   className=" bg-white text-gray-700 border border-gray-400 p-2 rounded grow"
