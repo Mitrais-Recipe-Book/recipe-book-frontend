@@ -58,7 +58,9 @@ export default function CommentForm(props: CommentFormProps) {
                 <button
                   className="bg-red-500 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-1 px-8 rounded cursor-pointer disabled:cursor-default"
                   type="submit"
-                  disabled={!props.isValid}
+                  disabled={
+                    !props.isValid || props.isSubmitting || !props.dirty
+                  }
                 >
                   POST
                 </button>
