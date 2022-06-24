@@ -106,7 +106,7 @@ export default function CreateRecipe() {
               for (let j in recipeTags) {
                 if (tagOptions.current[i].label == recipeTags[j].name) {
                   defaultTags.push({
-                    label: recipeTags[i].name,
+                    label: recipeTags[j].name,
                     value: tagOptions.current[i].value
                   })
                 }
