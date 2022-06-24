@@ -15,11 +15,30 @@ import { getSession } from "next-auth/react";
 // 3. form validation biar gk error
 // 4. make banner image optional
 
+type RecipeDto = {
+  userId: number,
+  tagIds: [],
+  title: string,
+  overview: string,
+  ingredients: string,
+  content: string,
+  videoURL: string,
+  draft: boolean
+}
+
 export default function CreateRecipe() {
   const { query } = useRouter();
   const router = useRouter();
   const userInfo: any = useRef();
-  const [recipeForm, setRecipeForm]: any = useState({});
+  const [recipeForm, setRecipeForm] = useState<RecipeDto>({
+    userId: -1,
+    tagIds: [],
+    title: "",
+    overview: "",
+    ingredients: "",
+    content: "",
+    videoURL: "",
+    draft: true});
   const [ingredientList, setIngredientList]: any = useState([]);
   const [imageFormData, setImageFormData]: any = useState({});
   const [contentValue, setContentValue]: any = useState("");
@@ -35,7 +54,7 @@ export default function CreateRecipe() {
   const [tagOptionsDefault, setTagOptionsDefault]: any = useState([]);
   const tagOptions: any = useRef([]);
   const tagInput: any = [];
-  const ingredientListCount: any = useRef(0);
+  const ingredientListCount = useRef(0);
   const [isEdit, setIsEdit] = useState(false)
   // fetch tags from db and add it to the tag options
   // also fetch userID from username saved in localstorage
@@ -54,6 +73,7 @@ export default function CreateRecipe() {
         userInfo.current = session?.user!!
 
         if (query.id) {
+          onRemoveBtnClick()
           const editRecipe = await axios
             .get("https://recipyb-dev.herokuapp.com/api/v1/recipe/" + query.id)
             .then((res) => res.data.payload)
@@ -66,12 +86,6 @@ export default function CreateRecipe() {
               // Forbidden, also not allowed
               router.replace("/")
             }
-
-            const ingredients: [] = JSON.parse(editRecipe.ingredients)
-            
-            const ingredientsElm = ingredients.map((it, i) => {
-              return <IngredientInput key={i} index={ingredientListCount.current++} defaultVal={it}/>
-            })
 
             const tagss = await axios
               .get("https://recipyb-dev.herokuapp.com/api/v1/tag")
@@ -99,9 +113,27 @@ export default function CreateRecipe() {
               }
             }
 
+            const ingredients: [] = JSON.parse(editRecipe.ingredients)
+
+            const ingredientsElm = ingredients.map((it: any, i) => {
+              ingredientFormData.current.ingredients[ingredientListCount.current] = {
+                name: it.name,
+                qty: it.qty
+              }
+              return <IngredientInput key={i} index={ingredientListCount.current++} defaultVal={it}/>
+            })
 
             setIngredientList(ingredientsElm)
-            setRecipeForm(editRecipe)
+            setRecipeForm({
+              userId: currentUserId,
+              title: editRecipe.title,
+              overview: editRecipe.overview,
+              videoURL: editRecipe.videoURL,
+              content: editRecipe.content,
+              ingredients: JSON.stringify(editRecipe.ingredients),
+              tagIds: recipeTags.map((it: any) => it.id),
+              draft: false
+            })
             setTagOptionsDefault(defaultTags)
             setIsEdit(true)
             setContentValue(editRecipe.content)
@@ -256,7 +288,6 @@ export default function CreateRecipe() {
       ingredients,
       content: contentValues,
     });
-    console.log(recipeForm);
     setSubmitFormState(true);
   }
 
@@ -351,10 +382,6 @@ export default function CreateRecipe() {
       missingFields += "<br>Overview has to be less than 280 characters";
       form = false;
     }
-    if (recipeForm.description === "") {
-      missingFields += "<br>Description is Empty";
-      form = false;
-    }
     if (recipeForm.ingredients === "") {
       missingFields += "<br>Ingredients are Empty";
       form = false;
@@ -370,7 +397,7 @@ export default function CreateRecipe() {
     // check if imageFormData uploaded is not image file
     if (
       imageFormData.type !== "image/jpeg" &&
-      imageFormData.type !== "image/png"
+      imageFormData.type !== "image/png" && !isEdit
     ) {
       missingFields += "<br>Image is not a valid image file";
       form = false;
@@ -392,7 +419,7 @@ export default function CreateRecipe() {
     }
     if (form === false) {
       Swal.fire({
-        title: "Faile to Submit Recipe",
+        title: "Failed to Submit Recipe",
         html: missingFields,
         icon: "error",
       });
