@@ -2,6 +2,7 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 interface CommentFormProps {
   recipeId: number | undefined;
@@ -27,6 +28,15 @@ export default function CommentForm(props: CommentFormProps) {
               .then((res) => {
                 resetForm();
                 props.refreshComment();
+              })
+              .catch((err) => {
+                Swal.fire({
+                  title: "Comment Failed",
+                  text: err.response.data.message,
+                  icon: "error",
+                }).then(() => {
+                  resetForm();
+                });
               });
           }}
           validationSchema={Yup.object({
