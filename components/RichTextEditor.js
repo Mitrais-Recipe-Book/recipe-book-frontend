@@ -1,18 +1,26 @@
 /* eslint-disable react/no-string-refs */
 import {
+  convertFromRaw,
   convertToRaw,
   Editor,
   EditorState,
   getDefaultKeyBinding,
   RichUtils,
 } from "draft-js";
-import { convertToHTML } from "draft-convert";
+import { convertFromHTML, convertToHTML } from "draft-convert";
 import React from "react";
 
 class RichTextEditor extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { editorState: EditorState.createEmpty() };
+
+    //set state to value if state is not empty
+    const value = this.props.defaultValue
+    const content = value ?
+      EditorState.createWithContent(convertFromHTML(value)) : 
+      EditorState.createEmpty()
+    
+    this.state = { editorState: content };
     this.focus = () => this.refs.editor.focus();
     this.getHtmlContent = this.props.getHtmlContent;
     this.onChange = (editorState) => {
@@ -25,13 +33,6 @@ class RichTextEditor extends React.Component {
     this.mapKeyToEditorCommand = this._mapKeyToEditorCommand.bind(this);
     this.toggleBlockType = this._toggleBlockType.bind(this);
     this.toggleInlineStyle = this._toggleInlineStyle.bind(this);
-
-    //set state to value if state is not empty
-    if (this.value) {
-      this.state = {
-        editorState: EditorState.createWithContent(this.props.value),
-      };
-    }
   }
 
   _handleKeyCommand(command, editorState) {

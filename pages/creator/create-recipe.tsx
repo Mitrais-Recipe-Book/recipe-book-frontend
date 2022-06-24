@@ -40,32 +40,26 @@ export default function CreateRecipe() {
   const username = "user1";
   const ingredientListCount: any = useRef(0);
 
+  const [isEdit, setIsEdit] = useState(false)
   // fetch tags from db and add it to the tag options
   // also fetch userID from username saved in localstorage
 
   useEffect(() => {
     const fetchData = async () => {
-      axios
-        .get("https://recipyb-dev.herokuapp.com/api/v1/user/" + username)
-        .then((res) => {
-          //@ts-ignore
-          setUserInfo(res.data.payload);
-          // console.log("User Info: ", res.data.payload);
-          setRecipeForm({
-            ...recipeForm,
-            userId: res.data.payload.id,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      const currentUser = await axios
+      .get("https://recipyb-dev.herokuapp.com/api/v1/user/" + username)
+      .then((res) => res.data.payload)
+      .catch((err) => console.log(err));
+      
+      setUserInfo(currentUser);
+      setRecipeForm({
+        ...recipeForm,
+        userId: currentUser.id,
+      });
+
       const tagss = await axios
         .get("https://recipyb-dev.herokuapp.com/api/v1/tag")
-        .then((res) => {
-          // setRecipeTagsData(res.data.payload);
-          // console.log("Tags: ", res.data.payload);
-          return res.data.payload
-        })
+        .then((res) => res.data.payload)
         .catch((err) => {
           console.log(err);
         });
@@ -82,12 +76,15 @@ export default function CreateRecipe() {
       if (query.id) {
         const editRecipe = await axios
           .get("https://recipyb-dev.herokuapp.com/api/v1/recipe/" + query.id)
-          .then((res) => {
-            for (const index in ingredientFormData) {
-              onAddBtnClick();
-            }
-            return res.data.payload
+          .then((res) => res.data.payload)
+
+          const ingredients: [] = JSON.parse(editRecipe.ingredients)
+          
+          const ingredientsElm = ingredients.map((it, i) => {
+            return <IngredientInput key={i} index={ingredientListCount.current++} defaultVal={it}/>
           })
+
+          setIngredientList(ingredientsElm)
 
           setRecipeForm(editRecipe)
 
@@ -106,6 +103,10 @@ export default function CreateRecipe() {
           }
 
           setTagOptionsDefault(defaultTags)
+          setIsEdit(true)
+          setContentValue(editRecipe.content)
+      } else {
+        onAddBtnClick()
       }
     }
 
@@ -114,12 +115,11 @@ export default function CreateRecipe() {
 
   //add new ingredient input form
   function onAddBtnClick() {
-    ingredientListCount.current++;
     setIngredientList(
       ingredientList.concat(
         <IngredientInput
           key={ingredientList.length}
-          index={ingredientListCount.current}
+          index={ingredientListCount.current++}
         />
       )
     );
@@ -198,7 +198,7 @@ export default function CreateRecipe() {
   }
 
   // Creates new ingredient object and adds the ingredient list
-  const IngredientInput = ({ index }: any) => {
+  const IngredientInput = ({ index, defaultVal }: any) => {
     return (
       <div className="pb-2 flex flex-row pr-[55px]">
         <input
@@ -208,11 +208,7 @@ export default function CreateRecipe() {
           placeholder="Ingredient name"
           required
           // note for Naufal: use conditional rendering if value of ingredientFormData exist from db. if theres no value or null, don't use default value
-          defaultValue={
-            ingredientFormData.current?.name
-              ? ingredientFormData.current[index]?.name
-              : ""
-          }
+          defaultValue={defaultVal && defaultVal.name}
           onChange={(e) =>
             (ingredientFormData.current.ingredients[index] = {
               ...ingredientFormData.current.ingredients[index],
@@ -221,17 +217,13 @@ export default function CreateRecipe() {
           }
         />
         <input
-          type="text"
+          type="number"
           className="ml-2 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
           style={{ flex: "1 1" }}
           placeholder="quantity"
           required
           // note for Naufal: use conditional rendering if value of ingredientFormData exist from db. if theres no value or null, don't use default value
-          defaultValue={
-            ingredientFormData.current?.qty
-              ? ingredientFormData.current[index]?.qty
-              : ""
-          }
+          defaultValue={defaultVal && defaultVal.qty}
           onChange={(e) =>
             (ingredientFormData.current.ingredients[index] = {
               ...ingredientFormData.current.ingredients[index],
@@ -242,14 +234,6 @@ export default function CreateRecipe() {
       </div>
     );
   };
-
-  //map recipe tags into tag options
-  // tagOptions.current = recipeTagsData.map((tag: { id: any; name: any }) => {
-  //   return {
-  //     label: tag.name,
-  //     value: tag.id,
-  //   };
-  // });
 
   useEffect(() => {
     if (submitFormState) {
@@ -415,7 +399,7 @@ export default function CreateRecipe() {
     return true;
   }
 
-  function tagSelect(tags: any) {
+  function TagSelect(tags: []) {
     return (
       <Select
           id="tags"
@@ -437,7 +421,7 @@ export default function CreateRecipe() {
         />
     )
   }
-
+  
   return (
     <>
       <Navbar />
@@ -497,7 +481,8 @@ export default function CreateRecipe() {
                   </div>
                   <div className="flex flex-col">
                     <label className="leading-loose">Recipe Tags</label>
-                    {tagOptionsDefault.length == 0 ? "Loading.." : tagSelect(tagOptionsDefault)}
+                    {!isEdit && TagSelect([])}
+                    {isEdit && TagSelect(tagOptionsDefault)}
                   </div>
                   <div className="flex flex-col">
                     <div className="flex flex-row">
@@ -518,49 +503,6 @@ export default function CreateRecipe() {
                       </div>
                     </div>
 
-                    <div className="pb-2 flex flex-row pr-[55px]">
-                      {/* 2 input dibawah kalau mau pake conditional rendering, kalau mau di jadiin component pisah biar gk kepanjangan*/}
-                      <input
-                        type="text"
-                        className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
-                        // className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
-                        placeholder="Ingredient name"
-                        required
-                        style={{ flex: "2 1" }}
-                        // note for Naufal: use conditional rendering if value of ingredientFormData exist from db. if theres no value or null, don't use default value
-                        defaultValue={
-                          // ingredientFormData?.current?.name
-                          ingredientFormData?.current[0]?.name
-                          // : ""
-                        }
-                        onChange={(e) =>
-                          (ingredientFormData.current.ingredients[0] = {
-                            ...ingredientFormData.current.ingredients[0],
-                            name: e.target.value,
-                          })
-                        }
-                      />
-                      <input
-                        type="text"
-                        className="ml-2 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
-                        // className="ml-2 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-11/12 sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
-                        placeholder="quantity"
-                        required
-                        style={{ flex: "1 1" }}
-                        // note for Naufal: use conditional rendering if value of ingredientFormData exist from db. if theres no value or null, don't use default value
-                        defaultValue={
-                          ingredientFormData?.current?.qty
-                            ? ingredientFormData?.current[0]?.qty
-                            : ""
-                        }
-                        onChange={(e) =>
-                          (ingredientFormData.current.ingredients[0] = {
-                            ...ingredientFormData.current.ingredients[0],
-                            qty: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
                     {ingredientList}
                   </div>
                   <div className="flex flex-col">
@@ -592,12 +534,14 @@ export default function CreateRecipe() {
                   <div className="flex flex-col">
                     <label className="leading-loose"> Content</label>
                     {/* {recipeForm.content? pake RCE pass props value: pake RCE ga pass props} */}
+                    {isEdit && 
                     <RichTextEditor
                       // note for Naufal: dont forget to use conditional rendering if recipeForm.content value exist from database. check RichTextEditor line 29.
-                      value={recipeForm?.content}
                       className="pb-14"
                       getHtmlContent={getHtmlContent}
-                    />
+                      defaultValue={contentValue}
+                     />}
+                     {!isEdit && <RichTextEditor className="pb-14" getHtmlContent={getHtmlContent} />}
                   </div>
                 </div>
                 <div className="pt-4 flex items-center space-x-4">
