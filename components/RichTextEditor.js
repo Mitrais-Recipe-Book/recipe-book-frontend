@@ -1,7 +1,5 @@
 /* eslint-disable react/no-string-refs */
 import {
-  convertFromRaw,
-  convertToRaw,
   Editor,
   EditorState,
   getDefaultKeyBinding,

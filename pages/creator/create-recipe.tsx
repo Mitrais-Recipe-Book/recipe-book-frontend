@@ -7,8 +7,8 @@ import { IoIosAdd, IoIosRemove } from "react-icons/io";
 import Select from "react-select";
 import Swal, { SweetAlertResult } from "sweetalert2";
 import { useRouter } from "next/router";
-import { convertFromHTML } from "draft-convert";
 import RichTextEditor from "@components/RichTextEditor";
+import { getSession } from "next-auth/react";
 
 // 1. conditional editorstate kl ada value biar keisi
 // 2. conditional ingredientlist
@@ -18,13 +18,12 @@ import RichTextEditor from "@components/RichTextEditor";
 export default function CreateRecipe() {
   const { query } = useRouter();
   const router = useRouter();
-  const [userInfo, setUserInfo]: any = useState({});
+  const userInfo: any = useRef();
   const [recipeForm, setRecipeForm]: any = useState({});
   const [ingredientList, setIngredientList]: any = useState([]);
   const [imageFormData, setImageFormData]: any = useState({});
-  const [recipeTagsData, setRecipeTagsData]: any = useState([]);
   const [contentValue, setContentValue]: any = useState("");
-  const [rawContentValue, setRawContentValue]: any = useState("");
+  const [isLoaded, setIsLoaded] = useState(false);
   const [submitFormState, setSubmitFormState]: any = useState(false);
 
   // const [ingredientFormData, setIngredientFormData]: any = useState({
@@ -36,82 +35,85 @@ export default function CreateRecipe() {
   const [tagOptionsDefault, setTagOptionsDefault]: any = useState([]);
   const tagOptions: any = useRef([]);
   const tagInput: any = [];
-  // note: use session from next to change the username
-  const username = "user1";
   const ingredientListCount: any = useRef(0);
-
   const [isEdit, setIsEdit] = useState(false)
   // fetch tags from db and add it to the tag options
   // also fetch userID from username saved in localstorage
 
   useEffect(() => {
     const fetchData = async () => {
-      const currentUser = await axios
-      .get("https://recipyb-dev.herokuapp.com/api/v1/user/" + username)
-      .then((res) => res.data.payload)
-      .catch((err) => console.log(err));
       
-      setUserInfo(currentUser);
-      setRecipeForm({
-        ...recipeForm,
-        userId: currentUser.id,
-      });
+      const session = await getSession()
+  
+      if (!session) {
+        // No session, not allowed
+        router.replace("/")
 
-      const tagss = await axios
-        .get("https://recipyb-dev.herokuapp.com/api/v1/tag")
-        .then((res) => res.data.payload)
-        .catch((err) => {
-          console.log(err);
-        });
-      // eslint-disable-next-line
-      setRecipeTagsData(tagss)
+      } else {
 
-      tagOptions.current = tagss.map((tag: { id: any; name: any }) => {
-        return {
-          label: tag.name,
-          value: tag.id,
-        };
-      });
+        userInfo.current = session?.user!!
 
-      if (query.id) {
-        const editRecipe = await axios
-          .get("https://recipyb-dev.herokuapp.com/api/v1/recipe/" + query.id)
-          .then((res) => res.data.payload)
+        if (query.id) {
+          const editRecipe = await axios
+            .get("https://recipyb-dev.herokuapp.com/api/v1/recipe/" + query.id)
+            .then((res) => res.data.payload)
 
-          const ingredients: [] = JSON.parse(editRecipe.ingredients)
-          
-          const ingredientsElm = ingredients.map((it, i) => {
-            return <IngredientInput key={i} index={ingredientListCount.current++} defaultVal={it}/>
-          })
+            const recipeAuthorId = editRecipe.author.id
+            // @ts-ignore
+            const currentUserId = session?.user?.id
 
-          setIngredientList(ingredientsElm)
+            if (recipeAuthorId != currentUserId) {
+              // Forbidden, also not allowed
+              router.replace("/")
+            }
 
-          setRecipeForm(editRecipe)
+            const ingredients: [] = JSON.parse(editRecipe.ingredients)
+            
+            const ingredientsElm = ingredients.map((it, i) => {
+              return <IngredientInput key={i} index={ingredientListCount.current++} defaultVal={it}/>
+            })
 
-          const recipeTags = editRecipe.tags
-          let defaultTags = []
-          
-          for (let i in tagOptions.current) {
-            for (let j in recipeTags) {
-              if (tagOptions.current[i].label == recipeTags[j].name) {
-                defaultTags.push({
-                  label: recipeTags[i].name,
-                  value: tagOptions.current[i].value
-                })
+            const tagss = await axios
+              .get("https://recipyb-dev.herokuapp.com/api/v1/tag")
+              .then((res) => res.data.payload)
+              .catch((err) => console.log(err));
+
+            tagOptions.current = tagss.map((tag: { id: any; name: any }) => {
+              return {
+                label: tag.name,
+                value: tag.id,
+              };
+            });
+
+            const recipeTags = editRecipe.tags
+            let defaultTags = []
+            
+            for (let i in tagOptions.current) {
+              for (let j in recipeTags) {
+                if (tagOptions.current[i].label == recipeTags[j].name) {
+                  defaultTags.push({
+                    label: recipeTags[i].name,
+                    value: tagOptions.current[i].value
+                  })
+                }
               }
             }
-          }
 
-          setTagOptionsDefault(defaultTags)
-          setIsEdit(true)
-          setContentValue(editRecipe.content)
-      } else {
-        onAddBtnClick()
+
+            setIngredientList(ingredientsElm)
+            setRecipeForm(editRecipe)
+            setTagOptionsDefault(defaultTags)
+            setIsEdit(true)
+            setContentValue(editRecipe.content)
+        } else {
+          onAddBtnClick()
+        }
+        setIsLoaded(true)
       }
     }
 
     fetchData()
-  }, [query]);
+  }, [query.id]);
 
   //add new ingredient input form
   function onAddBtnClick() {
@@ -421,8 +423,8 @@ export default function CreateRecipe() {
         />
     )
   }
-  
-  return (
+
+  return !isLoaded ? (<p>...</p>) : (
     <>
       <Navbar />
       <div
@@ -442,7 +444,7 @@ export default function CreateRecipe() {
                   objectFit="cover"
                 />
                 <div className="block pl-2 font-semibold text-xl self-start text-gray-700">
-                  <h1 className="leading-relaxed">{userInfo.fullName}</h1>
+                  <h1 className="leading-relaxed">{userInfo.current.fullName}</h1>
                   <h2 className="leading-relaxed">
                     {query.id
                       ? "Edit Recipe: " + recipeForm?.title
@@ -561,7 +563,7 @@ export default function CreateRecipe() {
                     className="bg-blue-500 flex justify-center items-center w-full text-white px-4 py-3 rounded-md focus:outline-none"
                     onClick={onSubmitClick}
                   >
-                    Create
+                    {isEdit ? "Save" : "Create"}
                   </button>
                 </div>
               </div>
