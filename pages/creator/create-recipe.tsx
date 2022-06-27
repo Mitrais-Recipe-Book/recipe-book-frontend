@@ -192,10 +192,6 @@ export default function CreateRecipe() {
   }
 
   function onDraftClick() {
-    setRecipeForm({
-      ...recipeForm,
-      draft: true,
-    });
     Swal.fire({
       title: "Draft your Recipe?",
       text: "You can edit and submit your recipe later.",
@@ -207,7 +203,7 @@ export default function CreateRecipe() {
       cancelButtonText: "Wait, I need to make changes!",
     }).then((result: SweetAlertResult<any>) => {
       if (result.value) {
-        submitForm();
+        submitForm(true);
 
         router.push("/profile");
       }
@@ -215,10 +211,6 @@ export default function CreateRecipe() {
   }
 
   function onSubmitClick() {
-    setRecipeForm({
-      ...recipeForm,
-      draft: false,
-    });
     Swal.fire({
       title: "Submit your form?",
       text: "You can edit and submit your recipe later.",
@@ -230,8 +222,7 @@ export default function CreateRecipe() {
       cancelButtonText: "Wait, I need to make changes!",
     }).then((result: SweetAlertResult<any>) => {
       if (result.value) {
-        console.log(submitFormState);
-        submitForm();
+        submitForm(false);
       }
     });
   }
@@ -282,7 +273,7 @@ export default function CreateRecipe() {
   }, [submitFormState]);
 
   // submit form function
-  function submitForm() {
+  function submitForm(isDraft: boolean) {
     let contentValues = contentValue;
     let ingredients: any = JSON.stringify(
       ingredientFormData.current.ingredients
@@ -292,6 +283,8 @@ export default function CreateRecipe() {
       ...recipeForm,
       ingredients,
       content: contentValues,
+      draft: isDraft,
+      userId: userInfo.current.id
     });
     setSubmitFormState(true);
   }
@@ -338,7 +331,7 @@ export default function CreateRecipe() {
       Swal.fire({
         title: "Recipe Submitted!",
         icon: "success",
-      }).then(() => router.push("/"));
+      }).then(() => router.push("/profile"));
       return;
     }
     const formData: any = new FormData();
