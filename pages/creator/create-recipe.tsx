@@ -157,7 +157,6 @@ export default function CreateRecipe() {
         />
       )
     );
-    console.log(ingredientFormData.current);
   }
 
   // remove ingredient input form
@@ -166,7 +165,6 @@ export default function CreateRecipe() {
       setIngredientList(ingredientList.slice(0, -1));
       ingredientFormData.current.ingredients.splice(0, 1);
       ingredientListCount.current--;
-      console.log(ingredientFormData.current);
     }
   }
 
@@ -282,7 +280,7 @@ export default function CreateRecipe() {
     let ingredients: any = JSON.stringify(
       ingredientFormData.current.ingredients
     );
-    console.log(ingredients);
+    
     setRecipeForm({
       ...recipeForm,
       ingredients,
@@ -304,7 +302,6 @@ export default function CreateRecipe() {
             recipeForm
           )
           .then((res) => {
-            console.log("Recipe Updated, now uploading image");
             uploadImage(query.id);
           })
           .catch((err) => {
@@ -317,7 +314,6 @@ export default function CreateRecipe() {
             recipeForm
           )
           .then((res) => {
-            console.log("uploaded recipe, now uploading image");
             uploadImage(res.data.payload);
           })
           .catch((err) => {
@@ -337,9 +333,7 @@ export default function CreateRecipe() {
       return
     }
     const formData: any = new FormData();
-    console.log(imageFormData);
     formData.append("photo", imageFormData, imageFormData.name);
-    console.log(formData.get(imageFormData));
     axios
       .put(
         "https://recipyb-dev.herokuapp.com/api/v1/recipe/" +
