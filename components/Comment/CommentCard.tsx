@@ -13,7 +13,7 @@ export default function CommentCard(props: CommentCardProps) {
         <div>
           <ProfileBedge username={props.username} />
         </div>
-        <div className="grow ml-12 -mt-5">{props.comment}</div>
+        <div className="grow ml-12 -mt-5 break-all">{props.comment}</div>
       </div>
     </div>
   );
