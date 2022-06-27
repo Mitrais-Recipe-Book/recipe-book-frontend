@@ -1,23 +1,30 @@
 /* eslint-disable react/no-string-refs */
 import {
-  convertToRaw,
   Editor,
   EditorState,
   getDefaultKeyBinding,
   RichUtils,
 } from "draft-js";
-import { convertToHTML } from "draft-convert";
+import { convertFromHTML, convertToHTML } from "draft-convert";
 import React from "react";
 
 class RichTextEditor extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { editorState: EditorState.createEmpty() };
+
+    //set state to value if state is not empty
+    const value = this.props.defaultValue
+    const content = value ?
+      EditorState.createWithContent(convertFromHTML(value)) : 
+      EditorState.createEmpty()
+    
+    this.state = { editorState: content };
     this.focus = () => this.refs.editor.focus();
     this.getHtmlContent = this.props.getHtmlContent;
     this.onChange = (editorState) => {
       this.setState({ editorState });
       this.getHtmlContent(convertToHTML(editorState.getCurrentContent()));
+      console.log("richTextEditor", editorState);
     };
 
     this.handleKeyCommand = this._handleKeyCommand.bind(this);
