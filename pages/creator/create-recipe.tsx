@@ -16,15 +16,15 @@ import { getSession } from "next-auth/react";
 // 4. make banner image optional
 
 type RecipeDto = {
-  userId: number,
-  tagIds: [],
-  title: string,
-  overview: string,
-  ingredients: string,
-  content: string,
-  videoURL: string,
-  draft: boolean
-}
+  userId: number;
+  tagIds: [];
+  title: string;
+  overview: string;
+  ingredients: string;
+  content: string;
+  videoURL: string;
+  draft: boolean;
+};
 
 export default function CreateRecipe() {
   const { query } = useRouter();
@@ -38,7 +38,8 @@ export default function CreateRecipe() {
     ingredients: "",
     content: "",
     videoURL: "",
-    draft: true});
+    draft: true,
+  });
   const [ingredientList, setIngredientList]: any = useState([]);
   const [imageFormData, setImageFormData]: any = useState({});
   const [contentValue, setContentValue]: any = useState("");
@@ -55,22 +56,19 @@ export default function CreateRecipe() {
   const tagOptions: any = useRef([]);
   const tagInput: any = [];
   const ingredientListCount = useRef(0);
-  const [isEdit, setIsEdit] = useState(false)
+  const [isEdit, setIsEdit] = useState(false);
   // fetch tags from db and add it to the tag options
   // also fetch userID from username saved in localstorage
 
   useEffect(() => {
     const fetchData = async () => {
-      
-      const session = await getSession()
-  
+      const session = await getSession();
+
       if (!session) {
         // No session, not allowed
-        router.replace("/")
-
+        router.replace("/");
       } else {
-
-        userInfo.current = session?.user!!
+        userInfo.current = session?.user!!;
 
         const tagss = await axios
           .get("https://recipyb-dev.herokuapp.com/api/v1/tag")
@@ -80,71 +78,79 @@ export default function CreateRecipe() {
         tagOptions.current = tagss.map((tag: { id: any; name: any }) => {
           return {
             label: tag.name,
-              value: tag.id,
-            };
-          });
+            value: tag.id,
+          };
+        });
 
         if (query.id) {
-          onRemoveBtnClick()
+          onRemoveBtnClick();
           const editRecipe = await axios
             .get("https://recipyb-dev.herokuapp.com/api/v1/recipe/" + query.id)
-            .then((res) => res.data.payload)
+            .then((res) => res.data.payload);
 
-            const recipeAuthorId = editRecipe.author.id
-            // @ts-ignore
-            const currentUserId = session?.user?.id
+          const recipeAuthorId = editRecipe.author.id;
+          // @ts-ignore
+          const currentUserId = session?.user?.id;
 
-            if (recipeAuthorId != currentUserId) {
-              // Forbidden, also not allowed
-              router.replace("/")
-            }
+          if (recipeAuthorId != currentUserId) {
+            // Forbidden, also not allowed
+            router.replace("/");
+          }
 
-            const recipeTags = editRecipe.tags
-            let defaultTags = []
-            
-            for (let i in tagOptions.current) {
-              for (let j in recipeTags) {
-                if (tagOptions.current[i].label == recipeTags[j].name) {
-                  defaultTags.push({
-                    label: recipeTags[j].name,
-                    value: tagOptions.current[i].value
-                  })
-                }
+          const recipeTags = editRecipe.tags;
+          let defaultTags = [];
+
+          for (let i in tagOptions.current) {
+            for (let j in recipeTags) {
+              if (tagOptions.current[i].label == recipeTags[j].name) {
+                defaultTags.push({
+                  label: recipeTags[j].name,
+                  value: tagOptions.current[i].value,
+                });
               }
             }
+          }
 
-            const ingredients: [] = JSON.parse(editRecipe.ingredients)
+          const ingredients: [] = JSON.parse(editRecipe.ingredients);
 
-            const ingredientsElm = ingredients.map((it: any, i) => {
-              ingredientFormData.current.ingredients[ingredientListCount.current] = {
-                name: it.name,
-                qty: it.qty
-              }
-              return <IngredientInput key={i} index={ingredientListCount.current++} defaultVal={it}/>
-            })
+          const ingredientsElm = ingredients.map((it: any, i) => {
+            ingredientFormData.current.ingredients[
+              ingredientListCount.current
+            ] = {
+              name: it.name,
+              qty: it.qty,
+            };
+            return (
+              <IngredientInput
+                key={i}
+                index={ingredientListCount.current++}
+                defaultVal={it}
+              />
+            );
+          });
 
-            setIngredientList(ingredientsElm)
-            setRecipeForm({
-              userId: currentUserId,
-              title: editRecipe.title,
-              overview: editRecipe.overview,
-              videoURL: editRecipe.videoURL,
-              content: editRecipe.content,
-              ingredients: JSON.stringify(editRecipe.ingredients),
-              tagIds: recipeTags.map((it: any) => it.id),
-              draft: false
-            })
-            setTagOptionsDefault(defaultTags)
-            setIsEdit(true)
-            setContentValue(editRecipe.content)
+          setIngredientList(ingredientsElm);
+          setRecipeForm({
+            userId: currentUserId,
+            title: editRecipe.title,
+            overview: editRecipe.overview,
+            videoURL: editRecipe.videoURL,
+            content: editRecipe.content,
+            ingredients: JSON.stringify(editRecipe.ingredients),
+            tagIds: recipeTags.map((it: any) => it.id),
+            draft: false,
+          });
+          setTagOptionsDefault(defaultTags);
+          setIsEdit(true);
+          setContentValue(editRecipe.content);
         } else {
-          onAddBtnClick()
+          onAddBtnClick();
         }
-        setIsLoaded(true)
+        setIsLoaded(true);
       }
-    }
+    };
 
-    fetchData()
+    fetchData();
   }, [query.id]);
 
   //add new ingredient input form
@@ -224,6 +230,7 @@ export default function CreateRecipe() {
       cancelButtonText: "Wait, I need to make changes!",
     }).then((result: SweetAlertResult<any>) => {
       if (result.value) {
+        console.log(submitFormState);
         submitForm();
       }
     });
@@ -280,7 +287,7 @@ export default function CreateRecipe() {
     let ingredients: any = JSON.stringify(
       ingredientFormData.current.ingredients
     );
-    
+
     setRecipeForm({
       ...recipeForm,
       ingredients,
@@ -321,6 +328,8 @@ export default function CreateRecipe() {
           });
         setSubmitFormState(false);
       }
+    } else {
+      setSubmitFormState(false);
     }
   }
   //upload image form function
@@ -330,7 +339,7 @@ export default function CreateRecipe() {
         title: "Recipe Submitted!",
         icon: "success",
       }).then(() => router.push("/"));
-      return
+      return;
     }
     const formData: any = new FormData();
     formData.append("photo", imageFormData, imageFormData.name);
@@ -398,7 +407,8 @@ export default function CreateRecipe() {
     // check if imageFormData uploaded is not image file
     if (
       imageFormData.type !== "image/jpeg" &&
-      imageFormData.type !== "image/png" && !isEdit
+      imageFormData.type !== "image/png" &&
+      !isEdit
     ) {
       missingFields += "<br>Image is not a valid image file";
       form = false;
@@ -432,27 +442,29 @@ export default function CreateRecipe() {
   function TagSelect(tags: []) {
     return (
       <Select
-          id="tags"
-          name="tags"
-          isMulti
-          className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-full sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
-          placeholder="Choose Recipe Tags"
-          defaultValue={tags}
-          options={tagOptions.current}
-          onChange={(e) => (
-            e.map((tag: any) => {
-              tagInput.push(tag.value);
-            }),
-            setRecipeForm({
-              ...recipeForm,
-              tagIds: tagInput,
-            })
-          )}
-        />
-    )
+        id="tags"
+        name="tags"
+        isMulti
+        className="px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-full sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+        placeholder="Choose Recipe Tags"
+        defaultValue={tags}
+        options={tagOptions.current}
+        onChange={(e) => (
+          e.map((tag: any) => {
+            tagInput.push(tag.value);
+          }),
+          setRecipeForm({
+            ...recipeForm,
+            tagIds: tagInput,
+          })
+        )}
+      />
+    );
   }
 
-  return !isLoaded ? (<></>) : (
+  return !isLoaded ? (
+    <></>
+  ) : (
     <>
       <Navbar />
       <div
@@ -472,7 +484,9 @@ export default function CreateRecipe() {
                   objectFit="cover"
                 />
                 <div className="block pl-2 font-semibold text-xl self-start text-gray-700">
-                  <h1 className="leading-relaxed">{userInfo.current.fullName}</h1>
+                  <h1 className="leading-relaxed">
+                    {userInfo.current.fullName}
+                  </h1>
                   <h2 className="leading-relaxed">
                     {query.id
                       ? "Edit Recipe: " + recipeForm?.title
@@ -564,14 +578,20 @@ export default function CreateRecipe() {
                   <div className="flex flex-col">
                     <label className="leading-loose"> Content</label>
                     {/* {recipeForm.content? pake RCE pass props value: pake RCE ga pass props} */}
-                    {isEdit && 
-                    <RichTextEditor
-                      // note for Naufal: dont forget to use conditional rendering if recipeForm.content value exist from database. check RichTextEditor line 29.
-                      className="pb-14"
-                      getHtmlContent={getHtmlContent}
-                      defaultValue={contentValue}
-                     />}
-                     {!isEdit && <RichTextEditor className="pb-14" getHtmlContent={getHtmlContent} />}
+                    {isEdit && (
+                      <RichTextEditor
+                        // note for Naufal: dont forget to use conditional rendering if recipeForm.content value exist from database. check RichTextEditor line 29.
+                        className="pb-14"
+                        getHtmlContent={getHtmlContent}
+                        defaultValue={contentValue}
+                      />
+                    )}
+                    {!isEdit && (
+                      <RichTextEditor
+                        className="pb-14"
+                        getHtmlContent={getHtmlContent}
+                      />
+                    )}
                   </div>
                 </div>
                 <div className="pt-4 flex items-center space-x-4">
