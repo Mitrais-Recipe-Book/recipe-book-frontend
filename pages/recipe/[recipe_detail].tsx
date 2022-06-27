@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { FiEye, FiHeart, FiThumbsUp } from "react-icons/fi";
+import { FiEye, FiHeart, FiEdit2 } from "react-icons/fi";
 import { FaRegSurprise } from "react-icons/fa";
 import { BsFillBookmarkCheckFill } from "react-icons/bs";
 import axios from "axios";
@@ -260,6 +260,15 @@ export default function RecipeDetail() {
     setComments([]);
     setPageInfo({ page: 0, last: false });
   }
+  function addEditRecipe() {
+    if (session?.user.username === recipe?.author.username) {
+      return (
+        <a className="ml-4" href={`/creator/create-recipe?id=${recipeId}`}>
+          <FiEdit2 />
+        </a>
+      );
+    }
+  }
 
   return (
     <>
@@ -284,6 +293,7 @@ export default function RecipeDetail() {
                       }}
                     />
                   </a>
+                  {addEditRecipe()}
                 </div>
                 <BannerImage
                   id={`${recipeId}`}
