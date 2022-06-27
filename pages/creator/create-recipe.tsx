@@ -331,6 +331,7 @@ export default function CreateRecipe() {
   function uploadImage(recipeId: any) {
     if (isEdit && Object.keys(imageFormData).length === 0) {
       router.push("/")
+      return
     }
     const formData: any = new FormData();
     console.log(imageFormData);
