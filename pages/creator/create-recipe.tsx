@@ -330,7 +330,10 @@ export default function CreateRecipe() {
   //upload image form function
   function uploadImage(recipeId: any) {
     if (isEdit && Object.keys(imageFormData).length === 0) {
-      router.push("/")
+      Swal.fire({
+        title: "Recipe Submitted!",
+        icon: "success",
+      }).then(() => router.push("/"));
       return
     }
     const formData: any = new FormData();
