@@ -3,6 +3,7 @@ import RecipeCardLong from '../RecipeCardLong'
 import Link from 'next/link'
 
 export const DraftRecipeTabs = (props:any) => {
+    const isDraft = true
     return (
         <>
             {
@@ -11,7 +12,7 @@ export const DraftRecipeTabs = (props:any) => {
                     //@ts-ignore
                     props.draftRecipeData?.draftRecipesData.map((recipe)=> (
                         //@ts-ignore
-                        <RecipeCardLong key={Math.random()*Math.random()} recipe={recipe} deleteAction={props.deleteRecipe} dataQueryParam={props.dataQueryParam} />
+                        <RecipeCardLong key={Math.random()*Math.random()} recipe={recipe} isDraft={true} deleteAction={props.deleteRecipe} dataQueryParam={props.dataQueryParam} />
                     ))
                 ) : (
                     <p className="p-4 text-center">
