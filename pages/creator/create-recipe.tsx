@@ -1,4 +1,5 @@
 import Footer from "@components/Footer";
+import ProfileImage from "@components/RecipeDetail/ProfileImage";
 import Image from "next/image";
 import Navbar from "@components/Navbar";
 import { useState, useEffect, useRef } from "react";
@@ -284,7 +285,7 @@ export default function CreateRecipe() {
       ingredients,
       content: contentValues,
       draft: isDraft,
-      userId: userInfo.current.id
+      userId: userInfo.current.id,
     });
     setSubmitFormState(true);
   }
@@ -468,14 +469,12 @@ export default function CreateRecipe() {
           <div className="relative max-w-2xl px-4 py-10 bg-white shadow-2xl rounded-2xl sm:p-10 mx-auto">
             <div className="max-w-lg mx-auto">
               <div className="flex flex-wrap items-center space-x-5">
-                <Image
-                  className="w-8 h-8 rounded-full"
-                  src="/images/user-profile.png"
-                  alt="user-profile"
-                  width={50}
-                  height={50}
-                  objectFit="cover"
-                />
+                <div className="w-10">
+                  <ProfileImage
+                    src={userInfo.current.username}
+                    alt={`${userInfo.current.fullName}-image`}
+                  />
+                </div>
                 <div className="block pl-2 font-semibold text-xl self-start text-gray-700">
                   <h1 className="leading-relaxed">
                     {userInfo.current.fullName}
