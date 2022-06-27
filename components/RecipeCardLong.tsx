@@ -38,7 +38,7 @@ export default function RecipeCardLong(prop) {
                   <div className="py-1">
                     <Menu.Item>
                       {({ active }) => (
-                        <Link href={`/creator/create-recipe?recipeId=${prop.recipe.id}`}>
+                        <Link href={`/creator/create-recipe?id=${prop.recipe.id}`}>
                           <a
                             href="#"
                             className={classNames(
