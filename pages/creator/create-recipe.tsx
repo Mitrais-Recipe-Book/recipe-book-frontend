@@ -72,6 +72,18 @@ export default function CreateRecipe() {
 
         userInfo.current = session?.user!!
 
+        const tagss = await axios
+          .get("https://recipyb-dev.herokuapp.com/api/v1/tag")
+          .then((res) => res.data.payload)
+          .catch((err) => console.log(err));
+
+        tagOptions.current = tagss.map((tag: { id: any; name: any }) => {
+          return {
+            label: tag.name,
+              value: tag.id,
+            };
+          });
+
         if (query.id) {
           onRemoveBtnClick()
           const editRecipe = await axios
@@ -86,18 +98,6 @@ export default function CreateRecipe() {
               // Forbidden, also not allowed
               router.replace("/")
             }
-
-            const tagss = await axios
-              .get("https://recipyb-dev.herokuapp.com/api/v1/tag")
-              .then((res) => res.data.payload)
-              .catch((err) => console.log(err));
-
-            tagOptions.current = tagss.map((tag: { id: any; name: any }) => {
-              return {
-                label: tag.name,
-                value: tag.id,
-              };
-            });
 
             const recipeTags = editRecipe.tags
             let defaultTags = []
@@ -329,6 +329,9 @@ export default function CreateRecipe() {
   }
   //upload image form function
   function uploadImage(recipeId: any) {
+    if (isEdit && Object.keys(imageFormData).length === 0) {
+      router.push("/")
+    }
     const formData: any = new FormData();
     console.log(imageFormData);
     formData.append("photo", imageFormData, imageFormData.name);
@@ -451,7 +454,7 @@ export default function CreateRecipe() {
     )
   }
 
-  return !isLoaded ? (<p>...</p>) : (
+  return !isLoaded ? (<></>) : (
     <>
       <Navbar />
       <div
