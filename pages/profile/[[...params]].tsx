@@ -66,7 +66,6 @@ export default function ProfilePage() {
             apiUrl+`/user/${userData?.response?.username}/draft-recipes?page=0`
         ).then((res)=>{
             const data = res.data.payload
-            console.log("draft resep",data)
             setDraftRecipesData({
                 draftRecipesData:data.data,
                 // @ts-ignore
