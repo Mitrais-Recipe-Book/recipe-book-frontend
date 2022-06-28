@@ -152,7 +152,6 @@ export const FollowBtn = (props: any) => {
         // 👇️ error: AxiosError<any, any>
         return error.message;
       } else {
-        console.log("unexpected error: ", error);
         return "An unexpected error occurred";
       }
     }
