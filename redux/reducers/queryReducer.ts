@@ -2,17 +2,18 @@ import { createSlice, createAsyncThunk, AnyAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import Router from "next/router";
 
-
 const url = "https://recipyb-dev.herokuapp.com/api/v1/";
 
 export const getTags = createAsyncThunk("tag/getTags", async () => {
   return axios
-    .get(url+"tag")
-    .then((res) => res.data.payload.map((tag:any) => ({
-      id: tag.id,
-      name: tag.name,
-      query: false,
-    })))
+    .get(url + "tag")
+    .then((res) =>
+      res.data.payload.map((tag: any) => ({
+        id: tag.id,
+        name: tag.name,
+        query: false,
+      }))
+    )
     .catch((err) => err.response.data);
 });
 //@ts-ignore
@@ -24,25 +25,25 @@ export const sendQuery = createAsyncThunk(
     //@ts-ignore
     const queryCreator = thunkAPI.getState().query.queryCreator;
     //@ts-ignore
-    const queryTags = thunkAPI.getState().query.allTags.filter((tag:any) => tag.query);
-    const queryTagsId = queryTags.length > 0 ?
-    queryTags
-    .map((tag: Tag) => {
-      return `tagId=${tag.id}&`;
-    })
-    .join(""):
-    "tagId=&"
-    const searchUrl = `recipe/search?title=${queryRecipeName}&author=${queryCreator}&${queryTagsId
-      }page=0`;
-    
-      
-      Router.push(
+    const queryTags = thunkAPI
+      .getState()
+      .query.allTags.filter((tag: any) => tag.query);
+    const queryTagsId =
+      queryTags.length > 0
+        ? queryTags
+            .map((tag: Tag) => {
+              return `tagId=${tag.id}&`;
+            })
+            .join("")
+        : "tagId=&";
+    const searchUrl = `recipe/search?title=${queryRecipeName}&author=${queryCreator}&${queryTagsId}page=0`;
+
+    Router.push(
       //@ts-ignore
       `/search/name?${queryRecipeName}&creator?${queryCreator}&${queryTagsId}`
     );
 
-
-    return axios.get(url+searchUrl).then((res) => res.data.payload.content);
+    return axios.get(url + searchUrl).then((res) => res.data.payload.content);
   }
 );
 
@@ -75,7 +76,6 @@ const queryReducer = createSlice({
       state.queryCreator = "";
     },
     addTagsToQuery: (state, action) => {
-      
       state.allTags.forEach((tag: Tag) => {
         if (tag.id === action.payload.id) {
           tag.query = true;
@@ -85,14 +85,13 @@ const queryReducer = createSlice({
     removeTagsFromQuery: (state, action) => {
       state.allTags.forEach((tag: Tag) => {
         if (tag.id === action.payload.id) {
-          console.log("tag:",tag);
           tag.query = false;
         }
       });
     },
     clearQueryTags: (state) => {
       state.allTags.forEach((tag: Tag) => {
-          tag.query = false;
+        tag.query = false;
       });
     },
     clearQuery: (state) => {
@@ -100,13 +99,13 @@ const queryReducer = createSlice({
       state.queryCreator = "";
       state.allTags.forEach((tag: Tag) => {
         tag.query = false;
-    });
+      });
     },
     clearQueryExceptName: (state) => {
       state.queryCreator = "";
       state.allTags.forEach((tag: Tag) => {
         tag.query = false;
-    });
+      });
     },
     setRecipesQuery: (state, action) => {
       state.queryRecipes = action.payload;
@@ -123,7 +122,7 @@ const queryReducer = createSlice({
     //@ts-ignore
     [sendQuery.fulfilled]: (state, action) => {
       state.queryRecipes = action.payload;
-    }
+    },
   },
 });
 export const {
