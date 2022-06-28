@@ -158,14 +158,24 @@ export const FollowBtn = (props: any) => {
     }
   }
 
-  // return (
-  //     <button className="uppercase transition  bg-gray-800 text-sm text-white hover:bg-gray-600 px-4 py-2 rounded-md "
-  //         onClick={followCreator}>Follow </button>
-  // );
-
-  if (isFollowed) {
-    return unfollowButton();
+  if (props.session?.user?.id && props.creatorId !== undefined) {
+    if (isFollowed) {
+      return unfollowButton();
+    } else {
+      return followButton();
+    }
   } else {
-    return followButton();
+    return (
+      <>
+        <button
+          className="uppercase transition  text-sm text-white bg-gray-600 px-4 py-2 rounded-md"
+          onClick={() => {
+            router.push("/sign-in");
+          }}
+        >
+          Please Login To Follow This Creator
+        </button>
+      </>
+    );
   }
 };
