@@ -2,15 +2,23 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState, SyntheticEvent } from "react";
 import { useDispatch } from "react-redux";
-import { signIn, useSession, getProviders, signOut, ClientSafeProvider, LiteralUnion, getSession, getCsrfToken } from "next-auth/react";
+import {
+  signIn,
+  useSession,
+  getProviders,
+  signOut,
+  ClientSafeProvider,
+  LiteralUnion,
+  getSession,
+  getCsrfToken,
+} from "next-auth/react";
 import { GetServerSideProps } from "next";
 import jsCookie from "js-cookie";
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import Swal from 'sweetalert2'
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 export default function LogIn({ csrfToken, providers }) {
   const session = useSession();
-  console.log("Sign-in Session", session);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -29,7 +37,12 @@ export default function LogIn({ csrfToken, providers }) {
   const [allFilled, setAllFilled] = useState(false);
 
   useEffect(() => {
-    if ((usernameFilled && userData.username.length > 0) && (passwordFilled && userData.password.length > 0)) {
+    if (
+      usernameFilled &&
+      userData.username.length > 0 &&
+      passwordFilled &&
+      userData.password.length > 0
+    ) {
       setAllFilled(true);
     }
   });
@@ -42,42 +55,44 @@ export default function LogIn({ csrfToken, providers }) {
       setShowPassword(true);
       setPasswordType("password");
     }
-  }
+  };
 
   const usernameBlank = () => {
     //Swal alert for username
     Swal.fire({
-      title: 'Username is required',
-      text: 'Please enter your username',
-      icon: 'warning',
-      confirmButtonText: 'OK'
-    })
-  }
+      title: "Username is required",
+      text: "Please enter your username",
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
+  };
 
   const passwordBlank = () => {
     //Swal alert for username
     Swal.fire({
-      title: 'Password is required',
-      text: 'Please enter your username',
-      icon: 'warning',
-      confirmButtonText: 'OK'
-    })
-  }
+      title: "Password is required",
+      text: "Please enter your username",
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
+  };
 
   useEffect(() => {
     if (jsCookie.get("next-auth.csrf-token")) {
       router.push("/");
     }
-    if (router.query.create) { setMessage(router.query.create), setNotif(true) };
+    if (router.query.create) {
+      setMessage(router.query.create), setNotif(true);
+    }
     if (router.query.error) {
-      Swal.fire(
-        'Sign-in Error',
-        'check your username or password!',
-        'error'
-      )
-    };
-    setTimeout(() => { setNotif(false) }, 5000);
-    setTimeout(() => { setErrMessage(false) }, 5000);
+      Swal.fire("Sign-in Error", "check your username or password!", "error");
+    }
+    setTimeout(() => {
+      setNotif(false);
+    }, 5000);
+    setTimeout(() => {
+      setErrMessage(false);
+    }, 5000);
   }, []);
 
   const login = async (event) => {
@@ -86,12 +101,12 @@ export default function LogIn({ csrfToken, providers }) {
     const username = userData.username;
     const password = userData.password;
     Swal.fire({
-      title: 'Loading...',
+      title: "Loading...",
       didOpen: () => {
-        Swal.showLoading()
-      }
-    })
-    signIn('credentials', { username, password });
+        Swal.showLoading();
+      },
+    });
+    signIn("credentials", { username, password });
   };
 
   return (
@@ -138,33 +153,63 @@ export default function LogIn({ csrfToken, providers }) {
               Recipy Book
             </h1>
           </div>
-          {notif ?
-            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+          {notif ? (
+            <div
+              className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+              role="alert"
+            >
               <strong className="font-bold">Success!</strong>
               <br />
-              <span className="block sm:inline">Successfully created new account please Sign In!</span>
-              <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
-                <svg className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
+              <span className="block sm:inline">
+                Successfully created new account please Sign In!
               </span>
-            </div> : ""
-          }
-          {errMessage ?
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg
+                  className="fill-current h-6 w-6 text-red-500"
+                  role="button"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <title>Close</title>
+                  <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+              </span>
+            </div>
+          ) : (
+            ""
+          )}
+          {errMessage ? (
+            <div
+              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+              role="alert"
+            >
               <strong className="font-bold">Sign-in Failed!</strong>
               <br />
-              <span className="block sm:inline">Check your username and password!</span>
-              <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
-                <svg className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
+              <span className="block sm:inline">
+                Check your username and password!
               </span>
-            </div> : ""
-          }
+              <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg
+                  className="fill-current h-6 w-6 text-red-500"
+                  role="button"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <title>Close</title>
+                  <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+              </span>
+            </div>
+          ) : (
+            ""
+          )}
           <h1 className="my-6 text-3xl font-bold">Sign In</h1>
           <form
             onSubmit={login}
             method="post"
             className="sm:w-2/3 w-full px-4 lg:px-0 mx-auto"
           >
-            <input name='csrfToken' type='hidden' />
+            <input name="csrfToken" type="hidden" />
             <div className="pb-2 pt-4">
               <input
                 type="text"
@@ -177,15 +222,15 @@ export default function LogIn({ csrfToken, providers }) {
                   if (e.target.value.length == 0) {
                     setUsernameFilled(false);
                   }
-                }
-                }
+                }}
                 className="block w-full p-4 text-gray-900 leading-tight focus:outline-orange-400 text-lg rounded-sm bg-slate"
               />
             </div>
-            {usernameFilled == false &&
+            {usernameFilled == false && (
               <div className="text-red-600">
                 <small>Username can't be blank</small>
-              </div>}
+              </div>
+            )}
             <div className="pb-2 pt-4 flex">
               <input
                 className="block w-full p-4 text-lg text-gray-900 leading-tight focus:outline-orange-400 rounded-l-sm bg-slate"
@@ -198,35 +243,40 @@ export default function LogIn({ csrfToken, providers }) {
                   if (e.target.value.length == 0) {
                     setPasswordFilled(false);
                   }
-                }
-                }
+                }}
                 placeholder="Password"
               />
-              <span className="bg-slate-100 text-gray-900 cursor-pointer min-w-fit p-3 flex items-center justify-center" onClick={togglePassword}>
-                {showPassword
-                  ? <FaEye />
-                  : <FaEyeSlash />}
+              <span
+                className="bg-slate-100 text-gray-900 cursor-pointer min-w-fit p-3 flex items-center justify-center"
+                onClick={togglePassword}
+              >
+                {showPassword ? <FaEye /> : <FaEyeSlash />}
               </span>
             </div>
-            {passwordFilled == false &&
+            {passwordFilled == false && (
               <div className="text-red-600">
                 <small>Password can't be blank</small>
-              </div>}
+              </div>
+            )}
             <div className="text-right text-gray-400 hover:underline hover:text-gray-100">
               <a href="/sign-up">Sign up here</a>
             </div>
             <div className="px-4 pb-2 pt-4">
-              {allFilled ? <button
-                type="submit"
-                className="uppercase block w-full p-4 text-lg rounded-full bg-orange-400 hover:bg-orange-500 focus:outline-none"
-              >
-                sign in
-              </button> : <button
-                disabled={true}
-                className="uppercase block w-full p-4 text-lg rounded-full bg-slate-400"
-              >
-                sign in
-              </button>}
+              {allFilled ? (
+                <button
+                  type="submit"
+                  className="uppercase block w-full p-4 text-lg rounded-full bg-orange-400 hover:bg-orange-500 focus:outline-none"
+                >
+                  sign in
+                </button>
+              ) : (
+                <button
+                  disabled={true}
+                  className="uppercase block w-full p-4 text-lg rounded-full bg-slate-400"
+                >
+                  sign in
+                </button>
+              )}
             </div>
 
             <div className="p-4 text-center right-0 left-0 flex justify-center space-x-4 mt-16 lg:hidden ">
@@ -278,7 +328,7 @@ export async function getServerSideProps(context) {
   if (session) {
     return {
       redirect: {
-        destination: '/',
+        destination: "/",
         permanent: false,
       },
     };

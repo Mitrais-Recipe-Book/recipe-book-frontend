@@ -25,23 +25,15 @@ import { getTags, clearQuery } from "../redux/reducers/queryReducer";
 import session from "redux-persist/lib/storage/session";
 
 const Home: NextPage = () => {
-  // const auth = useSelector((state) =>
-  // @ts-ignore
-  //   state.auth.value ? state.auth.value : []
-  // );
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [popularRecipes, setPopularRecipes] = useState<Recipe[]>([]);
-  // const [tags, setTags] = useState<Tag[]>([]);
   //@ts-ignore
   const tags: Tag[] = useSelector((state: State) =>
     state.query.allTags ? state.query.allTags : []
   );
   const dispatch = useDispatch();
-  //@ts-ignore
-  // console.log("query tags: ", useSelector((state) => state.tags.queryTags));
 
   const { data: session } = useSession();
-  console.log("Session", session);
 
   interface State {
     query: {
@@ -83,8 +75,6 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     fetchData();
-    console.log("tags:", tags);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // SwiperCore.use([Autoplay]);

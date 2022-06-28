@@ -1,8 +1,11 @@
-import  Router  from "next/router";
+import Router from "next/router";
 import React from "react";
 import { FiSearch } from "react-icons/fi";
 import { useSelector, useDispatch } from "react-redux";
-import { setQueryRecipeName, sendQuery } from "../../redux/reducers/queryReducer";
+import {
+  setQueryRecipeName,
+  sendQuery,
+} from "../../redux/reducers/queryReducer";
 
 export default function SearchByName() {
   const dispatch = useDispatch();
@@ -16,20 +19,18 @@ export default function SearchByName() {
           value={searchItem}
           onChange={(event) => {
             dispatch(setQueryRecipeName(event.currentTarget.value));
-            console.log(event.target.value);
           }}
           onKeyUp={(e) => {
             if (e.key === "Enter") {
-              //@ts-ignore
-              console.log(searchItem);
               //@ts-ignore
               dispatch(sendQuery());
             }
           }}
         />
-        <FiSearch className="invisible sm:cursor-pointer sm:visible sm:text-4xl sm:text-zinc-800 sm:mx-3"
-        //@ts-ignore
-        onClick={() => dispatch(sendQuery())}
+        <FiSearch
+          className="invisible sm:cursor-pointer sm:visible sm:text-4xl sm:text-zinc-800 sm:mx-3"
+          //@ts-ignore
+          onClick={() => dispatch(sendQuery())}
         />
       </div>
     </main>
