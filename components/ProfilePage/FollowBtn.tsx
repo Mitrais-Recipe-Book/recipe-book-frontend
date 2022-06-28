@@ -158,10 +158,23 @@ export const FollowBtn = (props: any) => {
   }
 
   if (props.session?.user?.id && props.creatorId !== undefined) {
-    if (isFollowed) {
-      return unfollowButton();
+    if (props.session?.user?.id === props.creatorId) {
+      return (
+        <>
+          <button
+            className="uppercase transition  text-sm text-white bg-red-500 hover:bg-gray-600 px-4 py-2 rounded-md"
+            onClick={() => router.push("/profile")}
+          >
+            Go To Profile
+          </button>
+        </>
+      );
     } else {
-      return followButton();
+      if (isFollowed) {
+        return unfollowButton();
+      } else {
+        return followButton();
+      }
     }
   } else {
     return (
