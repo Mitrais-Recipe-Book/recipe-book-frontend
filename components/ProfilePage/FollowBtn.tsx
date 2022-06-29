@@ -20,8 +20,6 @@ export const FollowBtn = (props: any) => {
     }
   });
 
-  console.log(isFollowed);
-
   const followButton = () => {
     return (
       <button
@@ -151,24 +149,45 @@ export const FollowBtn = (props: any) => {
         });
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log("error message: ", error.message);
         // 👇️ error: AxiosError<any, any>
         return error.message;
       } else {
-        console.log("unexpected error: ", error);
         return "An unexpected error occurred";
       }
     }
   }
 
-  // return (
-  //     <button className="uppercase transition  bg-gray-800 text-sm text-white hover:bg-gray-600 px-4 py-2 rounded-md "
-  //         onClick={followCreator}>Follow </button>
-  // );
-
-  if (isFollowed) {
-    return unfollowButton();
+  if (props.session?.user?.id && props.creatorId !== undefined) {
+    if (props.session?.user?.id === props.creatorId) {
+      return (
+        <>
+          <button
+            className="uppercase transition  text-sm text-white bg-red-500 hover:bg-gray-600 px-4 py-2 rounded-md"
+            onClick={() => router.push("/profile")}
+          >
+            Go To Profile
+          </button>
+        </>
+      );
+    } else {
+      if (isFollowed) {
+        return unfollowButton();
+      } else {
+        return followButton();
+      }
+    }
   } else {
-    return followButton();
+    return (
+      <>
+        <button
+          className="uppercase transition  text-sm text-white bg-gray-600 px-4 py-2 rounded-md"
+          onClick={() => {
+            router.push("/sign-in");
+          }}
+        >
+          Please Login To Follow This Creator
+        </button>
+      </>
+    );
   }
 };

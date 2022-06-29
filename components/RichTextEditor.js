@@ -1,18 +1,19 @@
 /* eslint-disable react/no-string-refs */
-import {
-  convertToRaw,
-  Editor,
-  EditorState,
-  getDefaultKeyBinding,
-  RichUtils,
-} from "draft-js";
-import { convertToHTML } from "draft-convert";
+import { Editor, EditorState, getDefaultKeyBinding, RichUtils } from "draft-js";
+import { convertFromHTML, convertToHTML } from "draft-convert";
 import React from "react";
 
 class RichTextEditor extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { editorState: EditorState.createEmpty() };
+
+    //set state to value if state is not empty
+    const value = this.props.defaultValue;
+    const content = value
+      ? EditorState.createWithContent(convertFromHTML(value))
+      : EditorState.createEmpty();
+
+    this.state = { editorState: content };
     this.focus = () => this.refs.editor.focus();
     this.getHtmlContent = this.props.getHtmlContent;
     this.onChange = (editorState) => {
@@ -30,7 +31,6 @@ class RichTextEditor extends React.Component {
     const newState = RichUtils.handleKeyCommand(editorState, command);
     if (newState) {
       this.onChange(newState);
-      console.log(newState);
       return true;
     }
     return false;
@@ -74,9 +74,6 @@ class RichTextEditor extends React.Component {
       }
     }
 
-    // console.log(convertToRaw(editorState.getCurrentContent()));
-    // console.log("HTML", convertToHTML(editorState.getCurrentContent()));
-    // this.getHtmlContent(convertToHTML(editorState.getCurrentContent()));
     return (
       <div className="RichEditor-root">
         <BlockStyleControls

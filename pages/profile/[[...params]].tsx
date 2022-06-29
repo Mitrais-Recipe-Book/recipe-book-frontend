@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import RecipeCardLong from "../../components/RecipeCardLong";
 import { CreatedRecipeTabs } from "../../components/ProfilePage/CreatedRecipeTabs";
 import { FollowTabs } from "../../components/ProfilePage/FollowTabs";
+import { DraftRecipeTabs } from "../../components/ProfilePage/DraftRecipeTabs";
 import Custom404 from "@components/Custom404";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
@@ -21,6 +22,9 @@ export default function ProfilePage() {
     const apiUrl = "https://recipyb-dev.herokuapp.com/api/v1"
     const [recipesData, setRecipesData] = useState({
         recipesData: []
+    })
+    const [draftRecipesData, setDraftRecipesData] = useState({
+        draftRecipesData : []
     })
     const [currentPage,setCurrentPage] = useState(0)
     const [incrementNum,setIncrementNum] = useState(0)
@@ -57,6 +61,19 @@ export default function ProfilePage() {
                 });
         }
     }
+    async function getDraftRecipes(){
+        axios.get(
+            apiUrl+`/user/${userData?.response?.username}/draft-recipes?page=0`
+        ).then((res)=>{
+            const data = res.data.payload
+            setDraftRecipesData({
+                draftRecipesData:data.data,
+                // @ts-ignore
+                currentPage: data.currentPage,
+                totalPages: data.totalPages
+            })
+        })
+    }
 
     function loadMoreRecipes() {
         getRecipes().then(() => {
@@ -88,6 +105,43 @@ export default function ProfilePage() {
                             html: 'Your recipe has been deleted.',
                             icon: 'success',
                             willClose: getRecipes
+                        })
+                    })
+                    .catch(error => {
+                        Swal.fire(
+                            'Error',
+                            'Something gone wrong!.',
+                            'error'
+                        )
+                    })
+            }
+        })
+    }
+
+    function deleteDraftRecipe(id?: number) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Loading...',
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
+                })
+                axios.delete(apiUrl + `/recipe/${id}`)
+                    .then((res) => {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            html: 'Your recipe has been deleted.',
+                            icon: 'success',
+                            willClose: getDraftRecipes
                         })
                     })
                     .catch(error => {
@@ -152,6 +206,7 @@ export default function ProfilePage() {
                 } else {
                     getDataProfile(session.user.username).then(() => {
                         getRecipes()
+                        getDraftRecipes()
                     })
                 }
             })
@@ -208,6 +263,24 @@ export default function ProfilePage() {
                                                     
                                                     Created Recipe(s)
                                                 </Tab>
+                                                {
+                                                    !routeUserName.params && (
+                                                        <>
+                                                            <Tab className={({ selected }) =>
+                                                                classNames(
+                                                                'w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                                                                'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                                                                selected
+                                                                    ? 'bg-white shadow'
+                                                                    : 'bg-gray-300 text-white hover:bg-white/[0.12] hover:text-white'
+                                                                )
+                                                            }>
+                                                                
+                                                                Draft Recipe(s)
+                                                            </Tab>
+                                                        </>
+                                                    )
+                                                }
                                                 <Tab className={({ selected }) =>
                                                     classNames(
                                                     `w-full px-3 whitespace-nowrap rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700`,
@@ -260,6 +333,16 @@ export default function ProfilePage() {
                                             }>
                                                 <CreatedRecipeTabs recipesData={recipesData} deleteRecipe={deleteRecipe} dataQueryParam={routeUserName.params} />
                                             </Tab.Panel>
+                                            {
+                                                !routeUserName.params && (
+                                                    <Tab.Panel className={
+                                                        `rounded-xl bg-white p-3
+                                                        ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400  `
+                                                    }>
+                                                        <DraftRecipeTabs draftRecipeData = {draftRecipesData} deleteRecipe={deleteDraftRecipe} />
+                                                    </Tab.Panel>
+                                                )
+                                            }
                                             <Tab.Panel className={
                                                 `rounded-xl bg-white p-3
                                                 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 `
