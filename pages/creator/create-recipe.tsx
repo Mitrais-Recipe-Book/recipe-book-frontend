@@ -282,7 +282,7 @@ export default function CreateRecipe() {
 
     setRecipeForm({
       ...recipeForm,
-      ingredients,
+      ingredients: ingredients,
       content: contentValues,
       draft: isDraft,
       userId: userInfo.current.id,
@@ -328,7 +328,7 @@ export default function CreateRecipe() {
   }
   //upload image form function
   function uploadImage(recipeId: any) {
-    if (isEdit && Object.keys(imageFormData).length === 0) {
+    if (isEdit && imageFormData.name == undefined) {
       Swal.fire({
         title: "Recipe Submitted!",
         icon: "success",
