@@ -131,6 +131,8 @@ export default function RecipeDetail() {
       setTimeout(() => {
         axios.put(process.env.API_URL + `recipe/addview?recipeId=${recipeId}`);
       }, 30000);
+
+      refreshComment();
     }
   }, [recipeId]);
 
