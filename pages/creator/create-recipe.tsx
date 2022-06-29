@@ -170,7 +170,7 @@ export default function CreateRecipe() {
   function onRemoveBtnClick() {
     if (ingredientListCount.current > 0) {
       setIngredientList(ingredientList.slice(0, -1));
-      ingredientFormData.current.ingredients.splice(0, 1);
+      ingredientFormData.current.ingredients.splice(-1);
       ingredientListCount.current--;
     }
   }
