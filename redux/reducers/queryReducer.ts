@@ -43,7 +43,7 @@ export const sendQuery = createAsyncThunk(
       `/search/name?${queryRecipeName}&creator?${queryCreator}&${queryTagsId}`
     );
 
-    return axios.get(url + searchUrl).then((res) => res.data.payload.content);
+    return axios.get(url + searchUrl).then((res) => res.data.payload.data);
   }
 );
 
