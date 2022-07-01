@@ -248,8 +248,8 @@ export default function RecipeDetail() {
           `recipe/${recipeId}/comments?page=${pageInfo.page}`
       )
       .then((res) => {
-        setComments([...comments, ...res.data.payload.content]);
-        setPageInfo({ last: res.data.payload.last, page: pageInfo.page + 1 });
+        setComments([...comments, ...res.data.payload.data]);
+        setPageInfo({ last: res.data.payload.islast, page: pageInfo.page + 1 });
       });
   }
   function refreshComment() {
