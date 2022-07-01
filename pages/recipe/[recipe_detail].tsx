@@ -10,8 +10,8 @@ import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import Swal from "sweetalert2";
 import CommentForm from "@components/Comment/CommentForm";
-import ProfileBedge from "@components/Comment/ProfileBedge";
 import CommentCard from "@components/Comment/CommentCard";
+import BannerImage from "@components/RecipeDetail/BannerImage";
 
 const Navbar = dynamic(() => import("@components/Navbar"));
 const Footer = dynamic(() => import("@components/Footer"));
@@ -21,12 +21,6 @@ const TagsPill = dynamic(() => import("@components/TagsPill"), {
 const RecipeCard = dynamic(() => import("@components/RecipeCard"), {
   loading: () => <div>Loading Recipe...</div>,
 });
-const BannerImage = dynamic(
-  () => import("@components/RecipeDetail/BannerImage"),
-  {
-    loading: () => <div>Loading Banner Image...</div>,
-  }
-);
 const ProfileImage = dynamic(
   () => import("@components/RecipeDetail/ProfileImage"),
   {
@@ -131,6 +125,8 @@ export default function RecipeDetail() {
       setTimeout(() => {
         axios.put(process.env.API_URL + `recipe/addview?recipeId=${recipeId}`);
       }, 30000);
+
+      refreshComment();
     }
   }, [recipeId]);
 
