@@ -164,6 +164,7 @@ export default function Navbar() {
                           <a
                             onClick={(e) => {
                               e.preventDefault();
+                              //TODO: API to request goes here
                             }}
                             className={
                               "bg-white text-gray-900 hover:bg-gray-900 duration-150 hover:text-white  block px-4 py-2 text-sm cursor-pointer"
