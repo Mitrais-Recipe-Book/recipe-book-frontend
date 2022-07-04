@@ -194,20 +194,31 @@ export default function Navbar() {
                         </a>
                       </Menu.Item>
                       {!session.user.roles.includes("Creator") ? (
-                        <Menu.Item>
-                          <a
-                            onClick={(e) => {
-                              e.preventDefault();
-                              //TODO: API to request goes here
-                              handleRequestCC(session.user.username);
-                            }}
-                            className={
-                              "bg-white text-gray-900 hover:bg-gray-900 duration-150 hover:text-white  block px-4 py-2 text-sm cursor-pointer"
-                            }
-                          >
-                            Request to be Content Creator
-                          </a>
-                        </Menu.Item>
+                        !session.user.roles.includes("Request") ? (
+                          <Menu.Item>
+                            <a
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleRequestCC(session.user.username);
+                              }}
+                              className={
+                                "bg-white text-gray-900 hover:bg-gray-900 duration-150 hover:text-white  block px-4 py-2 text-sm cursor-pointer"
+                              }
+                            >
+                              Request to be Content Creator
+                            </a>
+                          </Menu.Item>
+                        ) : (
+                          <Menu.Item>
+                            <a
+                              className={
+                                "bg-white text-gray-400  block px-4 py-2 text-sm cursor-not-allowed"
+                              }
+                            >
+                              You already requested to be Content Creator
+                            </a>
+                          </Menu.Item>
+                        )
                       ) : null}
 
                       <Menu.Item>
