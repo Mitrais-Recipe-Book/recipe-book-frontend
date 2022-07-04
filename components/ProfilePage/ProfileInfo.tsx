@@ -9,21 +9,29 @@ import EditProfileBtn from './EditProfileBtn';
 
 
 export const ProfileInfo = (props: any) => {
+    const [img, setImg] = useState("")
+    const defaultImg = "/images/No_image_available.png";
+    useEffect(() => {
+        setImg(`${process.env.API_URL}user/${props.user?.username}/photo`);
+    }, [props?.userData?.response?.username]);
     return (
         <>
             <div className="shadow-md md:shadow-xl rounded-lg pb-6">
-                <h1 className="text-3xl text-center font-bold my-3 ">Your Profile</h1>
+                <h1 className="text-3xl text-center font-bold my-3 ">Profile</h1>
                 <div className="grid grid-cols-4">
                     <div className="col-span-4 ">
                         <div className="w-1/2 mx-auto">
                             <Image
                                 className="rounded-full"
-                                src="/images/user-profile.png"
+                                src={img ? img : defaultImg}
                                 alt="RecipyBook"
                                 width={100}
                                 height={100}
                                 objectFit="cover"
                                 layout="responsive"
+                                onErrorCapture={(e) => {
+                                    setImg(defaultImg);
+                                }}
                             />
                         </div>
                     </div>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Fragment } from "react";
 import { CgMenu } from "react-icons/cg";
@@ -12,12 +12,18 @@ function classNames(...classes: string[]) {
 
 //@ts-ignore
 export default function RecipeCardLong(prop) {
+  const [img, setImg] = useState("")
+  const defaultImg = "/images/bibimbap512x512.png";
+  
+  useEffect(() => {
+    setImg(`${process.env.API_URL}recipe/${prop.recipe?.id}/photo`);
+  }, [prop.recipe.id]);
   return (
     <>
       <div className="w-full border shadow-md p-4 my-2">
         <div className="flex">
           <div className=" grow">
-            <h4>4 May 2022</h4>
+            <h4>{prop.recipe.dateCreated}</h4>
           </div>
           {
             prop?.dataQueryParam == undefined && 
@@ -120,12 +126,15 @@ export default function RecipeCardLong(prop) {
           <div className="order-1 md:order-2 px-5 my-3 mx-2 col-span-4 md:col-span-1">
             <Image
               className="rounded mx-auto w--40 md:w-full"
-              src="/images/bibimbap512x512.png"
+              src={img ? img : defaultImg}
               alt="RecipyBook"
               width={100}
               height={100}
               objectFit="cover"
               layout="responsive"
+              onErrorCapture={(e) => {
+                setImg(defaultImg);
+              }}
             />
           </div>
         </div>
