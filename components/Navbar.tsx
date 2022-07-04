@@ -13,6 +13,8 @@ import { Fragment } from "react";
 import { CgMenu } from "react-icons/cg";
 import { Menu, Transition } from "@headlessui/react";
 import { signOut } from "next-auth/react";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -23,6 +25,38 @@ export default function Navbar() {
   let searchItem = useSelector((state: any) => state.query.queryRecipeName);
   const dispatch = useDispatch();
   const { data: session }: any = useSession();
+
+  function handleRequestCC(username: string) {
+    Swal.fire({
+      title: "Send request to be Content Creator?",
+      text: "You will be able to post recipes after getting accepted",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, request it!",
+    }).then((result) => {
+      result.isConfirmed
+        ? axios
+            .post(process.env.API_URL + `user/${username}/request-creator`)
+            .then((res) => {
+              Swal.fire({
+                title: "Request sent!",
+                text: "Successfully sent request! You will be able to post recipes after getting accepted",
+                icon: "success",
+              });
+            })
+            .catch((err) => {
+              Swal.fire({
+                title: "Error",
+                text: "Something went wrong! Please try again later",
+                icon: "error",
+              });
+            })
+        : null;
+    });
+  }
+
   return (
     <nav className="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-800">
       <div className="container flex flex-wrap justify-around items-center mx-auto">
@@ -165,6 +199,7 @@ export default function Navbar() {
                             onClick={(e) => {
                               e.preventDefault();
                               //TODO: API to request goes here
+                              handleRequestCC(session.user.username);
                             }}
                             className={
                               "bg-white text-gray-900 hover:bg-gray-900 duration-150 hover:text-white  block px-4 py-2 text-sm cursor-pointer"
