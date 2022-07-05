@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import TagsTable from "../components/Admin/TagsTable";
-import UserManagement from "../components/Admin/UserManagement";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+import TagsTable from "../../components/Admin/TagsTable";
+import UserManagement from "../../components/Admin/UserManagement";
+import Footer from "../../components/Footer";
+import Navbar from "../../components/Navbar";
 
 export default function Admin() {
   const [showTagsManagement, setShowTagsManagement] = useState(true);

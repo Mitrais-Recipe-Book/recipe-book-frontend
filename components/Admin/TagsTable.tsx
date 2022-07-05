@@ -71,6 +71,20 @@ export default function TagsTable() {
       ),
     },
     {
+      name: "Total Recipes",
+      sortable: true,
+      selector: (row: { id: any; name: string; temp: string }) => {
+        return <div>total recipes WIP</div>;
+      },
+    },
+    {
+      name: "Total Clicks",
+      sortable: true,
+      selector: (row: { id: any; name: string; temp: string }) => {
+        return <div>total clicks WIP</div>;
+      },
+    },
+    {
       name: "Actions",
       sortable: false,
       maxWidth: "100px",
