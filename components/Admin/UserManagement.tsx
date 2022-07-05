@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import DataTable, { TableColumn, TableProps } from "react-data-table-component";
+import DataTable from "react-data-table-component";
 
 interface User {
   id: number;
@@ -36,7 +36,20 @@ export default function UserManagement() {
       maxWidth: "100px",
       selector: (row: User) => {
         return row.roles.map((role) => {
-          return <div>{role}</div>;
+          if (role === "User") {
+            return <div className="cursor-not-allowed">{role}</div>;
+          } else {
+            return (
+              <div
+                className="cursor-pointer hover:text-red-700 mt-1"
+                onClick={() => {
+                  removeRole(row.username, role);
+                }}
+              >
+                {role}
+              </div>
+            );
+          }
         });
       },
     },
@@ -48,6 +61,10 @@ export default function UserManagement() {
       setTotalPages(res.data.payload.totalPages);
       setTotalRows(res.data.payload.totalItem);
     });
+  }
+
+  function removeRole(username: string, role: string): any {
+    console.log(`Delete role ${role} for user ${username}`);
   }
 
   useEffect(() => {
