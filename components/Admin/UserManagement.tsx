@@ -107,7 +107,22 @@ export default function UserManagement() {
           icon: "error",
         });
       } else {
-        console.log(role);
+        axios
+          .post(`${process.env.API_URL}user/${username}/assign-${role}`)
+          .then(() =>
+            Swal.fire({
+              title: "Success",
+              text: "Role added successfully",
+              icon: "success",
+            })
+          )
+          .catch(() =>
+            Swal.fire({
+              title: "Error",
+              text: "Something went wrong",
+              icon: "error",
+            })
+          );
       }
     }
   }
