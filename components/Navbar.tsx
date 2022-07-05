@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Router from "next/router";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -20,43 +20,47 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  let searchItem = useSelector((state: any) => state.query.queryRecipeName);
-  const dispatch = useDispatch();
-  const { data: session }: any = useSession();
+  export default function Navbar() {
+    const [isOpen, setIsOpen] = useState(false);
+    let searchItem = useSelector((state: any) => state.query.queryRecipeName);
+    const dispatch = useDispatch();
+    const { data: session }:any = useSession();
+    const [img, setImg] = useState("")
+    const defaultImg = "/images/No_image_available.png";
+    useEffect(() => {
+        setImg(`${process.env.API_URL}user/${session?.user?.username}/photo`);
+    }, [session?.user?.username]);
 
-  function handleRequestCC(username: string) {
-    Swal.fire({
-      title: "Send request to be Content Creator?",
-      text: "You will be able to post recipes after getting accepted",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, request it!",
-    }).then((result) => {
-      result.isConfirmed
-        ? axios
-            .post(process.env.API_URL + `user/${username}/request-creator`)
-            .then((res) => {
-              Swal.fire({
-                title: "Request sent!",
-                text: "Successfully sent request! You will be able to post recipes after getting accepted",
-                icon: "success",
-              });
-            })
-            .catch((err) => {
-              Swal.fire({
-                title: "Error",
-                text: "Something went wrong! Please try again later",
-                icon: "error",
-              });
-            })
-        : null;
-    });
-  }
-
+    function handleRequestCC(username: string) {
+      Swal.fire({
+        title: "Send request to be Content Creator?",
+        text: "You will be able to post recipes after getting accepted",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, request it!",
+      }).then((result) => {
+        result.isConfirmed
+          ? axios
+              .post(process.env.API_URL + `user/${username}/request-creator`)
+              .then((res) => {
+                Swal.fire({
+                  title: "Request sent!",
+                  text: "Successfully sent request! You will be able to post recipes after getting accepted",
+                  icon: "success",
+                });
+              })
+              .catch((err) => {
+                Swal.fire({
+                  title: "Error",
+                  text: "Something went wrong! Please try again later",
+                  icon: "error",
+                });
+              })
+          : null;
+      });
+    }
   return (
     <nav className="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-800">
       <div className="container flex flex-wrap justify-around items-center mx-auto">
@@ -144,29 +148,33 @@ export default function Navbar() {
             </svg>
           </button>
           <div className="hidden md:block md:ml-4 md:mr-4 md:items-center md:w-auto">
-            {session ? (
-              <Menu as="div" className="relative inline-block text-left">
-                <Menu.Button className="inline-flex justify-center w-full rounded-md  shadow-sm ">
-                  <Image
-                    className="w-8 h-8 rounded-full"
-                    src="/images/user-profile.png"
-                    alt="user-profile"
-                    width={40}
-                    height={40}
-                    objectFit="cover"
-                  />
-                </Menu.Button>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Menu.Items className="z-10 origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <div className="py-1">
+            {
+              session ? (
+                <Menu as="div" className="relative inline-block text-left">
+                  <Menu.Button className="inline-flex justify-center w-full rounded-md  shadow-sm ">
+                    <Image
+                      className="w-8 h-8 rounded-full"
+                      src={img ? img : defaultImg}
+                      alt="user-profile"
+                      width={40}
+                      height={40}
+                      objectFit="cover"
+                      onErrorCapture={(e) => {
+                        setImg(defaultImg);
+                    }}
+                    />
+                  </Menu.Button>
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items className="z-10 origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <div className="py-1">
                       <Menu.Item>
                         <h2 className="block px-4 py-2 font-bold">
                           Halo, {session.user.username}!
