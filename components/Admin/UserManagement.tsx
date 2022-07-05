@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import DataTable from "react-data-table-component";
+import DataTable, { TableColumn, TableProps } from "react-data-table-component";
 
 interface User {
   id: number;
@@ -12,6 +12,8 @@ interface User {
 
 export default function UserManagement() {
   const [users, setUsers] = useState<User[]>();
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [totalRows, setTotalRows] = useState<number>(0);
   const columns = [
     {
       name: "Username",
@@ -40,10 +42,16 @@ export default function UserManagement() {
     },
   ];
 
-  useEffect(() => {
-    axios.get(`${process.env.API_URL}user?page=0`).then((res) => {
+  function fetchUser(page: number) {
+    axios.get(`${process.env.API_URL}user?page=${page}`).then((res) => {
       setUsers(res.data.payload.data);
+      setTotalPages(res.data.payload.totalPages);
+      setTotalRows(res.data.payload.totalItem);
     });
+  }
+
+  useEffect(() => {
+    fetchUser(0);
   }, []);
 
   return (
@@ -52,10 +60,16 @@ export default function UserManagement() {
       //@ts-ignore
       columns={columns}
       data={users!}
-      progressPending={false}
       pagination
-      paginationPerPage={5}
-      paginationRowsPerPageOptions={[5, 10, 20]}
+      paginationServer
+      paginationTotalRows={totalRows}
+      paginationTotalPages={totalPages}
+      paginationResetDefaultPage={true}
+      onChangePage={(page) => {
+        fetchUser(page - 1);
+      }}
+      paginationPerPage={10}
+      paginationRowsPerPageOptions={[10]}
     />
   );
 }
