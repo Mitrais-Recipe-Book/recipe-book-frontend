@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
+import Swal from "sweetalert2";
 
 interface User {
   id: number;
@@ -28,12 +29,13 @@ export default function UserManagement() {
     {
       name: "Email",
       sortable: true,
+      wrap: true,
       selector: (row: User) => row.email,
     },
     {
       name: "Roles",
       sortable: false,
-      maxWidth: "100px",
+
       selector: (row: User) => {
         return row.roles.map((role) => {
           if (role === "User") {
@@ -53,6 +55,29 @@ export default function UserManagement() {
         });
       },
     },
+    {
+      name: "Actions",
+      sortable: false,
+      allowOverflow: true,
+      grow: 2,
+      selector: (row: User) => {
+        return (
+          <div className="flex flex-row gap-4">
+            <button
+              className="bg-green-600 text-white px-2 py-1 rounded"
+              onClick={() => {
+                addRole(row.username);
+              }}
+            >
+              +Role
+            </button>
+            <button className="bg-red-600 text-white px-2 py-1 rounded">
+              Delete
+            </button>
+          </div>
+        );
+      },
+    },
   ];
 
   function fetchUser(page: number) {
@@ -61,6 +86,30 @@ export default function UserManagement() {
       setTotalPages(res.data.payload.totalPages);
       setTotalRows(res.data.payload.totalItem);
     });
+  }
+
+  async function addRole(username: string) {
+    const { value: role } = await Swal.fire({
+      title: "Add Role",
+      input: "select",
+      inputOptions: {
+        Creator: "Content Creator",
+        Admin: "Admin",
+      },
+      inputPlaceholder: "Please Select a Role",
+      showCancelButton: true,
+    });
+    if (role) {
+      if (role !== "Admin" && role !== "Creator") {
+        Swal.fire({
+          title: "Error",
+          text: "Please enter a valid role",
+          icon: "error",
+        });
+      } else {
+        console.log(role);
+      }
+    }
   }
 
   function removeRole(username: string, role: string): any {
@@ -72,21 +121,23 @@ export default function UserManagement() {
   }, []);
 
   return (
-    <DataTable
-      name="Users"
-      //@ts-ignore
-      columns={columns}
-      data={users!}
-      pagination
-      paginationServer
-      paginationTotalRows={totalRows}
-      paginationTotalPages={totalPages}
-      paginationResetDefaultPage={true}
-      onChangePage={(page) => {
-        fetchUser(page - 1);
-      }}
-      paginationPerPage={10}
-      paginationRowsPerPageOptions={[10]}
-    />
+    <div className="my-4 mx-8">
+      <DataTable
+        name="Users"
+        //@ts-ignore
+        columns={columns}
+        data={users!}
+        pagination
+        paginationServer
+        paginationTotalRows={totalRows}
+        paginationTotalPages={totalPages}
+        paginationResetDefaultPage={true}
+        onChangePage={(page) => {
+          fetchUser(page - 1);
+        }}
+        paginationPerPage={10}
+        paginationRowsPerPageOptions={[10]}
+      />
+    </div>
   );
 }
