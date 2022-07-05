@@ -66,7 +66,7 @@ export default function UserManagement() {
             <button
               className="bg-green-600 text-white px-2 py-1 rounded"
               onClick={() => {
-                addRole(row.username);
+                addRole(row.username, row.roles);
               }}
             >
               +Role
@@ -88,7 +88,7 @@ export default function UserManagement() {
     });
   }
 
-  async function addRole(username: string) {
+  async function addRole(username: string, roles: string[]) {
     const { value: role } = await Swal.fire({
       title: "Add Role",
       input: "select",
@@ -107,22 +107,38 @@ export default function UserManagement() {
           icon: "error",
         });
       } else {
-        axios
-          .post(`${process.env.API_URL}user/${username}/assign-${role}`)
-          .then(() =>
-            Swal.fire({
-              title: "Success",
-              text: "Role added successfully",
-              icon: "success",
+        if (roles.includes(role)) {
+          Swal.fire({
+            title: "Error",
+            text: "User already has this role",
+            icon: "error",
+          });
+        } else {
+          axios
+            .post(`${process.env.API_URL}user/${username}/assign-${role}`)
+            .then(() => {
+              Swal.fire({
+                title: "Success",
+                text: "Role added successfully",
+                icon: "success",
+              });
+              setUsers(
+                users?.map((user) => {
+                  if (user.username === username) {
+                    user.roles.push(role);
+                  }
+                  return user;
+                })
+              );
             })
-          )
-          .catch(() =>
-            Swal.fire({
-              title: "Error",
-              text: "Something went wrong",
-              icon: "error",
-            })
-          );
+            .catch(() =>
+              Swal.fire({
+                title: "Error",
+                text: "Something went wrong",
+                icon: "error",
+              })
+            );
+        }
       }
     }
   }
