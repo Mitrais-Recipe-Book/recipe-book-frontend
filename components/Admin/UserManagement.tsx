@@ -1,46 +1,57 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 
 interface User {
   id: number;
   username: string;
-  fullname: string;
+  fullName: string;
+  email: string;
   roles: string[];
 }
 
 export default function UserManagement() {
-  const [users, setUsers] = useState();
+  const [users, setUsers] = useState<User[]>();
   const columns = [
     {
       name: "Username",
-      sortFunction: (a: any, b: any) => {
-        if (a.name < b.name) {
-          return -1;
-        }
-        if (a.name > b.name) {
-          return 1;
-        }
-        return 0;
-      },
-      selector: (row: { id: any; name: string; temp: string }) => (
-        <div>username</div>
-      ),
+      sortable: true,
+      selector: (row: User) => row.username,
+    },
+    {
+      name: "Fullname",
+      sortable: true,
+      selector: (row: User) => row.fullName,
+    },
+    {
+      name: "Email",
+      sortable: true,
+      selector: (row: User) => row.email,
     },
     {
       name: "Roles",
       sortable: false,
       maxWidth: "100px",
-      selector: (row: { id: any; name: string; temp: string }) => {
-        return <div>roles</div>;
+      selector: (row: User) => {
+        return row.roles.map((role) => {
+          return <div>{role}</div>;
+        });
       },
     },
   ];
+
+  useEffect(() => {
+    axios.get(`${process.env.API_URL}user?page=0`).then((res) => {
+      setUsers(res.data.payload.data);
+    });
+  }, []);
+
   return (
     <DataTable
       name="Users"
       //@ts-ignore
       columns={columns}
-      // data={"test"}
+      data={users!}
       progressPending={false}
       pagination
       paginationPerPage={5}
