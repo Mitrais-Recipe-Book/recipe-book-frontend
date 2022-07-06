@@ -2,8 +2,15 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import DataTable from "react-data-table-component";
 
+interface Tag {
+  id: number;
+  name: string;
+  temp: string;
+  views: number;
+}
+
 export default function TagsTable() {
-  const URL = "https://recipyb-dev.herokuapp.com/api/v1/tag";
+  const URL = `${process.env.API_URL}tag/all`;
   const [loading, setLoading] = useState(true);
   // const [sortable, setSortable] = useState(true)
   const [notif, setNotif] = useState(false);
@@ -13,6 +20,7 @@ export default function TagsTable() {
       id: 1,
       name: "",
       temp: "",
+      views: 0,
     },
   ]);
 
@@ -25,6 +33,7 @@ export default function TagsTable() {
           id: tag.id,
           name: tag.name,
           temp: tag.name,
+          views: tag.views,
         }))
       );
       setLoading(false);
@@ -45,7 +54,7 @@ export default function TagsTable() {
         // }
         return 0;
       },
-      selector: (row: { id: any; name: string; temp: string }) => (
+      selector: (row: Tag) => (
         <input
           disabled={true}
           name={"input" + row.id}
@@ -73,22 +82,22 @@ export default function TagsTable() {
     {
       name: "Total Recipes",
       sortable: true,
-      selector: (row: { id: any; name: string; temp: string }) => {
+      selector: (row: Tag) => {
         return <div>total recipes WIP</div>;
       },
     },
     {
       name: "Total Clicks",
       sortable: true,
-      selector: (row: { id: any; name: string; temp: string }) => {
-        return <div>total clicks WIP</div>;
+      selector: (row: Tag) => {
+        return row.views;
       },
     },
     {
       name: "Actions",
       sortable: false,
       maxWidth: "100px",
-      selector: (row: { id: any; name: string; temp: string }) => {
+      selector: (row: Tag) => {
         return (
           <div>
             <button
@@ -226,6 +235,7 @@ export default function TagsTable() {
                     id: res.data.payload.id,
                     name: res.data.payload.name,
                     temp: res.data.payload.name,
+                    views: 0,
                   },
                 ]);
               })

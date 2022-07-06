@@ -15,6 +15,7 @@ export default function UserManagement() {
   const [users, setUsers] = useState<User[]>();
   const [totalPages, setTotalPages] = useState<number>(0);
   const [totalRows, setTotalRows] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
   const columns = [
     {
       name: "Username",
@@ -85,6 +86,7 @@ export default function UserManagement() {
       setUsers(res.data.payload.data);
       setTotalPages(res.data.payload.totalPages);
       setTotalRows(res.data.payload.totalItem);
+      setLoading(false);
     });
   }
 
@@ -168,6 +170,7 @@ export default function UserManagement() {
         }}
         paginationPerPage={10}
         paginationRowsPerPageOptions={[10]}
+        progressPending={loading}
       />
     </div>
   );
