@@ -86,6 +86,7 @@ export default function RecipeDetail() {
   const [ingredients, setIngredients] = useState<Ingredients[] | undefined>();
   const [userReaction, setUserReaction] = useState<Reaction>();
   const [comments, setComments] = useState<CommentContent[]>([]);
+  const [isFavorited, setIsFavorited] = useState<boolean>();
   const [pageInfo, setPageInfo] = useState<PageInfo>({
     page: 0,
     last: false,
@@ -116,6 +117,16 @@ export default function RecipeDetail() {
           axios.get(process.env.API_URL + `user/${username}`).then((res) => {
             setUserInfo(res.data.payload);
           });
+          username
+            ? axios
+                .get(
+                  process.env.API_URL +
+                    `recipe/${recipeId}/favorite?username=${username}`
+                )
+                .then((res) => {
+                  setIsFavorited(res.data.payload.favorited);
+                })
+            : null;
         })
         .catch((err) => {
           setIsRender(true);
@@ -140,6 +151,7 @@ export default function RecipeDetail() {
 
   useEffect(() => {
     getReactions(session?.user.username, recipe?.id);
+    console.log("fav= ", isFavorited);
   });
 
   useEffect(() => {
