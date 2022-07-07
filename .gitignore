@@ -34,5 +34,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
+<<<<<<< HEAD
 #instrumented files for code coverage
+=======
+# nyc code coverage
+>>>>>>> dev
 .nyc_output

@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 
 interface Tag {
@@ -7,12 +7,12 @@ interface Tag {
   name: string;
   temp: string;
   views: number;
+  totalRecipe: number;
 }
 
 export default function TagsTable() {
-  const URL = `${process.env.API_URL}tag/all`;
+  const URL = `${process.env.API_URL}tag`;
   const [loading, setLoading] = useState(true);
-  // const [sortable, setSortable] = useState(true)
   const [notif, setNotif] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [tags, setTags] = useState([
@@ -27,13 +27,14 @@ export default function TagsTable() {
   const [newTag, setNewTag] = useState("");
 
   useEffect(() => {
-    axios.get(URL).then((res) => {
+    axios.get(`${URL}/all`).then((res) => {
       setTags(
         res.data.payload.map((tag: any) => ({
           id: tag.id,
           name: tag.name,
           temp: tag.name,
           views: tag.views,
+          totalRecipe: tag.totalRecipe,
         }))
       );
       setLoading(false);
@@ -44,14 +45,12 @@ export default function TagsTable() {
     {
       name: "Tags",
       sortFunction: (a: any, b: any) => {
-        // if (sortable.current){
         if (a.name < b.name) {
           return -1;
         }
         if (a.name > b.name) {
           return 1;
         }
-        // }
         return 0;
       },
       selector: (row: Tag) => (
@@ -83,7 +82,7 @@ export default function TagsTable() {
       name: "Total Recipes",
       sortable: true,
       selector: (row: Tag) => {
-        return <div>total recipes WIP</div>;
+        return <div>{row.totalRecipe}</div>;
       },
     },
     {
