@@ -11,7 +11,7 @@ interface Tag {
 }
 
 export default function TagsTable() {
-  const URL = `${process.env.API_URL}tag/all`;
+  const URL = `${process.env.API_URL}tag`;
   const [loading, setLoading] = useState(true);
   // const [sortable, setSortable] = useState(true)
   const [notif, setNotif] = useState(false);
@@ -28,7 +28,7 @@ export default function TagsTable() {
   const [newTag, setNewTag] = useState("");
 
   useEffect(() => {
-    axios.get(URL).then((res) => {
+    axios.get(`${URL}/all`).then((res) => {
       setTags(
         res.data.payload.map((tag: any) => ({
           id: tag.id,
