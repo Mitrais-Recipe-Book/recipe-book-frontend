@@ -13,7 +13,6 @@ interface Tag {
 export default function TagsTable() {
   const URL = `${process.env.API_URL}tag`;
   const [loading, setLoading] = useState(true);
-  // const [sortable, setSortable] = useState(true)
   const [notif, setNotif] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [tags, setTags] = useState([
