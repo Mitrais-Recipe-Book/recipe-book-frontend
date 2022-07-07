@@ -7,6 +7,7 @@ interface Tag {
   name: string;
   temp: string;
   views: number;
+  totalRecipe: number;
 }
 
 export default function TagsTable() {
@@ -34,6 +35,7 @@ export default function TagsTable() {
           name: tag.name,
           temp: tag.name,
           views: tag.views,
+          totalRecipe: tag.totalRecipe,
         }))
       );
       setLoading(false);
@@ -44,14 +46,12 @@ export default function TagsTable() {
     {
       name: "Tags",
       sortFunction: (a: any, b: any) => {
-        // if (sortable.current){
         if (a.name < b.name) {
           return -1;
         }
         if (a.name > b.name) {
           return 1;
         }
-        // }
         return 0;
       },
       selector: (row: Tag) => (
@@ -83,7 +83,7 @@ export default function TagsTable() {
       name: "Total Recipes",
       sortable: true,
       selector: (row: Tag) => {
-        return <div>total recipes WIP</div>;
+        return <div>{row.totalRecipe}</div>;
       },
     },
     {
