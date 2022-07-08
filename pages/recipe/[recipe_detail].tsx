@@ -151,7 +151,6 @@ export default function RecipeDetail() {
 
   useEffect(() => {
     getReactions(session?.user.username, recipe?.id);
-    console.log("fav= ", isFavorited);
   });
 
   useEffect(() => {
@@ -253,6 +252,31 @@ export default function RecipeDetail() {
     }
   }
 
+  function removeFavorite(username: String, recipeId: String | String[]) {
+    if (username && recipeId) {
+      axios
+        .delete(process.env.API_URL + `recipe/${recipeId}/favorite`, {
+          data: {
+            username: username,
+          },
+        })
+        .then(() => {
+          setIsFavorited(false);
+        });
+    }
+  }
+  function addFavorite(username: String, recipeId: String | String[]) {
+    if (username && recipeId) {
+      axios
+        .post(process.env.API_URL + `recipe/${recipeId}/favorite`, {
+          username: username,
+        })
+        .then(() => {
+          setIsFavorited(true);
+        });
+    }
+  }
+
   function getComments() {
     axios
       .get(
@@ -293,11 +317,23 @@ export default function RecipeDetail() {
                   <a className="ml-auto">
                     <BsFillBookmarkCheckFill
                       id="bookmark"
-                      className="fill-slate-400"
+                      className={
+                        isFavorited
+                          ? "fill-red-600 cursor-pointer"
+                          : "fill-gray-600 cursor-pointer"
+                      }
                       onClick={() => {
-                        document
-                          .getElementById("bookmark")
-                          ?.classList.toggle("fill-red-600");
+                        if (session?.user.username) {
+                          if (isFavorited) {
+                            removeFavorite(session?.user.username, recipeId!);
+                          } else {
+                            addFavorite(session?.user.username, recipeId!);
+                          }
+                        } else {
+                          Swal.fire(
+                            "Please Login to add bookmark to this recipe"
+                          );
+                        }
                       }}
                     />
                   </a>
@@ -307,7 +343,7 @@ export default function RecipeDetail() {
                   id={`${recipeId}`}
                   alt={`banner-recipe-${recipe?.title}`}
                 />
-                <div className="mx-2 my-2 flex gap-2">
+                <div className="mx-2 my-2 flex gap-2 cursor-pointer">
                   <a
                     onClick={() => {
                       if (userReaction !== "LIKED") {
