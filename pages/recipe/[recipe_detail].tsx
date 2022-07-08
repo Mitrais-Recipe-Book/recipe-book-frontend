@@ -12,6 +12,7 @@ import Swal from "sweetalert2";
 import CommentForm from "@components/Comment/CommentForm";
 import CommentCard from "@components/Comment/CommentCard";
 import BannerImage from "@components/RecipeDetail/BannerImage";
+import BookmarkButton from "@components/BookmarkButton";
 
 const Navbar = dynamic(() => import("@components/Navbar"));
 const Footer = dynamic(() => import("@components/Footer"));
@@ -86,7 +87,6 @@ export default function RecipeDetail() {
   const [ingredients, setIngredients] = useState<Ingredients[] | undefined>();
   const [userReaction, setUserReaction] = useState<Reaction>();
   const [comments, setComments] = useState<CommentContent[]>([]);
-  const [isFavorited, setIsFavorited] = useState<boolean>();
   const [pageInfo, setPageInfo] = useState<PageInfo>({
     page: 0,
     last: false,
@@ -117,16 +117,6 @@ export default function RecipeDetail() {
           axios.get(process.env.API_URL + `user/${username}`).then((res) => {
             setUserInfo(res.data.payload);
           });
-          username
-            ? axios
-                .get(
-                  process.env.API_URL +
-                    `recipe/${recipeId}/favorite?username=${username}`
-                )
-                .then((res) => {
-                  setIsFavorited(res.data.payload.favorited);
-                })
-            : null;
         })
         .catch((err) => {
           setIsRender(true);
@@ -220,33 +210,6 @@ export default function RecipeDetail() {
     }
   }
 
-  function removeFavorite(username: String, recipeId: String | String[]) {
-    if (username && recipeId) {
-      axios
-        .delete(process.env.API_URL + `recipe/${recipeId}/favorite`, {
-          data: {
-            username: username,
-          },
-        })
-        .then(() => {
-          setIsFavorited(false);
-        });
-    }
-  }
-  function addFavorite(username: String, recipeId: String | String[]) {
-    if (username && recipeId) {
-      axios
-        .post(process.env.API_URL + `recipe/${recipeId}/favorite`, {
-          username: username,
-        })
-        .then(() => {
-          setIsFavorited(true);
-        });
-    } else {
-      promptToLogin("bookmark");
-    }
-  }
-
   function promptToLogin(action: String) {
     Swal.fire({
       title: "Please Login",
@@ -304,23 +267,9 @@ export default function RecipeDetail() {
                   <p className="flex gap-x-2">
                     <FiEye className="self-center" /> {recipe?.views}
                   </p>
-                  <a className="ml-auto">
-                    <BsFillBookmarkCheckFill
-                      id="bookmark"
-                      className={
-                        isFavorited
-                          ? "fill-red-600 cursor-pointer"
-                          : "fill-gray-600 cursor-pointer"
-                      }
-                      onClick={() => {
-                        if (isFavorited) {
-                          removeFavorite(session?.user.username, recipeId!);
-                        } else {
-                          addFavorite(session?.user.username, recipeId!);
-                        }
-                      }}
-                    />
-                  </a>
+                  <div className="ml-auto">
+                    <BookmarkButton recipeId={recipeId!} />
+                  </div>
                   {addEditRecipe()}
                 </div>
                 <BannerImage

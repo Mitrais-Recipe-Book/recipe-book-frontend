@@ -6,7 +6,7 @@ import { BsFillBookmarkCheckFill } from "react-icons/bs";
 import Swal from "sweetalert2";
 
 interface Props {
-  recipeId: String;
+  recipeId: String | String[];
 }
 
 export default function FavRecipeCard(props: Props) {
