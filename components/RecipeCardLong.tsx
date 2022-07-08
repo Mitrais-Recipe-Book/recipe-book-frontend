@@ -5,6 +5,7 @@ import { CgMenu } from "react-icons/cg";
 import { Menu, Transition } from "@headlessui/react";
 import TagsPill from "./TagsPill";
 import Link from "next/link";
+import BookmarkButton from "./BookmarkButton";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -12,9 +13,9 @@ function classNames(...classes: string[]) {
 
 //@ts-ignore
 export default function RecipeCardLong(prop) {
-  const [img, setImg] = useState("")
+  const [img, setImg] = useState("");
   const defaultImg = "/images/bibimbap512x512.png";
-  
+
   useEffect(() => {
     setImg(`${process.env.API_URL}recipe/${prop.recipe?.id}/photo`);
   }, [prop.recipe.id]);
@@ -25,8 +26,7 @@ export default function RecipeCardLong(prop) {
           <div className=" grow">
             <h4>{prop.recipe.dateCreated}</h4>
           </div>
-          {
-            prop?.dataQueryParam == undefined && 
+          {prop?.dataQueryParam == undefined && (
             <Menu as="div" className="relative inline-block text-left">
               <Menu.Button className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
                 <CgMenu size={20} />
@@ -44,7 +44,9 @@ export default function RecipeCardLong(prop) {
                   <div className="py-1">
                     <Menu.Item>
                       {({ active }) => (
-                        <Link href={`/creator/create-recipe?id=${prop.recipe.id}`}>
+                        <Link
+                          href={`/creator/create-recipe?id=${prop.recipe.id}`}
+                        >
                           <a
                             href="#"
                             className={classNames(
@@ -63,9 +65,9 @@ export default function RecipeCardLong(prop) {
                       {({ active }) => (
                         <a
                           href="#"
-                          onClick={(e)=>{
-                            e.preventDefault()
-                            prop.deleteAction(prop.recipe.id)
+                          onClick={(e) => {
+                            e.preventDefault();
+                            prop.deleteAction(prop.recipe.id);
                           }}
                           className={classNames(
                             active
@@ -82,27 +84,30 @@ export default function RecipeCardLong(prop) {
                 </Menu.Items>
               </Transition>
             </Menu>
-          }
+          )}
+          {prop?.isFavorite !== undefined && (
+            <div className="flex-1 text-right">
+              <BookmarkButton recipeId={prop.recipe.id} />
+            </div>
+          )}
         </div>
-        {
-          prop.isDraft? (
-            <h1 className="text-2xl text-center md:text-left my-3 font-semibold text-ellipsis overflow-hidden">
+        {prop.isDraft ? (
+          <h1 className="text-2xl text-center md:text-left my-3 font-semibold text-ellipsis overflow-hidden">
             {
               //@ts-ignore
               prop.recipe.title
             }
           </h1>
-          ) : (
-            <Link href={`/recipe/${prop.recipe.id}`}>
-              <h1 className="text-2xl text-center md:text-left my-3 font-semibold text-ellipsis overflow-hidden hover:cursor-pointer">
-                {
-                  //@ts-ignore
-                  prop.recipe.title
-                }
-              </h1>
-            </Link>
-          )
-        }
+        ) : (
+          <Link href={`/recipe/${prop.recipe.id}`}>
+            <h1 className="text-2xl text-center md:text-left my-3 font-semibold text-ellipsis overflow-hidden hover:cursor-pointer">
+              {
+                //@ts-ignore
+                prop.recipe.title
+              }
+            </h1>
+          </Link>
+        )}
         <div className="grid grid-cols-4 my-3">
           <div className="order-2 md:order-1 col-span-4 md:col-span-3">
             <p className="text-justify md:text-left four-lines-ellipsis">
@@ -112,15 +117,16 @@ export default function RecipeCardLong(prop) {
               }
             </p>
             <div className="flex flex-wrap gap-1 md:gap-3 my-3">
-              {
-                prop.recipe?.tags.length > 0 ? (
-                  prop.recipe.tags.map((tag:any) => (
-                    <TagsPill key={Math.random()*Math.random()} tag={{id: tag.id, name: tag.name}} />
-                  ))
-                ) : (
-                  <div className=""></div>
-                )
-              }
+              {prop.recipe?.tags.length > 0 ? (
+                prop.recipe.tags.map((tag: any) => (
+                  <TagsPill
+                    key={Math.random() * Math.random()}
+                    tag={{ id: tag.id, name: tag.name }}
+                  />
+                ))
+              ) : (
+                <div className=""></div>
+              )}
             </div>
           </div>
           <div className="order-1 md:order-2 px-5 my-3 mx-2 col-span-4 md:col-span-1">
