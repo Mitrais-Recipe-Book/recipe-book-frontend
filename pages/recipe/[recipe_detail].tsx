@@ -172,23 +172,7 @@ export default function RecipeDetail() {
             .then(() => {
               setUserReaction(reaction);
             })
-        : Swal.fire({
-            title: "Please Login",
-            text: "You need to login to like this recipe",
-            icon: "warning",
-            confirmButtonText: "Login",
-            showCancelButton: true,
-            cancelButtonText: "Cancel",
-            reverseButtons: true,
-            allowOutsideClick: true,
-            allowEscapeKey: false,
-            allowEnterKey: false,
-            showLoaderOnConfirm: true,
-          }).then((result) => {
-            if (result.value) {
-              window.location.href = "/sign-in";
-            }
-          })
+        : promptToLogin()
       : Swal.fire({
           icon: "error",
           title: "Oops...",
@@ -213,23 +197,7 @@ export default function RecipeDetail() {
             .then(() => {
               setUserReaction(Reaction.None);
             })
-        : Swal.fire({
-            title: "Please Login",
-            text: "You need to login to like this recipe",
-            icon: "warning",
-            confirmButtonText: "Login",
-            showCancelButton: true,
-            cancelButtonText: "Cancel",
-            reverseButtons: true,
-            allowOutsideClick: true,
-            allowEscapeKey: false,
-            allowEnterKey: false,
-            showLoaderOnConfirm: true,
-          }).then((result) => {
-            if (result.value) {
-              window.location.href = "/sign-in";
-            }
-          })
+        : promptToLogin()
       : Swal.fire({
           icon: "error",
           title: "Oops...",
@@ -274,7 +242,29 @@ export default function RecipeDetail() {
         .then(() => {
           setIsFavorited(true);
         });
+    } else {
+      promptToLogin();
     }
+  }
+
+  function promptToLogin() {
+    Swal.fire({
+      title: "Please Login",
+      text: "You need to login to like this recipe",
+      icon: "warning",
+      confirmButtonText: "Login",
+      showCancelButton: true,
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+      allowOutsideClick: true,
+      allowEscapeKey: false,
+      allowEnterKey: false,
+      showLoaderOnConfirm: true,
+    }).then((result) => {
+      if (result.value) {
+        window.location.href = "/sign-in";
+      }
+    });
   }
 
   function getComments() {
@@ -323,16 +313,10 @@ export default function RecipeDetail() {
                           : "fill-gray-600 cursor-pointer"
                       }
                       onClick={() => {
-                        if (session?.user.username) {
-                          if (isFavorited) {
-                            removeFavorite(session?.user.username, recipeId!);
-                          } else {
-                            addFavorite(session?.user.username, recipeId!);
-                          }
+                        if (isFavorited) {
+                          removeFavorite(session?.user.username, recipeId!);
                         } else {
-                          Swal.fire(
-                            "Please Login to add bookmark to this recipe"
-                          );
+                          addFavorite(session?.user.username, recipeId!);
                         }
                       }}
                     />
