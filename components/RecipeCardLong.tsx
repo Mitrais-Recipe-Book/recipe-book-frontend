@@ -86,7 +86,7 @@ export default function RecipeCardLong(prop) {
             </Menu>
           )}
           {prop?.isFavorite !== undefined && (
-            <div className="flex-1 text-right">
+            <div className="flex place-items-end">
               <BookmarkButton recipeId={prop.recipe.id} />
             </div>
           )}
