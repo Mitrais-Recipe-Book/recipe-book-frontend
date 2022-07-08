@@ -172,7 +172,7 @@ export default function RecipeDetail() {
             .then(() => {
               setUserReaction(reaction);
             })
-        : promptToLogin()
+        : promptToLogin("like/dislike")
       : Swal.fire({
           icon: "error",
           title: "Oops...",
@@ -197,7 +197,7 @@ export default function RecipeDetail() {
             .then(() => {
               setUserReaction(Reaction.None);
             })
-        : promptToLogin()
+        : promptToLogin("like/dislike")
       : Swal.fire({
           icon: "error",
           title: "Oops...",
@@ -243,14 +243,14 @@ export default function RecipeDetail() {
           setIsFavorited(true);
         });
     } else {
-      promptToLogin();
+      promptToLogin("bookmark");
     }
   }
 
-  function promptToLogin() {
+  function promptToLogin(action: String) {
     Swal.fire({
       title: "Please Login",
-      text: "You need to login to like this recipe",
+      text: `You need to login to ${action} this recipe`,
       icon: "warning",
       confirmButtonText: "Login",
       showCancelButton: true,
