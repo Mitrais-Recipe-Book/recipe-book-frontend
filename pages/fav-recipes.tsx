@@ -3,6 +3,7 @@ import Navbar from "@components/Navbar";
 import RecipeCardLong from "@components/RecipeCardLong";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import router from "next/router";
 import React, { useEffect, useState } from "react";
 
 interface Recipe {
@@ -46,27 +47,47 @@ export default function favrecipes() {
     <div>
       <Navbar />
       <main className="container mx-auto pt-1">
-        <h1 className="text-5xl my-5 text-center">Your Favorite Recipes</h1>
-        <div className="container w-3/4 mx-auto pt-1">
-          {recipes?.map((recipe) => (
-            <RecipeCardLong
-              recipe={recipe}
-              dataQueryParam={true}
-              isFavorite={true}
-            />
-          ))}
-          <div className="flex place-content-center">
-            <button
-              className="bg-red-600 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-2 px-4 rounded"
-              disabled={isLastPage}
-              onClick={() => {
-                loadMore();
-              }}
-            >
-              {isLastPage ? "No more recipe" : "Load more"}
-            </button>
-          </div>
-        </div>
+        {session ? (
+          <>
+            <h1 className="text-5xl my-5 text-center">Your Favorite Recipes</h1>
+            <div className="container w-3/4 mx-auto pt-1">
+              {recipes?.map((recipe) => (
+                <RecipeCardLong
+                  recipe={recipe}
+                  dataQueryParam={true}
+                  isFavorite={true}
+                />
+              ))}
+              <div className="flex place-content-center">
+                <button
+                  className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                  disabled={isLastPage}
+                  onClick={() => {
+                    loadMore();
+                  }}
+                >
+                  {isLastPage ? "No more recipe" : "Load more"}
+                </button>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <h1 className="text-2xl my-5 text-center">
+              Please Login to access your Favorite Recipes
+            </h1>
+            <div className="flex place-content-center">
+              <button
+                className="bg-red-600 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+                onClick={() => {
+                  router.push("/sign-in");
+                }}
+              >
+                LOGIN
+              </button>
+            </div>
+          </>
+        )}
       </main>
       <Footer />
     </div>
