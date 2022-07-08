@@ -336,32 +336,21 @@ export default function RecipeDetail() {
                           recipe?.id,
                           Reaction.Like
                         );
-                        document
-                          .getElementById("fav-button")
-                          ?.classList.add("fill-red-700");
-                        document
-                          .getElementById("surprise-button")
-                          ?.classList.remove("fill-yellow-700");
                       } else {
                         removeReaction(
                           session?.user.username,
                           recipe?.id,
                           Reaction.Like
                         );
-                        document
-                          .getElementById("fav-button")
-                          ?.classList.remove("fill-red-700");
                       }
                     }}
                   >
                     <FiHeart
                       id="fav-button"
                       className={
-                        userReaction !== undefined
-                          ? userReaction === "LIKED"
-                            ? "fill-red-700"
-                            : ""
-                          : ""
+                        userReaction === "LIKED"
+                          ? "fill-red-700"
+                          : "fill-gray-700"
                       }
                     />
                   </a>
@@ -373,32 +362,19 @@ export default function RecipeDetail() {
                           recipe?.id,
                           Reaction.Dislike
                         );
-                        document
-                          .getElementById("surprise-button")
-                          ?.classList.add("fill-yellow-700");
-                        document
-                          .getElementById("fav-button")
-                          ?.classList.remove("fill-red-700");
                       } else {
                         removeReaction(
                           session?.user.username,
                           recipe?.id,
                           Reaction.Dislike
                         );
-                        document
-                          .getElementById("surprise-button")
-                          ?.classList.remove("fill-yellow-700");
                       }
                     }}
                   >
                     <FaRegSurprise
                       id="surprise-button"
                       className={
-                        userReaction !== undefined
-                          ? userReaction === "DISLIKED"
-                            ? "fill-yellow-700"
-                            : ""
-                          : ""
+                        userReaction === "DISLIKED" ? "fill-yellow-700" : ""
                       }
                     />
                   </a>
