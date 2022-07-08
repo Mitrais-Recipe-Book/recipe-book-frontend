@@ -21,23 +21,27 @@ interface Tag {
 
 export default function favrecipes() {
   const { data: session }: any = useSession();
-  const [recipes, setRecipes] = useState<Recipe[]>();
-  const [isLastPage, setIsLastPage] = useState<Boolean>();
-  const [page, setPage] = useState<Number>();
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [isLastPage, setIsLastPage] = useState<boolean>();
+  const [page, setPage] = useState<number>(0);
   useEffect(() => {
+    loadMore();
+  }, [session]);
+
+  function loadMore() {
     if (session) {
       axios
         .get(
           process.env.API_URL +
-            `user/${session?.user.username}/favorite-recipe?isPaginated=true&page=0&size=10`
+            `user/${session?.user.username}/favorite-recipe?isPaginated=true&page=${page}&size=10`
         )
         .then((res) => {
-          setRecipes(res.data.payload.data);
+          setRecipes([...recipes, ...res.data.payload.data]);
           setIsLastPage(res.data.payload.islast);
-          setPage(res.data.payload.currentPage);
+          setPage(page + 1);
         });
     }
-  }, [session]);
+  }
   return (
     <div>
       <Navbar />
@@ -50,6 +54,17 @@ export default function favrecipes() {
               isFavorite={true}
             />
           ))}
+          <div className="flex place-content-center">
+            <button
+              className="bg-red-600 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+              disabled={isLastPage}
+              onClick={() => {
+                loadMore();
+              }}
+            >
+              {isLastPage ? "No more recipe" : "Load more"}
+            </button>
+          </div>
         </div>
       </main>
       <Footer />
