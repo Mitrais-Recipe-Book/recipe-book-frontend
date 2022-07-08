@@ -46,6 +46,7 @@ export default function favrecipes() {
     <div>
       <Navbar />
       <main className="container mx-auto pt-1">
+        <h1 className="text-5xl my-5 text-center">Your Favorite Recipes</h1>
         <div className="container w-3/4 mx-auto pt-1">
           {recipes?.map((recipe) => (
             <RecipeCardLong
