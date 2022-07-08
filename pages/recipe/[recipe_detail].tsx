@@ -12,6 +12,7 @@ import Swal from "sweetalert2";
 import CommentForm from "@components/Comment/CommentForm";
 import CommentCard from "@components/Comment/CommentCard";
 import BannerImage from "@components/RecipeDetail/BannerImage";
+import BookmarkButton from "@components/BookmarkButton";
 
 const Navbar = dynamic(() => import("@components/Navbar"));
 const Footer = dynamic(() => import("@components/Footer"));
@@ -161,23 +162,7 @@ export default function RecipeDetail() {
             .then(() => {
               setUserReaction(reaction);
             })
-        : Swal.fire({
-            title: "Please Login",
-            text: "You need to login to like this recipe",
-            icon: "warning",
-            confirmButtonText: "Login",
-            showCancelButton: true,
-            cancelButtonText: "Cancel",
-            reverseButtons: true,
-            allowOutsideClick: true,
-            allowEscapeKey: false,
-            allowEnterKey: false,
-            showLoaderOnConfirm: true,
-          }).then((result) => {
-            if (result.value) {
-              window.location.href = "/sign-in";
-            }
-          })
+        : promptToLogin("like/dislike")
       : Swal.fire({
           icon: "error",
           title: "Oops...",
@@ -202,23 +187,7 @@ export default function RecipeDetail() {
             .then(() => {
               setUserReaction(Reaction.None);
             })
-        : Swal.fire({
-            title: "Please Login",
-            text: "You need to login to like this recipe",
-            icon: "warning",
-            confirmButtonText: "Login",
-            showCancelButton: true,
-            cancelButtonText: "Cancel",
-            reverseButtons: true,
-            allowOutsideClick: true,
-            allowEscapeKey: false,
-            allowEnterKey: false,
-            showLoaderOnConfirm: true,
-          }).then((result) => {
-            if (result.value) {
-              window.location.href = "/sign-in";
-            }
-          })
+        : promptToLogin("like/dislike")
       : Swal.fire({
           icon: "error",
           title: "Oops...",
@@ -239,6 +208,26 @@ export default function RecipeDetail() {
             : null;
         });
     }
+  }
+
+  function promptToLogin(action: String) {
+    Swal.fire({
+      title: "Please Login",
+      text: `You need to login to ${action} this recipe`,
+      icon: "warning",
+      confirmButtonText: "Login",
+      showCancelButton: true,
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+      allowOutsideClick: true,
+      allowEscapeKey: false,
+      allowEnterKey: false,
+      showLoaderOnConfirm: true,
+    }).then((result) => {
+      if (result.value) {
+        router.push("/sign-in");
+      }
+    });
   }
 
   function getComments() {
@@ -278,24 +267,16 @@ export default function RecipeDetail() {
                   <p className="flex gap-x-2">
                     <FiEye className="self-center" /> {recipe?.views}
                   </p>
-                  <a className="ml-auto">
-                    <BsFillBookmarkCheckFill
-                      id="bookmark"
-                      className="fill-slate-400"
-                      onClick={() => {
-                        document
-                          .getElementById("bookmark")
-                          ?.classList.toggle("fill-red-600");
-                      }}
-                    />
-                  </a>
+                  <div className="ml-auto">
+                    <BookmarkButton recipeId={recipeId!} />
+                  </div>
                   {addEditRecipe()}
                 </div>
                 <BannerImage
                   id={`${recipeId}`}
                   alt={`banner-recipe-${recipe?.title}`}
                 />
-                <div className="mx-2 my-2 flex gap-2">
+                <div className="mx-2 my-2 flex gap-2 cursor-pointer">
                   <a
                     onClick={() => {
                       if (userReaction !== "LIKED") {
@@ -304,32 +285,21 @@ export default function RecipeDetail() {
                           recipe?.id,
                           Reaction.Like
                         );
-                        document
-                          .getElementById("fav-button")
-                          ?.classList.add("fill-red-700");
-                        document
-                          .getElementById("surprise-button")
-                          ?.classList.remove("fill-yellow-700");
                       } else {
                         removeReaction(
                           session?.user.username,
                           recipe?.id,
                           Reaction.Like
                         );
-                        document
-                          .getElementById("fav-button")
-                          ?.classList.remove("fill-red-700");
                       }
                     }}
                   >
                     <FiHeart
                       id="fav-button"
                       className={
-                        userReaction !== undefined
-                          ? userReaction === "LIKED"
-                            ? "fill-red-700"
-                            : ""
-                          : ""
+                        userReaction === "LIKED"
+                          ? "fill-red-700"
+                          : "fill-gray-700"
                       }
                     />
                   </a>
@@ -341,32 +311,19 @@ export default function RecipeDetail() {
                           recipe?.id,
                           Reaction.Dislike
                         );
-                        document
-                          .getElementById("surprise-button")
-                          ?.classList.add("fill-yellow-700");
-                        document
-                          .getElementById("fav-button")
-                          ?.classList.remove("fill-red-700");
                       } else {
                         removeReaction(
                           session?.user.username,
                           recipe?.id,
                           Reaction.Dislike
                         );
-                        document
-                          .getElementById("surprise-button")
-                          ?.classList.remove("fill-yellow-700");
                       }
                     }}
                   >
                     <FaRegSurprise
                       id="surprise-button"
                       className={
-                        userReaction !== undefined
-                          ? userReaction === "DISLIKED"
-                            ? "fill-yellow-700"
-                            : ""
-                          : ""
+                        userReaction === "DISLIKED" ? "fill-yellow-700" : ""
                       }
                     />
                   </a>
