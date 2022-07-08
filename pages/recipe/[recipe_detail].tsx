@@ -262,7 +262,7 @@ export default function RecipeDetail() {
       showLoaderOnConfirm: true,
     }).then((result) => {
       if (result.value) {
-        window.location.href = "/sign-in";
+        router.push("/sign-in");
       }
     });
   }
