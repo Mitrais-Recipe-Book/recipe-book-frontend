@@ -3,8 +3,11 @@ import Navbar from "@components/Navbar";
 import { Form, Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import React from "react";
+import ChangePP from "@components/EditProfile/ChangePP";
+import { useSession } from "next-auth/react";
 
 export default function editprofile() {
+  const { data: session }: any = useSession();
   return (
     <>
       <Navbar />
@@ -30,6 +33,7 @@ export default function editprofile() {
             >
               {(props) => (
                 <div className="py-4 px-10">
+                  <ChangePP username={session?.user.username} />
                   <Form>
                     <div className="grid grid-cols-4 gap-2 my-4">
                       <label className="grid-col-1">Email</label>
