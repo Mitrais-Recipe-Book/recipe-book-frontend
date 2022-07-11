@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import React from "react";
 import ChangePP from "@components/EditProfile/ChangePP";
 import { useSession } from "next-auth/react";
+import ChangePassword from "@components/EditProfile/ChangePassword";
 
 export default function editprofile() {
   const { data: session }: any = useSession();
@@ -59,6 +60,8 @@ export default function editprofile() {
                         component="div"
                         className="col-span-4 text-red-500"
                       />
+                      <label className="grid-scol-1">Change Password</label>
+                      <ChangePassword />
                     </div>
                     <button
                       className="bg-red-500 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-1 px-8 rounded cursor-pointer disabled:cursor-default"
