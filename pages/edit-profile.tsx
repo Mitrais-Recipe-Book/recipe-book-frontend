@@ -1,6 +1,6 @@
 import Footer from "@components/Footer";
 import Navbar from "@components/Navbar";
-import { Form, Formik, Field } from "formik";
+import { Form, Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import React from "react";
 
@@ -31,18 +31,29 @@ export default function editprofile() {
               {(props) => (
                 <div className="py-4 px-10">
                   <Form>
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="grid grid-cols-4 gap-2 my-4">
                       <label className="grid-col-1">Email</label>
                       <Field
                         name="email"
                         as="input"
                         className=" bg-white text-gray-700 border border-gray-400 p-2 rounded grow col-span-3"
                       />
+                      <ErrorMessage
+                        name="email"
+                        component="div"
+                        className="col-span-4 text-red-500"
+                      />
+
                       <label className="grid-col-1">Fullname</label>
                       <Field
                         name="fullName"
                         as="input"
                         className=" bg-white text-gray-700 border border-gray-400 p-2 rounded grow col-span-3"
+                      />
+                      <ErrorMessage
+                        name="fullName"
+                        component="div"
+                        className="col-span-4 text-red-500"
                       />
                     </div>
                     <button
