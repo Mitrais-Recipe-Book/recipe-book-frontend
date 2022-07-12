@@ -67,8 +67,8 @@ export default function editprofile() {
                   <div className="py-4 px-10">
                     <ChangePP username={session?.user.username} />
                     <Form>
-                      <div className="grid grid-cols-4 gap-2 my-4">
-                        <label className="grid-col-1">Email</label>
+                      <div className="grid grid-cols-4  gap-2 my-4">
+                        <label>Email</label>
                         <Field
                           name="email"
                           as="input"
@@ -80,7 +80,7 @@ export default function editprofile() {
                           className="col-span-4 text-red-500"
                         />
 
-                        <label className="grid-col-1">Fullname</label>
+                        <label>Fullname</label>
                         <Field
                           name="fullName"
                           as="input"
@@ -91,8 +91,10 @@ export default function editprofile() {
                           component="div"
                           className="col-span-4 text-red-500"
                         />
-                        <label className="grid-scol-1">Change Password</label>
-                        <ChangePassword />
+                        <label>Change Password</label>
+                        <div className="grid-flow-col">
+                          <ChangePassword />
+                        </div>
                       </div>
                       <button
                         className="bg-red-500 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-1 px-8 rounded cursor-pointer disabled:cursor-default"
