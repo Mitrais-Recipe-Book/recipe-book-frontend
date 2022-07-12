@@ -12,7 +12,7 @@ describe("UserManagement", () => {
     cy.mount(<UserManagement />);
     cy.get(".sc-cxabCf").should("contain.text", "10");
   });
-  it.only("try to add role", () => {
+  it("try to add role", () => {
     cy.mount(<UserManagement />);
     cy.get(
       '#cell-5-2 > [data-tag="allowRowEvents"] > .flex > .bg-green-600'

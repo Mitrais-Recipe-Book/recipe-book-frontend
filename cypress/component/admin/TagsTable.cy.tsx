@@ -39,7 +39,7 @@ describe("TagsTable", () => {
     cy.get(".block").should("contain.text", "Failed to edit tag");
   });
 
-  it.only("can successfully change tag to other name", () => {
+  it("can successfully change tag to other name", () => {
     cy.mount(<TagsTable />);
     cy.get(
       '#cell-4-1 > [data-tag="allowRowEvents"] > div > .bg-blue-500'
