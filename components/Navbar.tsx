@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -30,6 +30,8 @@ export default function Navbar() {
   useEffect(() => {
     setImg(`${process.env.API_URL}user/${session?.user?.username}/photo`);
   }, [session?.user?.username]);
+
+  const router = useRouter();
 
   function handleRequestCC(username: string) {
     Swal.fire({
@@ -193,6 +195,9 @@ export default function Navbar() {
                       </Menu.Item>
                       <Menu.Item>
                         <a
+                          onClick={() => {
+                            router.push("/edit-profile");
+                          }}
                           className={
                             "bg-white text-gray-900 hover:bg-gray-900 duration-150 hover:text-white  block px-4 py-2 text-sm cursor-pointer"
                           }
@@ -246,7 +251,7 @@ export default function Navbar() {
                 </Transition>
               </Menu>
             ) : (
-              <Link href="/sign-in">
+              <Link href={"/sign-in"}>
                 <button className="border-2 hover:border-gray-200 hover:bg-gray-800  hover:text-white duration-150 rounded py-1 px-3 bg-gray-200 border-gray-700  text-gray-800 font-semibold  text-md ">
                   Login
                 </button>
