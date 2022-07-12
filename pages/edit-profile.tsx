@@ -66,6 +66,21 @@ export default function editprofile() {
                 {(props) => (
                   <div className="py-4 px-10">
                     <ChangePP username={session?.user.username} />
+                    <div className="flex flex-col text-center my-2">
+                      <div className="text-xl font-bold">
+                        {userInfo.username}
+                      </div>
+                      <div className="flex flex-row mx-auto">
+                        [
+                        {userInfo.roles.map((role) => (
+                          <div className="mx-1" key={role}>
+                            {" "}
+                            {role}
+                          </div>
+                        ))}
+                        ]
+                      </div>
+                    </div>
                     <Form>
                       <div className="grid grid-cols-4  gap-2 my-4">
                         <label>Email</label>
