@@ -203,10 +203,14 @@ export default function CreateRecipe() {
       confirmButtonText: "Yes, Draft it!",
       cancelButtonText: "Wait, I need to make changes!",
     }).then((result: SweetAlertResult<any>) => {
+      Swal.fire({
+        title: "Loading...",
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
       if (result.value) {
         submitForm(true);
-
-        router.push("/profile");
       }
     });
   }
@@ -222,6 +226,12 @@ export default function CreateRecipe() {
       confirmButtonText: "Yes!",
       cancelButtonText: "Wait, I need to make changes!",
     }).then((result: SweetAlertResult<any>) => {
+      Swal.fire({
+        title: "Loading...",
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
       if (result.value) {
         submitForm(false);
       }
@@ -353,7 +363,13 @@ export default function CreateRecipe() {
         Swal.fire({
           title: "Recipe Submitted!",
           icon: "success",
-        }).then(() => router.push("/"));
+        }).then(() => {
+          if (recipeForm.draft) {
+            router.push("/profile")
+          } else {
+            router.push("/")
+          }
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -427,6 +443,9 @@ export default function CreateRecipe() {
         title: "Failed to Submit Recipe",
         html: missingFields,
         icon: "error",
+        didOpen: () => {
+          Swal.hideLoading();
+        }
       });
       return false;
     }
