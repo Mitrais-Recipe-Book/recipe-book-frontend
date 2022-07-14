@@ -60,7 +60,7 @@ export default function favrecipes() {
               ))}
               <div className="flex place-content-center">
                 <button
-                  className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                  className="bg-red-600 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-2 px-4 rounded"
                   disabled={isLastPage}
                   onClick={() => {
                     loadMore();
