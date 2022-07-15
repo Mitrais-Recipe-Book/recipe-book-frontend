@@ -15,7 +15,11 @@ export default function ChangePP(props: Props) {
   const router = useRouter();
 
   useEffect(() => {
-    setImg(`${process.env.API_URL}user/${props?.username}/photo`);
+    setImg(
+      `${process.env.API_URL}user/${
+        props?.username
+      }/photo?${new Date().getTime()}`
+    );
   }, [props]);
 
   function editPP() {

@@ -28,7 +28,11 @@ export default function Navbar() {
   const [img, setImg] = useState("");
   const defaultImg = "/images/No_image_available.png";
   useEffect(() => {
-    setImg(`${process.env.API_URL}user/${session?.user?.username}/photo`);
+    setImg(
+      `${process.env.API_URL}user/${
+        session?.user?.username
+      }/photo?${new Date().getTime()}`
+    );
   }, [session?.user?.username]);
 
   const router = useRouter();
