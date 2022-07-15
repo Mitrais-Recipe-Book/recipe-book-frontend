@@ -45,20 +45,42 @@ export default function Navbar() {
     }).then((result) => {
       result.isConfirmed
         ? axios
-            .post(process.env.API_URL + `user/${username}/request-creator`)
+            .get(
+              `${process.env.API_URL}user/${session?.user?.username}/profile`
+            )
             .then((res) => {
-              Swal.fire({
-                title: "Request sent!",
-                text: "Successfully sent request! You will be able to post recipes after getting accepted",
-                icon: "success",
-              });
-            })
-            .catch((err) => {
-              Swal.fire({
-                title: "Error",
-                text: "Something went wrong! Please try again later",
-                icon: "error",
-              });
+              res.data.payload.roles.includes("Request")
+                ? Swal.fire({
+                    title: "Request already sent",
+                    text: "You have already sent a request",
+                    icon: "warning",
+                    showConfirmButton: true,
+                  })
+                : res.data.payload.roles.includes("Creator")
+                ? Swal.fire({
+                    title: "You are already a Content Creator",
+                    text: "You have already been accepted as a Content Creator. Please relogin to change your role",
+                    icon: "warning",
+                    showConfirmButton: true,
+                  })
+                : axios
+                    .post(
+                      process.env.API_URL + `user/${username}/request-creator`
+                    )
+                    .then((res) => {
+                      Swal.fire({
+                        title: "Request sent!",
+                        text: "Successfully sent request! You will be able to post recipes after getting accepted",
+                        icon: "success",
+                      });
+                    })
+                    .catch((err) => {
+                      Swal.fire({
+                        title: "Error",
+                        text: "Something went wrong! Please try again later",
+                        icon: "error",
+                      });
+                    });
             })
         : null;
     });
