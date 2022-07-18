@@ -1,9 +1,10 @@
 import axios from "axios";
-import { Field, Form, Formik } from "formik";
-import React from "react";
-import ReactDOM from "react-dom";
-import { renderToStaticMarkup } from "react-dom/server";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import React, { useState } from "react";
+import * as Yup from "yup";
+import { renderToStaticMarkup, renderToString } from "react-dom/server";
 import Swal from "sweetalert2";
+import SweetAlert2 from "react-sweetalert2";
 
 interface Props {
   user: {
@@ -23,30 +24,57 @@ export default function ChangePassword(props: Props) {
             confirmPassword: "",
           }}
           onSubmit={(values) => {
-            axios.put(
-              `${process.env.API_URL}user/${props.user.username}/profile/change-password`,
-              values
-            );
+            axios
+              .put(
+                `${process.env.API_URL}user/${props.user.username}/profile/change-password`,
+                values
+              )
+              .then((res) => {
+                Swal.fire({
+                  title: "Success",
+                  text: "Password updated successfully",
+                  icon: "success",
+                });
+              });
           }}
+          validationSchema={Yup.object({
+            oldPassword: Yup.string().required("Required"),
+            newPassword: Yup.string().required("Required"),
+            confirmPassword: Yup.string().oneOf(
+              [Yup.ref("newPassword"), null],
+              "Passwords must match"
+            ),
+          })}
         >
           <Form>
             <div className="flex flex-col gap-3">
               <Field
+                className="p-2"
                 name="oldPassword"
                 type="password"
                 placeholder="Old Password"
               />
+              <ErrorMessage component="div" name="oldPassword" />
               <Field
+                className="p-2"
                 name="newPassword"
                 type="password"
                 placeholder="New Password"
               />
+              <ErrorMessage component="div" name="newPassword" />
               <Field
+                className="p-2"
                 name="confirmPassword"
                 type="password"
                 placeholder="Confirm Password"
               />
-              <button type="submit">Change Password</button>
+              <ErrorMessage component="div" name="confirmPassword" />
+              <button
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
+                type="submit"
+              >
+                Change Password
+              </button>
             </div>
           </Form>
         </Formik>
@@ -54,16 +82,19 @@ export default function ChangePassword(props: Props) {
     );
   }
   function changePassword() {
-    Swal.fire({
-      title: "Change your password",
-      html: form,
-      showConfirmButton: false,
-    });
+    setSwalProps({ ...swalProps, show: true });
   }
 
   const form = document.createElement("div");
-  let staticElement = renderToStaticMarkup(<PasswordForm />);
+  let staticElement = renderToString(<PasswordForm />);
   form.innerHTML = `<div>${staticElement}</div>`;
+
+  const [swalProps, setSwalProps] = useState({
+    show: false,
+    title: "Change Your Password",
+    showConfirmButton: false,
+  });
+
   return (
     <div>
       <div
@@ -72,6 +103,16 @@ export default function ChangePassword(props: Props) {
       >
         Change Password
       </div>
+      <SweetAlert2
+        {...swalProps}
+        didClose={() => {
+          setSwalProps({ ...swalProps, show: false });
+        }}
+      >
+        <>
+          <PasswordForm />
+        </>
+      </SweetAlert2>
     </div>
   );
 }
