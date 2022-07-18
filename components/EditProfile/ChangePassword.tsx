@@ -33,6 +33,17 @@ export default function ChangePassword(props: Props) {
                   title: "Success",
                   text: "Password updated successfully",
                   icon: "success",
+                }).then(() => {
+                  setSwalProps({ ...swalProps, show: false });
+                });
+              })
+              .catch((err) => {
+                Swal.fire({
+                  title: "Error",
+                  text: err.response.data.message,
+                  icon: "error",
+                }).then(() => {
+                  setSwalProps({ ...swalProps, show: false });
                 });
               });
           }}
