@@ -108,7 +108,7 @@ export default function editprofile() {
                         />
                         <label>Change Password</label>
                         <div className="grid-flow-col">
-                          <ChangePassword />
+                          <ChangePassword user={session.user} />
                         </div>
                       </div>
                       <button
