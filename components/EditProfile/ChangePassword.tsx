@@ -2,7 +2,6 @@ import axios from "axios";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useState } from "react";
 import * as Yup from "yup";
-import { renderToStaticMarkup, renderToString } from "react-dom/server";
 import Swal from "sweetalert2";
 import SweetAlert2 from "react-sweetalert2";
 
@@ -84,10 +83,6 @@ export default function ChangePassword(props: Props) {
   function changePassword() {
     setSwalProps({ ...swalProps, show: true });
   }
-
-  const form = document.createElement("div");
-  let staticElement = renderToString(<PasswordForm />);
-  form.innerHTML = `<div>${staticElement}</div>`;
 
   const [swalProps, setSwalProps] = useState({
     show: false,
