@@ -49,44 +49,60 @@ export default function ChangePassword(props: Props) {
           }}
           validationSchema={Yup.object({
             oldPassword: Yup.string().required("Required"),
-            newPassword: Yup.string().required("Required"),
-            confirmPassword: Yup.string().oneOf(
-              [Yup.ref("newPassword"), null],
-              "Passwords must match"
-            ),
+            newPassword: Yup.string().required("Required").min(6, "Too short"),
+            confirmPassword: Yup.string()
+              .required("Required")
+              .oneOf([Yup.ref("newPassword"), null], "Passwords must match"),
           })}
         >
-          <Form>
-            <div className="flex flex-col gap-3">
-              <Field
-                className="p-2"
-                name="oldPassword"
-                type="password"
-                placeholder="Old Password"
-              />
-              <ErrorMessage component="div" name="oldPassword" />
-              <Field
-                className="p-2"
-                name="newPassword"
-                type="password"
-                placeholder="New Password"
-              />
-              <ErrorMessage component="div" name="newPassword" />
-              <Field
-                className="p-2"
-                name="confirmPassword"
-                type="password"
-                placeholder="Confirm Password"
-              />
-              <ErrorMessage component="div" name="confirmPassword" />
-              <button
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
-                type="submit"
-              >
-                Change Password
-              </button>
-            </div>
-          </Form>
+          {(props) => (
+            <Form>
+              <div className="flex flex-col gap-3">
+                <Field
+                  className="p-2"
+                  name="oldPassword"
+                  type="password"
+                  placeholder="Old Password"
+                />
+                <ErrorMessage
+                  className="text-red-500"
+                  component="div"
+                  name="oldPassword"
+                />
+                <Field
+                  className="p-2"
+                  name="newPassword"
+                  type="password"
+                  placeholder="New Password"
+                />
+                <ErrorMessage
+                  className="text-red-500"
+                  component="div"
+                  name="newPassword"
+                />
+                <Field
+                  className="p-2"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Confirm Password"
+                />
+                <ErrorMessage
+                  className="text-red-500"
+                  component="div"
+                  name="confirmPassword"
+                />
+                <button
+                  className="bg-red-500 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-2 px-4 rounded cursor-pointer"
+                  type="submit"
+                  disabled={
+                    !props.isValid || props.isSubmitting || !props.dirty
+                  }
+                >
+                  Change Password
+                </button>
+              </div>
+            </Form>
+          )}
         </Formik>
       </>
     );
