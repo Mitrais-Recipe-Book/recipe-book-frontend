@@ -11,8 +11,6 @@ interface User {
 interface Props {
   data: User[];
   loading: boolean;
-  totalRows: number;
-  fetchUser: (page: number) => void;
 }
 
 export default function RequestTable(props: Props) {
@@ -55,13 +53,9 @@ export default function RequestTable(props: Props) {
       columns={columns}
       data={props.data}
       progressPending={props.loading}
-      noRowsPerPage={true}
       customStyles={customStyles}
       pagination
-      paginationServer
-      paginationTotalRows={props.totalRows}
       paginationPerPage={10}
-      onChangePage={props.fetchUser}
     />
   );
 }
