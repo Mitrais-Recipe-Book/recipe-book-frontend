@@ -146,6 +146,34 @@ export default function UserManagement() {
   }
 
   function removeRole(username: string, role: string): any {
+    Swal.fire({
+      title: `Are you sure you want to remove ${role} role from ${username}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, remove it!",
+    }).then((result) => {
+      result.value
+        ? axios
+            .delete(`${process.env.API_URL}user/${username}/remove-${role}`)
+            .then(() => {
+              Swal.fire({
+                title: "Success",
+                text: "Role removed successfully",
+                icon: "success",
+              });
+              setUsers(
+                users?.map((user) => {
+                  if (user.username === username) {
+                    user.roles = user.roles.filter((r) => r !== role);
+                  }
+                  return user;
+                })
+              );
+            })
+        : null;
+    });
     console.log(`Delete role ${role} for user ${username}`);
   }
 
