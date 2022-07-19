@@ -8,7 +8,7 @@ export default function request() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  async function fetchUser(page: number) {
+  async function fetchUser() {
     setLoading(true);
     const response = await axios.get(
       `${process.env.API_URL}user/role-request/`
@@ -18,7 +18,7 @@ export default function request() {
   }
 
   useEffect(() => {
-    fetchUser(0);
+    fetchUser();
   }, []);
   return (
     <>
