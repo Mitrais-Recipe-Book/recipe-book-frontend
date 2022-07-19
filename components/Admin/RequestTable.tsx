@@ -19,7 +19,7 @@ export default function RequestTable(props: Props) {
       name: "Username",
       sortable: true,
       style: { marginLeft: "20%" },
-      selector: (row: { username: string }) => <div>{row.username}</div>,
+      selector: (row: { username: string }) => row.username,
     },
     {
       name: "Request",
