@@ -33,7 +33,17 @@ export default function RequestTable(props: Props) {
   }
 
   function rejectRequest(username: string): void {
-    console.log("Reject ", username);
+    axios
+      .delete(`${process.env.API_URL}user/${username}/remove-Request`)
+      .then(() => {
+        props.removeUser(username);
+        Swal.fire({
+          title: "Success",
+          text: "Request has been rejected",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+      });
   }
   const columns = [
     {
