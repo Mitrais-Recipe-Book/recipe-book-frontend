@@ -2,6 +2,7 @@ import RequestTable from "@components/Admin/RequestTable";
 import Footer from "@components/Footer";
 import Navbar from "@components/Navbar";
 import axios from "axios";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 interface User {
@@ -12,6 +13,7 @@ interface User {
 export default function request() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   async function fetchUser() {
     setLoading(true);
@@ -32,9 +34,17 @@ export default function request() {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto mt-10 w-3/4">
-        <h1 className="text-center text-2xl mb-4">Reuqest Table</h1>
-        <div className="flex flex-col justify-items-center ">
+      <div className="container mx-auto mt-10 flex flex-col w-3/4">
+        <h1 className="text-4xl text-center mb-3 font-bold">Reuqest Table</h1>
+        <button
+          className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded mb-3 mx-auto"
+          onClick={() => {
+            router.push("/admin");
+          }}
+        >
+          Back to Admin Page
+        </button>
+        <div className="mx-auto w-1/2">
           <RequestTable
             data={data}
             loading={loading}
