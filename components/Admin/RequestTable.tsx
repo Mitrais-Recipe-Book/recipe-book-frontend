@@ -67,13 +67,13 @@ export default function RequestTable(props: Props) {
     {
       name: "Username",
       sortable: true,
-      style: { marginLeft: "20%" },
+      // style: { marginLeft: "20%" },
       selector: (row: { username: string }) => row.username,
     },
     {
       name: "Request",
       sortable: false,
-      style: { marginLeft: "10%" },
+      style: { marginLeft: "25%" },
       selector: (row: { username: string }) => {
         return (
           <div className="flex gap-4">
