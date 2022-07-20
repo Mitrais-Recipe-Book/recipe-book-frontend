@@ -19,31 +19,49 @@ interface Props {
 
 export default function RequestTable(props: Props) {
   function acceptRequest(username: string): void {
-    axios
-      .put(`${process.env.API_URL}user/${username}/approve-creator`)
-      .then(() => {
-        props.removeUser(username);
-        Swal.fire({
-          title: "Success",
-          text: "Request has been approved",
-          icon: "success",
-          confirmButtonText: "OK",
-        });
-      });
+    Swal.fire({
+      title: "Are you sure?",
+      text: `You want to accept request of ${username}`,
+      icon: "warning",
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.value) {
+        axios
+          .put(`${process.env.API_URL}user/${username}/approve-creator`)
+          .then(() => {
+            props.removeUser(username);
+            Swal.fire({
+              title: "Success",
+              text: "Request has been approved",
+              icon: "success",
+              confirmButtonText: "OK",
+            });
+          });
+      }
+    });
   }
 
   function rejectRequest(username: string): void {
-    axios
-      .delete(`${process.env.API_URL}user/${username}/remove-Request`)
-      .then(() => {
-        props.removeUser(username);
-        Swal.fire({
-          title: "Success",
-          text: "Request has been rejected",
-          icon: "success",
-          confirmButtonText: "OK",
-        });
-      });
+    Swal.fire({
+      title: "Are you sure?",
+      text: `You want to reject request of ${username}`,
+      icon: "warning",
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.value) {
+        axios
+          .delete(`${process.env.API_URL}user/${username}/remove-Request`)
+          .then(() => {
+            props.removeUser(username);
+            Swal.fire({
+              title: "Success",
+              text: "Request has been rejected",
+              icon: "success",
+              confirmButtonText: "OK",
+            });
+          });
+      }
+    });
   }
   const columns = [
     {
