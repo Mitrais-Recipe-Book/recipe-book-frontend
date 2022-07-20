@@ -4,6 +4,11 @@ import Navbar from "@components/Navbar";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
+interface User {
+  id: number;
+  username: string;
+}
+
 export default function request() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,6 +22,10 @@ export default function request() {
     setLoading(false);
   }
 
+  function removeFromList(username: string) {
+    setData(data.filter((user: User) => user.username !== username));
+  }
+
   useEffect(() => {
     fetchUser();
   }, []);
@@ -26,7 +35,11 @@ export default function request() {
       <div className="container mx-auto mt-10 w-3/4">
         <h1 className="text-center text-2xl mb-4">Reuqest Table</h1>
         <div className="flex flex-col justify-items-center ">
-          <RequestTable data={data} loading={loading} />
+          <RequestTable
+            data={data}
+            loading={loading}
+            removeUser={removeFromList}
+          />
         </div>
       </div>
       <Footer />
