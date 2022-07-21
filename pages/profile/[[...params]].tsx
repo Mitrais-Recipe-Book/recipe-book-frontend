@@ -35,7 +35,7 @@ export default function ProfilePage() {
         draftRecipeData:0,
     })
     const [incrementNum,setIncrementNum] = useState(0)
-    const { data: session }:any = useSession();
+    const { data: session,status }:any = useSession();
     const [userData,setUserData]:any = useState({})
     const [userDataFound,SetUserDataFound]:any = useState(true)
     const [sessionProfile,setSessionProfile] = useState(false)
@@ -54,6 +54,7 @@ export default function ProfilePage() {
             .then((res) => {
                 //@ts-ignore
                 const data = res.data.payload
+                console.log("created",data)
                 //@ts-ignore
                 // if(data.data !== recipesData?.currentPage){
                     setRecipesData({
@@ -64,26 +65,31 @@ export default function ProfilePage() {
                         isLast : data.islast,
                         currentPage : data.currentPage
                     })
-                    setNextPage({...nextPage, createdRecipeData: nextPage.createdRecipeData+1})
-                    console.log(nextPage)
+                    //@ts-ignore
+                    setNextPage((state) =>{ 
+                        return  {draftRecipeData:state.draftRecipeData,createdRecipeData: state.createdRecipeData+1 }
+                    })
                 // }
             });
         }
     }
-    async function getDraftRecipes(){
+    async function getDraftRecipes(username:string){
         if(draftRecipesData.isLast !== true){
             axios.get(
-                apiUrl+`/user/${userData?.response?.username}/draft-recipes?page=${nextPage.draftRecipeData}`
+                apiUrl+`/user/`+username+`/draft-recipes?page=${nextPage.draftRecipeData}`
             ).then((res)=>{
                 const data = res.data.payload
+                console.log("draft",data)
                 setDraftRecipesData({
                     draftRecipesData:draftRecipesData.draftRecipesData.concat(data.data),
                     // @ts-ignore
                     currentPage: data.currentPage,
                     isLast:data.islast
                 })
-                setNextPage({...nextPage, draftRecipeData: nextPage.draftRecipeData+1})
-
+                //@ts-ignore
+                setNextPage((state) =>{ 
+                    return  {draftRecipeData:state.draftRecipeData+1,createdRecipeData: state.createdRecipeData }
+                })
             })
         }
     }
@@ -93,7 +99,7 @@ export default function ProfilePage() {
         if(tabs === "createdRecipe"){
             getRecipes()
         } else if (tabs === "draftRecipe") {
-            getDraftRecipes()
+            getDraftRecipes(session.user.username)
         } else if ( tabs === "follower") {
             getUserFollowers()
         } else {
@@ -161,7 +167,7 @@ export default function ProfilePage() {
                             title: 'Deleted!',
                             html: 'Your recipe has been deleted.',
                             icon: 'success',
-                            willClose: getDraftRecipes
+                            // willClose: getDraftRecipes
                         })
                     })
                     .catch(error => {
@@ -218,19 +224,23 @@ export default function ProfilePage() {
 
     useEffect(() => {
         if (session) {
+            console.log("first")
             checkQueryParam().then(() => {
                 if (routeUserName.params !== undefined && routeUserName.params.length > 0) {
+                    console.log("qparam")
                     getDataProfile(routeUserName.params).then(() => {
                         getRecipes()
                     })
                 } else {
                     getDataProfile(session.user.username).then(() => {
+                        console.log("session")
                         getRecipes()
-                        getDraftRecipes()
+                        getDraftRecipes(session.user.username)
                     })
                 }
             })
         } else {
+            console.log("second")
             checkQueryParam().then(() => {
                 getDataProfile(routeUserName.params).then(() => {
                     getRecipes()
@@ -239,7 +249,7 @@ export default function ProfilePage() {
         }
         getUserFollowing(userData?.response?.id)
         getUserFollowers(userData?.response?.id)
-    },[session,routeUserName,userData?.response?.username])
+    },[routeUserName,userData?.response?.username])
 
     function classNames(...classes: any) {
         return classes.filter(Boolean).join(' ')
