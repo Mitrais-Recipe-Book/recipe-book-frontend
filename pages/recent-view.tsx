@@ -53,16 +53,19 @@ export default function recentview() {
 
   function mapData(recipes: Recipe[] | undefined): JSX.Element[] | JSX.Element {
     if (recipes) {
-      return recipes!.map((recipe: Recipe) => {
-        return (
-          <div className="my-2">
-            <RecipeCard recipe={recipe} />
-          </div>
-        );
-      });
-    } else {
-      return <div>No Recipes</div>;
+      if (recipes!.length > 0) {
+        return recipes!.map((recipe: Recipe) => {
+          return (
+            <div className="my-2">
+              <RecipeCard recipe={recipe} />
+            </div>
+          );
+        });
+      } else {
+        return <div>No Recipe</div>;
+      }
     }
+    return <div>Loading...</div>;
   }
 
   return (
