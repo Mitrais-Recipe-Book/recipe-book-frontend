@@ -53,7 +53,11 @@ export default function recentview() {
   function mapData(recipes: Recipe[] | undefined): JSX.Element[] | JSX.Element {
     if (recipes) {
       return recipes!.map((recipe: Recipe) => {
-        return <RecipeCard recipe={recipe} />;
+        return (
+          <div className="my-2">
+            <RecipeCard recipe={recipe} />
+          </div>
+        );
       });
     } else {
       return <div>No Recipes</div>;
@@ -63,8 +67,16 @@ export default function recentview() {
   return (
     <>
       <Navbar />
-      <main className="container mx-auto pt-1">
-        <div>{loading ? <div>Loading...</div> : mapData(recipes)}</div>
+      <main className="w-3/4 mx-auto pt-1">
+        <div>
+          {loading ? (
+            <div>Loading...</div>
+          ) : (
+            <div className="flex flex-row flex-wrap justify-center">
+              {mapData(recipes)}
+            </div>
+          )}
+        </div>
       </main>
       <Footer />
     </>
