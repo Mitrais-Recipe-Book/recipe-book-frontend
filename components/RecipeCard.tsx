@@ -20,8 +20,8 @@ interface Recipe {
   id: number;
   recipeName: string;
   description: string;
-  recipeViews: number;
-  author: {
+  recipeViews?: number;
+  author?: {
     username: string;
     fullName: string;
     authorFollowers: number;
