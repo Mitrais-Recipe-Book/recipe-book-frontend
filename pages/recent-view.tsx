@@ -1,5 +1,6 @@
 import Footer from "@components/Footer";
 import Navbar from "@components/Navbar";
+import PromptLogin from "@components/PromptLogin";
 import RecipeCard from "@components/RecipeCard";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -69,12 +70,16 @@ export default function recentview() {
       <Navbar />
       <main className="w-3/4 mx-auto pt-1">
         <div>
-          {loading ? (
-            <div>Loading...</div>
+          {session ? (
+            loading ? (
+              <div>Loading...</div>
+            ) : (
+              <div className="flex flex-row flex-wrap justify-center">
+                {mapData(recipes)}
+              </div>
+            )
           ) : (
-            <div className="flex flex-row flex-wrap justify-center">
-              {mapData(recipes)}
-            </div>
+            <PromptLogin />
           )}
         </div>
       </main>
