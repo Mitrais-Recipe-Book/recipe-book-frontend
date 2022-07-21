@@ -16,9 +16,22 @@ const ProfileImage = dynamic(
     loading: () => <div>Loading Profile Image...</div>,
   }
 );
+interface Recipe {
+  id: number;
+  recipeName: string;
+  description: string;
+  recipeViews: number;
+  author: {
+    username: string;
+    fullName: string;
+    authorFollowers: number;
+  };
+}
+interface Props {
+  recipe: Recipe;
+}
 
-// @ts-ignore
-export default function RecipeCard(props) {
+export default function RecipeCard(props: Props) {
   const router = useRouter();
 
   function pushToRecipe() {
