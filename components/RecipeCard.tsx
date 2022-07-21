@@ -16,9 +16,22 @@ const ProfileImage = dynamic(
     loading: () => <div>Loading Profile Image...</div>,
   }
 );
+interface Recipe {
+  id: number;
+  recipeName: string;
+  description: string;
+  recipeViews?: number;
+  author?: {
+    username: string;
+    fullName: string;
+    authorFollowers: number;
+  };
+}
+interface Props {
+  recipe: Recipe;
+}
 
-// @ts-ignore
-export default function RecipeCard(props) {
+export default function RecipeCard(props: Props) {
   const router = useRouter();
 
   function pushToRecipe() {
@@ -30,7 +43,7 @@ export default function RecipeCard(props) {
         props.recipe.author
           ? "grid grid-flow-row grid-flow-row-col grid-rows-3 grid-cols-1"
           : "flex-wrap"
-      } mx-2 my-3 sm:w-40 xl:w-50 box-border border-1 pb-2 rounded shadow transition-all hover:bg-orange-200 hover:scale-110`}
+      } mx-2 my-3 w-40 xl:w-50 box-border border-1 pb-2 rounded shadow transition-all hover:bg-orange-200 hover:scale-110`}
     >
       <section>
         <BannerImage
@@ -52,7 +65,7 @@ export default function RecipeCard(props) {
           {props.recipe.recipeName}
         </div>
         <div
-          className="text-gray-600 break-words line-clamp-3"
+          className="text-gray-600 break-words line-clamp-2"
           title={props.recipe.description}
         >
           {props.recipe.description}
