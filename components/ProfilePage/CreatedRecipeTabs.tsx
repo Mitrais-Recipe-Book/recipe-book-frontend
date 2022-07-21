@@ -3,6 +3,7 @@ import RecipeCardLong from '../RecipeCardLong'
 import Link from 'next/link'
 
 export const CreatedRecipeTabs = (props:any) => {
+    // console.log(props.recipesData)
     return (
         <>
             {
@@ -21,9 +22,9 @@ export const CreatedRecipeTabs = (props:any) => {
             }
             {
                 //@ts-ignore
-                ((props.recipesData?.recipesData?.length > 0) && (props.recipesData.totalPages - 1  !== props.recipesData.currentPage)) ? (
+                ((props.recipesData?.recipesData?.length > 0) && (props.recipesData.isLast !== true)) ? (
                     <div className="w-full flex items-center my-5">
-                        <button className="mx-auto transition bg-gray-600 hover:bg-gray-500 px-8 font-semibold py-2 rounded-lg text-white">
+                        <button onClick={props.loadMoreRecipes} className="mx-auto transition bg-gray-600 hover:bg-gray-500 px-8 font-semibold py-2 rounded-lg text-white">
                             Load more recipes
                         </button>
                     </div>

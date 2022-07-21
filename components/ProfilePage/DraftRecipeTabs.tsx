@@ -3,7 +3,7 @@ import RecipeCardLong from '../RecipeCardLong'
 import Link from 'next/link'
 
 export const DraftRecipeTabs = (props:any) => {
-    const isDraft = true
+    // console.log(props?.draftRecipeData)
     return (
         <>
             {
@@ -22,9 +22,9 @@ export const DraftRecipeTabs = (props:any) => {
             }
             {
                 //@ts-ignore
-                ((props.draftRecipeData?.draftRecipesData?.length > 0) && (props.draftRecipeData.totalPages - 1  !== props.draftRecipeData.currentPage)) ? (
+                ((props.draftRecipeData?.draftRecipesData?.length > 0) &&  (props.draftRecipeData.isLast !== true)) ?  (
                     <div className="w-full flex items-center my-5">
-                        <button className="mx-auto transition bg-gray-600 hover:bg-gray-500 px-8 font-semibold py-2 rounded-lg text-white">
+                        <button onClick={()=> props.loadMoreRecipes("draftRecipe")}  className="mx-auto transition bg-gray-600 hover:bg-gray-500 px-8 font-semibold py-2 rounded-lg text-white">
                             Load more recipes
                         </button>
                     </div>
