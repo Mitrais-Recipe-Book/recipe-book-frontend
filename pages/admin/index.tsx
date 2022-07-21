@@ -1,14 +1,37 @@
+import axios from "axios";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TagsTable from "../../components/Admin/TagsTable";
 import UserManagement from "../../components/Admin/UserManagement";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
 
+interface User {
+  id: number;
+  username: string;
+  fullName: string;
+  email: string;
+  roles: string[];
+}
+
 export default function Admin() {
   const [showTagsManagement, setShowTagsManagement] = useState(true);
   const [showUserManagement, setShowUserManagement] = useState(false);
+  const [users, setUsers] = useState<User[]>();
+  const [loadingUser, setLoadingUser] = useState(true);
   const router = useRouter();
+
+  function fetchUser(page: number) {
+    axios.get(`${process.env.API_URL}user?page=${page}`).then((res) => {
+      setUsers(res.data.payload.data);
+      setLoadingUser(false);
+    });
+  }
+
+  useEffect(() => {
+    fetchUser(0);
+  }, []);
+
   return (
     <div>
       <Navbar />
@@ -51,7 +74,13 @@ export default function Admin() {
           </section>
           <section className="my-2 py-3 rounded-md bg-white drop-shadow-lg">
             {showTagsManagement && <TagsTable />}
-            {showUserManagement && <UserManagement />}
+            {showUserManagement && (
+              <UserManagement
+                users={users!}
+                setUsers={setUsers}
+                isLoading={loadingUser}
+              />
+            )}
           </section>
         </div>
         <Footer />
