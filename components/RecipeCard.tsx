@@ -17,7 +17,7 @@ const ProfileImage = dynamic(
   }
 );
 interface Recipe {
-  id?: number;
+  id: number;
   recipeName: string;
   description: string;
   recipeViews?: number;
