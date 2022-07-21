@@ -55,7 +55,7 @@ export default function ProfilePage() {
                 //@ts-ignore
                 const data = res.data.payload
                 //@ts-ignore
-                // if(data.currentPage !== recipesData?.currentPage){
+                // if(data.data !== recipesData?.currentPage){
                     setRecipesData({
                         // @ts-ignore
                         // recipesData: recipesData?.recipesData?.concat(data.data),
@@ -64,10 +64,10 @@ export default function ProfilePage() {
                         isLast : data.islast,
                         currentPage : data.currentPage
                     })
-                    // }
                     setNextPage({...nextPage, createdRecipeData: nextPage.createdRecipeData+1})
                     console.log(nextPage)
-                });
+                // }
+            });
         }
     }
     async function getDraftRecipes(){
