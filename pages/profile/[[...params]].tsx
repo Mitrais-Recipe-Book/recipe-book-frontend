@@ -1,9 +1,6 @@
-import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import Image from "next/image";
 import { useEffect, useState } from "react";
-import RecipeCardLong from "../../components/RecipeCardLong";
 import { CreatedRecipeTabs } from "../../components/ProfilePage/CreatedRecipeTabs";
 import { FollowTabs } from "../../components/ProfilePage/FollowTabs";
 import { DraftRecipeTabs } from "../../components/ProfilePage/DraftRecipeTabs";
@@ -15,7 +12,6 @@ import axios from "axios";
 import Swal from 'sweetalert2'
 import { Tab } from '@headlessui/react'
 import { getSession, useSession } from "next-auth/react";
-import { route } from "next/dist/server/router";
 
 
 export default function ProfilePage() {
@@ -42,6 +38,7 @@ export default function ProfilePage() {
     const [isRendered,setIsRendered] = useState(false)
     const [userFollowers,setUserFollowers] = useState([])
     const [userFollowings,setUserFollowings] = useState([])
+    const [isLoaded,setIsLoaded] = useState(false)
 
     const router = useRouter()
     let routeUserName: any = router.query
@@ -54,7 +51,6 @@ export default function ProfilePage() {
             .then((res) => {
                 //@ts-ignore
                 const data = res.data.payload
-                console.log("created",data)
                 //@ts-ignore
                 // if(data.data !== recipesData?.currentPage){
                     setRecipesData({
@@ -79,7 +75,6 @@ export default function ProfilePage() {
                 apiUrl+`/user/`+username+`/draft-recipes?page=${nextPage.draftRecipeData}`
             ).then((res)=>{
                 const data = res.data.payload
-                console.log("draft",data)
                 setDraftRecipesData({
                     draftRecipesData:draftRecipesData.draftRecipesData.concat(data.data),
                     // @ts-ignore
@@ -93,7 +88,6 @@ export default function ProfilePage() {
             })
         }
     }
-    console.log("page", nextPage)
 
     function loadMoreRecipes(tabs:string) {
         if(tabs === "createdRecipe"){
@@ -208,7 +202,6 @@ export default function ProfilePage() {
                 apiUrl + `/user/${username}`
             ).then((res: any) => {
                 const response = res.data.payload
-                // console.log(response)
                 setUserData({ ...userData, response })
             }).catch((error: any) => {
                 console.log(error)
@@ -224,23 +217,22 @@ export default function ProfilePage() {
 
     useEffect(() => {
         if (session) {
-            console.log("first")
             checkQueryParam().then(() => {
                 if (routeUserName.params !== undefined && routeUserName.params.length > 0) {
-                    console.log("qparam")
                     getDataProfile(routeUserName.params).then(() => {
                         getRecipes()
                     })
                 } else {
                     getDataProfile(session.user.username).then(() => {
-                        console.log("session")
                         getRecipes()
-                        getDraftRecipes(session.user.username)
+                        if(!isLoaded){
+                            getDraftRecipes(session.user.username)
+                            setIsLoaded(true)
+                        }
                     })
                 }
             })
         } else {
-            console.log("second")
             checkQueryParam().then(() => {
                 getDataProfile(routeUserName.params).then(() => {
                     getRecipes()
