@@ -41,13 +41,14 @@ const Home: NextPage = () => {
     };
   }
   interface Recipe {
+    id: number;
     recipeName: string;
     description: string;
     recipeImage: string;
     recipeViews: number;
     author: {
       username: string;
-      fullname: string;
+      fullName: string;
       authorFollowers: number;
     };
   }
