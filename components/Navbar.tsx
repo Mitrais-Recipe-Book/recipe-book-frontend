@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,8 +28,14 @@ export default function Navbar() {
   const [img, setImg] = useState("");
   const defaultImg = "/images/No_image_available.png";
   useEffect(() => {
-    setImg(`${process.env.API_URL}user/${session?.user?.username}/photo`);
+    setImg(
+      `${process.env.API_URL}user/${
+        session?.user?.username
+      }/photo?${new Date().getTime()}`
+    );
   }, [session?.user?.username]);
+
+  const router = useRouter();
 
   function handleRequestCC(username: string) {
     Swal.fire({
@@ -43,20 +49,42 @@ export default function Navbar() {
     }).then((result) => {
       result.isConfirmed
         ? axios
-            .post(process.env.API_URL + `user/${username}/request-creator`)
+            .get(
+              `${process.env.API_URL}user/${session?.user?.username}/profile`
+            )
             .then((res) => {
-              Swal.fire({
-                title: "Request sent!",
-                text: "Successfully sent request! You will be able to post recipes after getting accepted",
-                icon: "success",
-              });
-            })
-            .catch((err) => {
-              Swal.fire({
-                title: "Error",
-                text: "Something went wrong! Please try again later",
-                icon: "error",
-              });
+              res.data.payload.roles.includes("Request")
+                ? Swal.fire({
+                    title: "Request already sent",
+                    text: "You have already sent a request",
+                    icon: "warning",
+                    showConfirmButton: true,
+                  })
+                : res.data.payload.roles.includes("Creator")
+                ? Swal.fire({
+                    title: "You are already a Content Creator",
+                    text: "You have already been accepted as a Content Creator. Please relogin to change your role",
+                    icon: "warning",
+                    showConfirmButton: true,
+                  })
+                : axios
+                    .post(
+                      process.env.API_URL + `user/${username}/request-creator`
+                    )
+                    .then((res) => {
+                      Swal.fire({
+                        title: "Request sent!",
+                        text: "Successfully sent request! You will be able to post recipes after getting accepted",
+                        icon: "success",
+                      });
+                    })
+                    .catch((err) => {
+                      Swal.fire({
+                        title: "Error",
+                        text: "Something went wrong! Please try again later",
+                        icon: "error",
+                      });
+                    });
             })
         : null;
     });
@@ -193,6 +221,9 @@ export default function Navbar() {
                       </Menu.Item>
                       <Menu.Item>
                         <a
+                          onClick={() => {
+                            router.push("/edit-profile");
+                          }}
                           className={
                             "bg-white text-gray-900 hover:bg-gray-900 duration-150 hover:text-white  block px-4 py-2 text-sm cursor-pointer"
                           }
@@ -227,6 +258,18 @@ export default function Navbar() {
                           </Menu.Item>
                         )
                       ) : null}
+                      <Menu.Item>
+                        <a
+                          onClick={() => {
+                            router.push("/recent-view");
+                          }}
+                          className={
+                            "bg-white text-gray-900 hover:bg-gray-900 duration-150 hover:text-white  block px-4 py-2 text-sm cursor-pointer"
+                          }
+                        >
+                          Recent View Recipes
+                        </a>
+                      </Menu.Item>
 
                       <Menu.Item>
                         <a
@@ -246,7 +289,7 @@ export default function Navbar() {
                 </Transition>
               </Menu>
             ) : (
-              <Link href="/sign-in">
+              <Link href={"/sign-in"}>
                 <button className="border-2 hover:border-gray-200 hover:bg-gray-800  hover:text-white duration-150 rounded py-1 px-3 bg-gray-200 border-gray-700  text-gray-800 font-semibold  text-md ">
                   Login
                 </button>

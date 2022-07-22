@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
 interface ImgInfo {
-  id: string | undefined;
+  id: string | number | undefined;
   alt: string;
   href?: boolean;
 }

@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import TagsTable from "../../components/Admin/TagsTable";
 import UserManagement from "../../components/Admin/UserManagement";
@@ -7,6 +8,7 @@ import Navbar from "../../components/Navbar";
 export default function Admin() {
   const [showTagsManagement, setShowTagsManagement] = useState(true);
   const [showUserManagement, setShowUserManagement] = useState(false);
+  const router = useRouter();
   return (
     <div>
       <Navbar />
@@ -35,6 +37,15 @@ export default function Admin() {
                 className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
               >
                 User Management
+              </button>
+              <span className="px-2" />
+              <button
+                className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => {
+                  router.push("/admin/request");
+                }}
+              >
+                Request Page
               </button>
             </div>
           </section>

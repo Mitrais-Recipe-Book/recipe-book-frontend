@@ -55,7 +55,7 @@ export default function SignUp() {
       //@ts-ignore
       const { data } = await axios
         .post<CreateUserResponse>(
-          "https://recipyb-dev.herokuapp.com/auth/sign-up",
+          `${process.env.API_URL}user/sign-up`,
           {
             email: userData.email,
             username: userData.username,
