@@ -35,7 +35,7 @@ export default function request() {
     <>
       <Navbar />
       <div className="container mx-auto mt-10 flex flex-col w-3/4">
-        <h1 className="text-4xl text-center mb-3 font-bold">Reuqest Table</h1>
+        <h1 className="text-4xl text-center mb-3 font-bold">Reqest Table</h1>
         <button
           className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded mb-3 mx-auto"
           onClick={() => {
