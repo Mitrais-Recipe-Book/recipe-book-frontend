@@ -3,7 +3,6 @@ import RecipeCardLong from '../RecipeCardLong'
 import Link from 'next/link'
 
 export const CreatedRecipeTabs = (props:any) => {
-    // console.log(props.recipesData)
     return (
         <>
             {
