@@ -259,7 +259,7 @@ const Home: NextPage = () => {
             <div className="flex flex-wrap w-full md:w-3/4 mx-auto justify-center pb-3">
               <RecentView
                 username={user}
-                loading={false}
+                loading={recentViewLoading}
                 recipes={recentView}
               />
             </div>
