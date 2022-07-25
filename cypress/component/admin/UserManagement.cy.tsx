@@ -39,5 +39,6 @@ describe("UserManagement", () => {
     cy.get('#cell-4-2 > [data-tag="allowRowEvents"] > .cursor-pointer').click();
     cy.contains("remove Admin role");
     cy.get(".swal2-confirm").click();
+    cy.contains("OK").click();
   });
 });
