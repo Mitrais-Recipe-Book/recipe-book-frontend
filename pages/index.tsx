@@ -80,7 +80,6 @@ const Home: NextPage = () => {
       fetchRecentView();
       setUser(session.user.username);
     }
-    console.log(user);
   }, [session]);
 
   function fetchRecentView() {
