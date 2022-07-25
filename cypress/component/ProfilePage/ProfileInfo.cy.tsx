@@ -4,14 +4,16 @@ describe("Profile info card",() => {
     const data = {
         response :{
             fullName: "Faris Adam",
+            id: 11,
             totalRecipes:"2",
             recipeLikes:"0",
             followers:"2"
         }
     }
-    const session ={
+
+    const dataSession ={
         user:{
-            id:9
+            id:10
         }
     }
 
@@ -29,18 +31,32 @@ describe("Profile info card",() => {
 
     it("should render edit button", () => {
         cy.mount(
-            <ProfileInfo userData={data} session={session} creatorId={6} />
+            <ProfileInfo userData={data} session={dataSession} creatorId={6} />
         )
         cy.contains("Edit Profile")
     })
 
-    it("should render follow/unfollow button",() => {
+    it("should render unfollow button",() => {
         const dataQueryParam = "faristest2"
 
         cy.mount(
-            <ProfileInfo userData={data} dataQueryParam={dataQueryParam} session={session} creatorId={6}/>
+            <ProfileInfo userData={data} dataQueryParam={dataQueryParam} session={dataSession} creatorId={6} />
         )
         
-        cy.contains("Please Login To Follow This Creator")
+        cy.contains("Unfollow")
+    })
+
+    it("should render follow button",() => {
+        const dataQueryParam = "bernard1"
+        const data = {
+            response :{
+                id: 4
+            }
+        }
+        cy.mount(
+            <ProfileInfo userData={data} dataQueryParam={dataQueryParam} session={dataSession} creatorId={6} />
+        )
+        
+        cy.contains("Follow")
     })
 })
