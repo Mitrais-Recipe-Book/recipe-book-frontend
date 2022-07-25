@@ -1,9 +1,6 @@
-import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import Image from "next/image";
 import { useEffect, useState } from "react";
-import RecipeCardLong from "../../components/RecipeCardLong";
 import { CreatedRecipeTabs } from "../../components/ProfilePage/CreatedRecipeTabs";
 import { FollowTabs } from "../../components/ProfilePage/FollowTabs";
 import { DraftRecipeTabs } from "../../components/ProfilePage/DraftRecipeTabs";
@@ -15,70 +12,93 @@ import axios from "axios";
 import Swal from 'sweetalert2'
 import { Tab } from '@headlessui/react'
 import { getSession, useSession } from "next-auth/react";
-import { route } from "next/dist/server/router";
 
 
 export default function ProfilePage() {
     const apiUrl = "https://recipyb-dev.herokuapp.com/api/v1"
     const [recipesData, setRecipesData] = useState({
-        recipesData: []
+        recipesData: [],
+        isLast : false,
+        currentPage: 0
     })
     const [draftRecipesData, setDraftRecipesData] = useState({
-        draftRecipesData : []
+        draftRecipesData : [],
+        isLast : false,
+        currentPage: 0
     })
-    const [currentPage,setCurrentPage] = useState(0)
+    const [nextPage,setNextPage] = useState({
+        createdRecipeData : 0,
+        draftRecipeData:0,
+    })
     const [incrementNum,setIncrementNum] = useState(0)
-    const { data: session }:any = useSession();
+    const { data: session,status }:any = useSession();
     const [userData,setUserData]:any = useState({})
     const [userDataFound,SetUserDataFound]:any = useState(true)
     const [sessionProfile,setSessionProfile] = useState(false)
     const [isRendered,setIsRendered] = useState(false)
     const [userFollowers,setUserFollowers] = useState([])
     const [userFollowings,setUserFollowings] = useState([])
+    const [isLoaded,setIsLoaded] = useState(false)
 
     const router = useRouter()
     let routeUserName: any = router.query
 
     async function getRecipes() {
-        if (userData?.response?.username) {
+        if (userData?.response?.username && recipesData.isLast !== true) {
             axios.get(
-                apiUrl+`/user/${userData?.response?.username}/recipes?page=${currentPage}`
-              )
-              .then((res) => {
+                apiUrl+`/user/${userData?.response?.username}/recipes?page=${nextPage.createdRecipeData}`
+            )
+            .then((res) => {
                 //@ts-ignore
                 const data = res.data.payload
                 //@ts-ignore
-                // if(data.currentPage !== recipesData?.currentPage){
+                // if(data.data !== recipesData?.currentPage){
                     setRecipesData({
                         // @ts-ignore
                         // recipesData: recipesData?.recipesData?.concat(data.data),
-                        recipesData: data.data,
+                        recipesData: recipesData.recipesData.concat(data.data),
                         // @ts-ignore
-                        currentPage: data.currentPage,
-                        totalPages: data.totalPages
+                        isLast : data.islast,
+                        currentPage : data.currentPage
                     })
-                    // }
-                });
+                    //@ts-ignore
+                    setNextPage((state) =>{ 
+                        return  {draftRecipeData:state.draftRecipeData,createdRecipeData: state.createdRecipeData+1 }
+                    })
+                // }
+            });
         }
     }
-    async function getDraftRecipes(){
-        axios.get(
-            apiUrl+`/user/${userData?.response?.username}/draft-recipes?page=0`
-        ).then((res)=>{
-            const data = res.data.payload
-            setDraftRecipesData({
-                draftRecipesData:data.data,
-                // @ts-ignore
-                currentPage: data.currentPage,
-                totalPages: data.totalPages
+    async function getDraftRecipes(username:string){
+        if(draftRecipesData.isLast !== true){
+            axios.get(
+                apiUrl+`/user/`+username+`/draft-recipes?page=${nextPage.draftRecipeData}`
+            ).then((res)=>{
+                const data = res.data.payload
+                setDraftRecipesData({
+                    draftRecipesData:draftRecipesData.draftRecipesData.concat(data.data),
+                    // @ts-ignore
+                    currentPage: data.currentPage,
+                    isLast:data.islast
+                })
+                //@ts-ignore
+                setNextPage((state) =>{ 
+                    return  {draftRecipeData:state.draftRecipeData+1,createdRecipeData: state.createdRecipeData }
+                })
             })
-        })
+        }
     }
 
-    function loadMoreRecipes() {
-        getRecipes().then(() => {
-            setCurrentPage(currentPage + 1)
-        })
+    function loadMoreRecipes(tabs:string) {
+        if(tabs === "createdRecipe"){
+            getRecipes()
+        } else if (tabs === "draftRecipe") {
+            getDraftRecipes(session.user.username)
+        } else if ( tabs === "follower") {
+            getUserFollowers()
+        } else {
+            getUserFollowing()
+        }
     }
 
     function deleteRecipe(id?: number) {
@@ -141,7 +161,7 @@ export default function ProfilePage() {
                             title: 'Deleted!',
                             html: 'Your recipe has been deleted.',
                             icon: 'success',
-                            willClose: getDraftRecipes
+                            // willClose: getDraftRecipes
                         })
                     })
                     .catch(error => {
@@ -182,7 +202,6 @@ export default function ProfilePage() {
                 apiUrl + `/user/${username}`
             ).then((res: any) => {
                 const response = res.data.payload
-                // console.log(response)
                 setUserData({ ...userData, response })
             }).catch((error: any) => {
                 console.log(error)
@@ -206,7 +225,10 @@ export default function ProfilePage() {
                 } else {
                     getDataProfile(session.user.username).then(() => {
                         getRecipes()
-                        getDraftRecipes()
+                        if(!isLoaded){
+                            getDraftRecipes(session.user.username)
+                            setIsLoaded(true)
+                        }
                     })
                 }
             })
@@ -219,7 +241,7 @@ export default function ProfilePage() {
         }
         getUserFollowing(userData?.response?.id)
         getUserFollowers(userData?.response?.id)
-    },[session,routeUserName,userData?.response?.username])
+    },[routeUserName,userData?.response?.username])
 
     function classNames(...classes: any) {
         return classes.filter(Boolean).join(' ')
@@ -331,7 +353,7 @@ export default function ProfilePage() {
                                                 `rounded-xl bg-white p-3
                                                 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400  `
                                             }>
-                                                <CreatedRecipeTabs recipesData={recipesData} deleteRecipe={deleteRecipe} dataQueryParam={routeUserName.params} />
+                                                <CreatedRecipeTabs recipesData={recipesData} deleteRecipe={deleteRecipe} dataQueryParam={routeUserName.params} loadMoreRecipes={loadMoreRecipes} />
                                             </Tab.Panel>
                                             {
                                                 !routeUserName.params && (
@@ -339,7 +361,7 @@ export default function ProfilePage() {
                                                         `rounded-xl bg-white p-3
                                                         ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400  `
                                                     }>
-                                                        <DraftRecipeTabs draftRecipeData = {draftRecipesData} deleteRecipe={deleteDraftRecipe} />
+                                                        <DraftRecipeTabs draftRecipeData = {draftRecipesData} deleteRecipe={deleteDraftRecipe} loadMoreRecipes={loadMoreRecipes}/>
                                                     </Tab.Panel>
                                                 )
                                             }

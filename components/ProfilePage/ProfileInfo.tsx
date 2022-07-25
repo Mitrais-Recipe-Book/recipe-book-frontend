@@ -11,7 +11,6 @@ import EditProfileBtn from './EditProfileBtn';
 export const ProfileInfo = (props: any) => {
     const [img, setImg] = useState("")
     const defaultImg = "/images/No_image_available.png";
-    console.log(props)
     useEffect(() => {
         setImg(`${process.env.API_URL}user/${props.userData?.response?.username}/photo`);
     }, [props?.userData?.response?.username]);
