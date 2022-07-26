@@ -1,5 +1,4 @@
 import PromptLogin from "@components/PromptLogin";
-import { createRouter } from "next/router";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 
 describe("Prompt Login", () => {
