@@ -258,18 +258,6 @@ export default function Navbar() {
                           </Menu.Item>
                         )
                       ) : null}
-                      <Menu.Item>
-                        <a
-                          onClick={() => {
-                            router.push("/recent-view");
-                          }}
-                          className={
-                            "bg-white text-gray-900 hover:bg-gray-900 duration-150 hover:text-white  block px-4 py-2 text-sm cursor-pointer"
-                          }
-                        >
-                          Recent View Recipes
-                        </a>
-                      </Menu.Item>
 
                       <Menu.Item>
                         <a
