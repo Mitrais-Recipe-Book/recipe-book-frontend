@@ -254,7 +254,7 @@ const Home: NextPage = () => {
           </section>
 
           {/* Recent View */}
-          <section className="my-5 py-3 rounded-md bg-white drop-shadow-lg">
+          <section className="my-5 py-3">
             <h1 className="text-4xl text-center mb-3 font-bold">Recent View</h1>
             <div className="flex flex-wrap w-full md:w-3/4 mx-auto justify-center pb-3">
               <RecentView
@@ -266,7 +266,7 @@ const Home: NextPage = () => {
           </section>
 
           {/* Tags */}
-          <section className="my-5 py-3 rounded-md bg-white drop-shadow-lg">
+          <section className="my-5 py-3">
             <h1 className="text-4xl text-center mb-3 font-bold">Tags</h1>
             <div className="flex flex-wrap w-full md:w-3/4 mx-auto justify-center pb-3">
               {tags.map((tag) => {
