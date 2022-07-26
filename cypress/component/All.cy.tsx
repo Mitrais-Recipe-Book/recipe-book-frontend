@@ -3,4 +3,5 @@ import "./admin/UserManagement.cy.tsx";
 import "./admin/RequestTable.cy.tsx";
 import "./ProfilePage/ProfilePage.cy.tsx";
 import "./EditProfile/ChangePassword.cy.tsx";
-
+import "./PromptLogin.cy.tsx";
+import "./RecentView.cy.tsx";
