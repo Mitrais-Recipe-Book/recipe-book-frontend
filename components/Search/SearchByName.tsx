@@ -11,7 +11,7 @@ export default function SearchByName() {
   const dispatch = useDispatch();
   const searchItem = useSelector((state: any) => state.query.queryRecipeName);
   return (
-    <main className="py-4 w-3/4 bg-white shadow">
+    <main className="py-4 w-3/4 sm:w-full bg-white shadow">
       <div className="container flex place-content-center content-center m-1 sm:px-10 ">
         <input
           className="w-full px-5 h-10 border-2 border-gray-200 focus:outline-none focus:border-orange-600 rounded"

@@ -7,7 +7,7 @@ export default function SearchByCreator() {
   const dispatch = useDispatch();
   const searchItem = useSelector((state: any) => state.query.queryCreator);
   return (
-    <main className="py-4 w-3/4 sm:w-full bg-white shadow md:grid">
+    <main className="py-4 w-3/4 sm:w-full  bg-white shadow md:grid">
       <div className="container md:flex px-2 md:place-self-center">
         <input
           className="w-full px-5 h-8 border-2 border-gray-200 focus:outline-none focus:border-orange-600 rounded "
