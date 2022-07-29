@@ -35,7 +35,7 @@ export default function favrecipes() {
       axios
         .get(
           process.env.API_URL +
-            `user/${session?.user.username}/favorite-recipe?isPaginated=true&page=${page}&size=10`
+            `recipe/favorite?username=${session?.user.username}&isPaginated=true&page=${page}&size=10`
         )
         .then((res) => {
           setRecipes([...recipes, ...res.data.payload.data]);
