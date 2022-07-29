@@ -17,7 +17,7 @@ export default function SearchItem() {
       <Navbar />
       <main className="grid grid-cols-12 container mx-auto pt-2 justify-center ">
         <section className="col-span-3 hidden sm:block">
-          <div className="bg-white mb-4 mr-8 px-4 py-10 shadow">
+          <div className="bg-white mr-8 px-4 py-10 border-b-2 shadow">
             Advanced Search
           </div>
         </section>
