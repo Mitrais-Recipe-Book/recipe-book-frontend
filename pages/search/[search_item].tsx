@@ -21,14 +21,14 @@ export default function SearchItem() {
             Advanced Search
           </div>
         </section>
-        <section className="col-span-12 sm:col-span-9 sm:mb-4 flex place-content-center rounded">
+        <section className="col-span-12 sm:col-span-9 mb-2 sm:mb-4 flex place-content-center rounded">
           <SearchByName />
         </section>
         <section className="col-span-12 sm:col-span-3 sm:mr-8">
-          <div className="flex place-content-center mb-2">
+          <div className="flex place-content-center sm:border-b-2">
             <SearchByTags />
           </div>
-          <div className="flex place-content-center">
+          <div className="flex place-content-center my-2 sm:my-0 sm:border-b-2">
             <SearchByCreator />
           </div>
           <div className="sm:hidden flex place-content-center">
@@ -41,7 +41,7 @@ export default function SearchItem() {
             </button>
           </div>
         </section>
-        <section className="col-span-9 sm:flex sm:flex-wrap grid grid-cols-2 place-content-center mx-auto">
+        <section className="col-span-12 sm:col-span-9 flex flex-wrap place-content-center mx-auto">
           {recipes.length ? (
             recipes.map((recipe: any) => <RecipeCard recipe={recipe} />)
           ) : (
