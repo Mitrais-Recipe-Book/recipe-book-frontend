@@ -43,7 +43,7 @@ export default function RecipeCard(props: Props) {
         props.recipe.author
           ? "grid grid-flow-row grid-flow-row-col grid-rows-3 grid-cols-1"
           : "flex-wrap"
-      } mx-2 my-3 w-40 xl:w-50 box-border border-1 pb-2 rounded shadow transition-all hover:bg-orange-200 hover:scale-110`}
+      } bg-white mx-2 my-3 w-40 xl:w-50 box-border border-1 pb-2 rounded shadow transition-all hover:bg-orange-200 hover:scale-110`}
     >
       <section>
         <BannerImage

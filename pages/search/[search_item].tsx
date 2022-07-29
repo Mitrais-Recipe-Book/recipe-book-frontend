@@ -13,9 +13,9 @@ export default function SearchItem() {
   const recipes = useSelector((state: any) => state.query.queryRecipes);
 
   return (
-    <div>
+    <div className="bg-slate-100">
       <Navbar />
-      <main className="flex flex-col container mx-auto pt-2 justify-center">
+      <main className="flex flex-col container mx-auto pt-2 justify-center ">
         <section className="flex place-content-center rounded">
           <SearchByName />
         </section>
@@ -24,7 +24,7 @@ export default function SearchItem() {
             <section className="flex gap-y-2 flex-col-reverse place-content-start my-3">
               <div className="sm:hidden flex place-content-center">
                 <button
-                  className="bg-yellow-500 rounded w-3/4 h-8 text-black px-2 py-1 font-extrabold"
+                  className="bg-white rounded hover:bg-orange-300 w-3/4 h-8 text-black px-2 py-1 font-extrabold shadow"
                   //@ts-ignore
                   onClick={() => dispatch(sendQuery())}
                 >
