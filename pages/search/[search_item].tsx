@@ -11,8 +11,6 @@ import { sendQuery } from "@redux/reducers/queryReducer";
 
 export default function SearchItem() {
   const dispatch = useDispatch();
-  const router = useRouter();
-  const searchItem = router.query.search_item;
   const recipes = useSelector((state: any) => state.query.queryRecipes);
 
   return (
