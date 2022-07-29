@@ -42,7 +42,7 @@ export default function SearchItem() {
               </div>
             </section>
 
-            <section className="col-span-3 flex flex-wrap justify-center">
+            <section className="col-span-3 sm:flex sm:flex-wrap grid grid-cols-2 justify-center mx-auto">
               {recipes.length ? (
                 recipes.map((recipe: any) => <RecipeCard recipe={recipe} />)
               ) : (
