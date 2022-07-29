@@ -15,6 +15,8 @@ export default function SearchByCreator() {
           value={searchItem}
           onChange={(event) => {
             dispatch(setQueryCreator(event.currentTarget.value));
+            //@ts-ignore
+            dispatch(sendQuery());
           }}
           onKeyUp={(e) => {
             if (e.key === "Enter") {
