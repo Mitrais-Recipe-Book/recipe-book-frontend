@@ -55,16 +55,18 @@ export default function SearchItem() {
         </section>
         <section className="col-span-3"></section>
         <section className="col-span-9 mx-auto">
-          <button
-            className="bg-red-600 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-2 px-4 rounded"
-            disabled={isLastPage}
-            onClick={() => {
-              //@ts-ignore
-              dispatch(getMoreRecipes());
-            }}
-          >
-            {isLastPage ? "No more recipes" : "Load more"}
-          </button>
+          {recipes.length ? (
+            <button
+              className="bg-red-600 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+              disabled={isLastPage}
+              onClick={() => {
+                //@ts-ignore
+                dispatch(getMoreRecipes());
+              }}
+            >
+              {isLastPage ? "No more recipes" : "Load more"}
+            </button>
+          ) : null}
         </section>
       </main>
       <Footer />
