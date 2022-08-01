@@ -89,7 +89,6 @@ const Home: NextPage = () => {
         `${process.env.API_URL}recipe/viewed?username=${session?.user?.username}&isPaginated=false&page=0&size=10`
       )
       .then((res) => {
-        // console.log("recent view",res.data.payload);
         setRecentView(res.data.payload.data);
         setRecentViewLoading(false);
       });
@@ -148,6 +147,7 @@ const Home: NextPage = () => {
                 disableOnInteraction: false,
                 pauseOnMouseEnter: true,
               }}
+              loop={true}
               spaceBetween={50}
               slidesPerView={1}
               navigation={true}
@@ -169,7 +169,7 @@ const Home: NextPage = () => {
           {
             recentView !== undefined && recentView?.length > 0 ? (
               <section className="my-5">
-                <h1 className="text-3xl mb-3 font-bold">
+                <h1 className="text-3xl text-center mb-3 font-bold">
                   Your last Recent view recipes
                 </h1>
                 <Swiper
