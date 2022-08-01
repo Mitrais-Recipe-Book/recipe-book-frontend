@@ -148,6 +148,7 @@ const Home: NextPage = () => {
                 disableOnInteraction: false,
                 pauseOnMouseEnter: true,
               }}
+              loop={true}
               spaceBetween={50}
               slidesPerView={1}
               navigation={true}
