@@ -52,15 +52,18 @@ export default function SearchItem() {
               No Recipe Found
             </h1>
           )}
-          {/* <button
+        </section>
+        <section className="col-span-3"></section>
+        <section className="col-span-9 mx-auto">
+          <button
             className="bg-red-600 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-2 px-4 rounded"
-            disabled={pageInfo.last}
+            disabled={isLastPage}
             onClick={() => {
               // getMoreRecipe();
             }}
           >
-            {pageInfo.last ? "No more comments" : "Load more"}
-          </button> */}
+            {isLastPage ? "No more recipes" : "Load more"}
+          </button>
         </section>
       </main>
       <Footer />
