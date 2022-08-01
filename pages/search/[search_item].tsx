@@ -13,8 +13,6 @@ export default function SearchItem() {
   const recipes = useSelector((state: any) => state.query.queryRecipes);
   const isLastPage = useSelector((state: any) => state.query.isLastPage);
 
-  console.log("last:", isLastPage);
-
   return (
     <div className="bg-slate-100">
       <Navbar />
