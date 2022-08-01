@@ -21,6 +21,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { getTags, clearQuery } from "../redux/reducers/queryReducer";
 import RecentView from "@components/RecentView";
+import RecipeCarousel  from "@components/RecipeCarousel";
 
 const Home: NextPage = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -88,6 +89,7 @@ const Home: NextPage = () => {
         `${process.env.API_URL}recipe/viewed?username=${session?.user?.username}&isPaginated=false&page=0&size=10`
       )
       .then((res) => {
+        // console.log("recent view",res.data.payload);
         setRecentView(res.data.payload.data);
         setRecentViewLoading(false);
       });
@@ -138,7 +140,7 @@ const Home: NextPage = () => {
       <main className="container mx-auto pt-1">
         <div className="container md:px-[50px] lg:px-[100px] xl:px-[150px]">
           {/* Carousel */}
-          <section className="my-5 ">
+          <section className="my-5 pb-4">
             <Swiper
               modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
               autoplay={{
@@ -151,110 +153,56 @@ const Home: NextPage = () => {
               navigation={true}
               pagination={{ clickable: true }}
             >
-              <SwiperSlide>
-                <div
-                  className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent"
-                  style={{
-                    backgroundImage: `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url('/images/bibimbap-image.webp')`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center",
-                    backgroundSize: "cover",
-                  }}
-                >
-                  <div className="m-auto">
-                    <h1 className="text-2xl md:text-5xl font-bold text-white ">
-                      Bibimbap
-                    </h1>
-                  </div>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div
-                  className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent"
-                  style={{
-                    backgroundImage: `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url('/images/bibimbap-image.webp')`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center",
-                    backgroundSize: "cover",
-                  }}
-                >
-                  <div className="m-auto">
-                    <h1 className="text-2xl md:text-5xl font-bold text-white ">
-                      Bibimbap 2
-                    </h1>
-                  </div>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div
-                  className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent"
-                  style={{
-                    backgroundImage: `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url('/images/bibimbap-image.webp')`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center",
-                    backgroundSize: "cover",
-                  }}
-                >
-                  <div className="m-auto">
-                    <h1 className="text-2xl md:text-5xl font-bold text-white ">
-                      Bibimbap 3
-                    </h1>
-                  </div>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div
-                  className="w-full h-[18rem] sm:h-[20rem] xl:h-[24rem] flex rounded-lg bg-gradient-to-r  from-blue-500 to-transparent"
-                  style={{
-                    backgroundImage: `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url('/images/bibimbap-image.webp')`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center",
-                    backgroundSize: "cover",
-                  }}
-                >
-                  <div className="m-auto">
-                    <h1 className="text-2xl md:text-5xl font-bold text-white ">
-                      Bibimbap 4
-                    </h1>
-                  </div>
-                </div>
-              </SwiperSlide>
+            {
+              popularRecipes.map((recipe) => {
+                return (
+                  <SwiperSlide>
+                    <RecipeCarousel key={Math.random()*Math.random()} recipeData={recipe}/>
+                  </SwiperSlide>
+                );
+              })
+            }
             </Swiper>
           </section>
 
           {/* Recipes of the day */}
-          <section className="my-5">
-            <h1 className="text-4xl text-center mb-3 font-bold">
-              Recipes of the day
-            </h1>
-            <Swiper
-              modules={[Navigation, A11y]}
-              spaceBetween={30}
-              navigation={true}
-              breakpoints={{
-                320: {
-                  slidesPerView: 1,
-                },
-                768: {
-                  slidesPerView: 2,
-                },
-                1024: {
-                  slidesPerView: 3,
-                },
-              }}
-            >
-              {popularRecipes.map((recipe) => {
-                return (
-                  <SwiperSlide>
-                    <RecipeCardFull recipe={recipe} />
-                  </SwiperSlide>
-                );
-              })}
-            </Swiper>
-          </section>
-
+          {
+            recentView !== undefined && recentView?.length > 0 ? (
+              <section className="my-5">
+                <h1 className="text-3xl mb-3 font-bold">
+                  Your last Recent view recipes
+                </h1>
+                <Swiper
+                  modules={[Navigation, A11y]}
+                  spaceBetween={30}
+                  navigation={true}
+                  breakpoints={{
+                    320: {
+                      slidesPerView: 1,
+                    },
+                    768: {
+                      slidesPerView: 2,
+                    },
+                    1024: {
+                      slidesPerView: 3,
+                    },
+                  }}
+                >
+                  {recentView.map((recipe) => {
+                    return (
+                      <SwiperSlide>
+                        <RecipeCardFull recipe={recipe} />
+                      </SwiperSlide>
+                    );
+                  })}
+                </Swiper>
+              </section>
+            ) : (
+              <div className=""></div>
+            )
+          }
           {/* Recent View */}
-          <section className="my-5 py-3">
+          {/* <section className="my-5 py-3">
             <h1 className="text-4xl text-center mb-3 font-bold">Recent View</h1>
             <div className="flex flex-wrap w-full md:w-3/4 mx-auto justify-center pb-3">
               <RecentView
@@ -263,11 +211,11 @@ const Home: NextPage = () => {
                 recipes={recentView}
               />
             </div>
-          </section>
+          </section> */}
 
           {/* Tags */}
           <section className="my-5 py-3">
-            <h1 className="text-4xl text-center mb-3 font-bold">Tags</h1>
+            <h1 className="text-4xl text-center mb-3 font-bold">What do you want to eat?</h1>
             <div className="flex flex-wrap w-full md:w-3/4 mx-auto justify-center pb-3">
               {tags.map((tag) => {
                 return <TagsPill tag={tag} />;
@@ -277,7 +225,7 @@ const Home: NextPage = () => {
 
           {/* Discover recipes */}
           <section className="w-full my-2">
-            <h1 className="text-4xl text-center mb-3 font-bold">Discover</h1>
+            <h1 className="text-4xl text-center mb-3 font-bold">Discover more recipes</h1>
             <div
               className="
                 flex
