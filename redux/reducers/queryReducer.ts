@@ -43,7 +43,7 @@ export const sendQuery = createAsyncThunk(
       `/search/name?${queryRecipeName}&creator?${queryCreator}&${queryTagsId}`
     );
 
-    return axios.get(url + searchUrl).then((res) => res.data.payload.data);
+    return axios.get(url + searchUrl).then((res) => res.data.payload);
   }
 );
 
@@ -57,6 +57,8 @@ const initialState = {
   queryCreator: "",
   queryRecipeName: "",
   queryRecipes: [],
+  isLastPage: false,
+  page: 0,
 };
 //@ts-ignore
 const queryReducer = createSlice({
@@ -108,10 +110,12 @@ const queryReducer = createSlice({
       });
     },
     setRecipesQuery: (state, action) => {
-      state.queryRecipes = action.payload;
+      state.queryRecipes = action.payload.data;
+      state.isLastPage = action.payload.islast;
     },
     clearRecipesQuery: (state) => {
       state.queryRecipes = [];
+      state.isLastPage = false;
     },
   },
   extraReducers: {
@@ -121,7 +125,8 @@ const queryReducer = createSlice({
     },
     //@ts-ignore
     [sendQuery.fulfilled]: (state, action) => {
-      state.queryRecipes = action.payload;
+      state.queryRecipes = action.payload.data;
+      state.isLastPage = action.payload.islast;
     },
   },
 });

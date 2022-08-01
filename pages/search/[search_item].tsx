@@ -11,6 +11,9 @@ import { sendQuery } from "@redux/reducers/queryReducer";
 export default function SearchItem() {
   const dispatch = useDispatch();
   const recipes = useSelector((state: any) => state.query.queryRecipes);
+  const isLastPage = useSelector((state: any) => state.query.isLastPage);
+
+  console.log("last:", isLastPage);
 
   return (
     <div className="bg-slate-100">
@@ -49,6 +52,15 @@ export default function SearchItem() {
               No Recipe Found
             </h1>
           )}
+          {/* <button
+            className="bg-red-600 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+            disabled={pageInfo.last}
+            onClick={() => {
+              // getMoreRecipe();
+            }}
+          >
+            {pageInfo.last ? "No more comments" : "Load more"}
+          </button> */}
         </section>
       </main>
       <Footer />
