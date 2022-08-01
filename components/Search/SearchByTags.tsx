@@ -19,7 +19,7 @@ export default function SearchByTags() {
       <div className="container flex place-content-center content-center px-2 ">
         <input
           className="w-full px-3 h-8 border-2 border-gray-200 focus:outline-none focus:border-orange-600 rounded"
-          placeholder="Tagsname"
+          placeholder="Tag name"
           value={filteredTags}
           onChange={(event) => {
             setFilteredTags(event.currentTarget.value);
