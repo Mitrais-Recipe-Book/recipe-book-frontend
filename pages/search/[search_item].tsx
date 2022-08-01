@@ -6,7 +6,7 @@ import RecipeCard from "@components/RecipeCard";
 import SearchByCreator from "@components/Search/SearchByCreator";
 import SearchByName from "@components/Search/SearchByName";
 import SearchByTags from "@components/Search/SearchByTags";
-import { sendQuery } from "@redux/reducers/queryReducer";
+import { sendQuery, getMoreRecipes } from "@redux/reducers/queryReducer";
 
 export default function SearchItem() {
   const dispatch = useDispatch();
@@ -59,7 +59,8 @@ export default function SearchItem() {
             className="bg-red-600 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-2 px-4 rounded"
             disabled={isLastPage}
             onClick={() => {
-              // getMoreRecipe();
+              //@ts-ignore
+              dispatch(getMoreRecipes());
             }}
           >
             {isLastPage ? "No more recipes" : "Load more"}
