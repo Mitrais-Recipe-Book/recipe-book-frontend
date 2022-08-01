@@ -1,8 +1,6 @@
 import Link from "next/link"
 
-// @ts-ignore
-export default function RecipeCarousel (props) {
-    // console.log(props.recipeData)
+export default function RecipeCarousel (props:any) {
     return (
         <Link href={`/recipe/${props.recipeData?.id}`}>
             <div

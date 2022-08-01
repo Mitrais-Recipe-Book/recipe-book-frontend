@@ -89,7 +89,6 @@ const Home: NextPage = () => {
         `${process.env.API_URL}recipe/viewed?username=${session?.user?.username}&isPaginated=false&page=0&size=10`
       )
       .then((res) => {
-        // console.log("recent view",res.data.payload);
         setRecentView(res.data.payload.data);
         setRecentViewLoading(false);
       });
