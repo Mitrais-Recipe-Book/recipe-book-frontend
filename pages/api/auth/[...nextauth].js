@@ -1,7 +1,7 @@
-import NextAuth from 'next-auth/next';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import axios from 'axios'
-import Swal from 'sweetalert2'
+import NextAuth from "next-auth/next";
+import CredentialsProvider from "next-auth/providers/credentials";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 export default NextAuth({
   jwt: {
@@ -9,22 +9,22 @@ export default NextAuth({
     maxAge: 60 * 60 * 24 * 30,
   },
   pages: {
-    signIn: '/sign-in',
-    signOut: '/sign-in',
-    error: '/sign-in'
+    signIn: "/sign-in",
+    signOut: "/sign-in",
+    error: "/sign-in",
   },
   providers: [
     CredentialsProvider({
-      name: 'credentials',
+      name: "credentials",
       credentials: {
         username: { label: "Username", type: "text" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
         const { username, password } = credentials;
 
         const login = await axios
-          .post(`https://recipyb-dev.herokuapp.com/auth/sign-in`, {
+          .post(`${process.env.API_URL}user/sign-in`, {
             username,
             password,
           })
@@ -36,12 +36,12 @@ export default NextAuth({
           })
           .catch((err) => {
             let message = err?.response?.data?.error;
-            if (message == null) message = 'Sign-in Error'
+            if (message == null) message = "Sign-in Error";
             throw new Error(message);
           });
         return login;
-      }
-    })
+      },
+    }),
   ],
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
@@ -65,8 +65,8 @@ export default NextAuth({
       return token;
     },
     async redirect({ url, baseUrl }) {
-      return baseUrl
-    }
+      return baseUrl;
+    },
   },
   debug: true,
 });

@@ -147,6 +147,15 @@ export default function RecipeDetail() {
     pageInfo.page === 0 ? (recipeId ? getComments() : null) : null;
   }, [recipeId, pageInfo.page]);
 
+  function addToRecentView() {
+    if (session) {
+      axios.post(`${process.env.API_URL}recipe/viewed`, {
+        username: session?.user.username,
+        recipeId: recipeId,
+      });
+    }
+  }
+
   function giveReaction(
     username: string,
     recipeId: number | undefined,
@@ -207,6 +216,7 @@ export default function RecipeDetail() {
             ? setUserReaction(res.data.payload.userReaction.reaction)
             : null;
         });
+      addToRecentView();
     }
   }
 
