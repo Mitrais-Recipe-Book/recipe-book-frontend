@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import Swal from "sweetalert2";
 
@@ -11,11 +11,13 @@ interface User {
   roles: string[];
 }
 
-export default function UserManagement() {
-  const [users, setUsers] = useState<User[]>();
-  const [totalPages, setTotalPages] = useState<number>(0);
-  const [totalRows, setTotalRows] = useState<number>(0);
-  const [loading, setLoading] = useState(true);
+interface Props {
+  users: User[];
+  isLoading: boolean;
+  setUsers: React.Dispatch<React.SetStateAction<User[] | undefined>>;
+}
+
+export default function UserManagement(props: Props) {
   const columns = [
     {
       name: "Username",
@@ -81,15 +83,6 @@ export default function UserManagement() {
     },
   ];
 
-  function fetchUser(page: number) {
-    axios.get(`${process.env.API_URL}user?page=${page}`).then((res) => {
-      setUsers(res.data.payload.data);
-      setTotalPages(res.data.payload.totalPages);
-      setTotalRows(res.data.payload.totalItem);
-      setLoading(false);
-    });
-  }
-
   async function addRole(username: string, roles: string[]) {
     const { value: role } = await Swal.fire({
       title: "Add Role",
@@ -124,8 +117,8 @@ export default function UserManagement() {
                 text: "Role added successfully",
                 icon: "success",
               });
-              setUsers(
-                users?.map((user) => {
+              props.setUsers(
+                props.users?.map((user) => {
                   if (user.username === username) {
                     user.roles.push(role);
                   }
@@ -163,8 +156,8 @@ export default function UserManagement() {
                 text: "Role removed successfully",
                 icon: "success",
               });
-              setUsers(
-                users?.map((user) => {
+              props.setUsers(
+                props.users?.map((user) => {
                   if (user.username === username) {
                     user.roles = user.roles.filter((r) => r !== role);
                   }
@@ -177,28 +170,15 @@ export default function UserManagement() {
     console.log(`Delete role ${role} for user ${username}`);
   }
 
-  useEffect(() => {
-    fetchUser(0);
-  }, []);
-
   return (
     <div className="my-4 mx-8">
       <DataTable
         name="Users"
         //@ts-ignore
         columns={columns}
-        data={users!}
+        data={props.users}
+        loading={props.isLoading}
         pagination
-        paginationServer
-        paginationTotalRows={totalRows}
-        paginationTotalPages={totalPages}
-        paginationResetDefaultPage={true}
-        onChangePage={(page) => {
-          fetchUser(page - 1);
-        }}
-        paginationPerPage={10}
-        paginationRowsPerPageOptions={[10]}
-        progressPending={loading}
       />
     </div>
   );

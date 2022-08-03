@@ -1,7 +1,12 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 
+interface Props {
+  tags: Tag[];
+  setTags: React.Dispatch<React.SetStateAction<Tag[]>>;
+  loading: boolean;
+}
 interface Tag {
   id: number;
   name: string;
@@ -10,36 +15,12 @@ interface Tag {
   totalRecipe: number;
 }
 
-export default function TagsTable() {
+export default function TagsTable(props: Props) {
   const URL = `${process.env.API_URL}tag`;
-  const [loading, setLoading] = useState(true);
   const [notif, setNotif] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [tags, setTags] = useState([
-    {
-      id: 1,
-      name: "",
-      temp: "",
-      views: 0,
-    },
-  ]);
 
   const [newTag, setNewTag] = useState("");
-
-  useEffect(() => {
-    axios.get(`${URL}/all`).then((res) => {
-      setTags(
-        res.data.payload.map((tag: any) => ({
-          id: tag.id,
-          name: tag.name,
-          temp: tag.name,
-          views: tag.views,
-          totalRecipe: tag.totalRecipe,
-        }))
-      );
-      setLoading(false);
-    });
-  }, []);
 
   const columns = [
     {
@@ -61,8 +42,8 @@ export default function TagsTable() {
           type="text"
           value={row.temp}
           onChange={(e) => {
-            setTags(
-              tags.map((tag) => {
+            props.setTags(
+              props.tags.map((tag) => {
                 if (tag.id === row.id) {
                   if (tag.temp.length <= 21) {
                     tag.temp = e.target.value.toLowerCase();
@@ -117,8 +98,8 @@ export default function TagsTable() {
                       })
                       .then((res) => {
                         setNotif(false);
-                        setTags(
-                          tags.map((tag) => {
+                        props.setTags(
+                          props.tags.map((tag) => {
                             if (tag.id === row.id) {
                               tag.name = tag.temp;
                             }
@@ -127,8 +108,8 @@ export default function TagsTable() {
                         );
                       })
                       .catch((err) => {
-                        setTags(
-                          tags.map((tag) => {
+                        props.setTags(
+                          props.tags.map((tag) => {
                             if (tag.id === row.id) {
                               tag.temp = tag.name;
                             }
@@ -136,7 +117,7 @@ export default function TagsTable() {
                           })
                         );
                         setErrorMessage(
-                          `Failed to edit tag ${err.response.data.payload.toBeEdited} to ${err.response.data.payload.input}. ${err.response.data.message}`
+                          `Failed to edit tag. ${err.response.data.message}`
                         );
 
                         setNotif(true);
@@ -195,8 +176,8 @@ export default function TagsTable() {
         name="Tags"
         //@ts-ignore
         columns={columns}
-        data={tags}
-        progressPending={loading}
+        data={props.tags}
+        progressPending={props.loading}
         pagination
         paginationPerPage={5}
         paginationRowsPerPageOptions={[5, 10, 20]}
@@ -228,13 +209,14 @@ export default function TagsTable() {
               })
               .then((res) => {
                 setNotif(false);
-                setTags([
-                  ...tags,
+                props.setTags([
+                  ...props.tags,
                   {
                     id: res.data.payload.id,
                     name: res.data.payload.name,
                     temp: res.data.payload.name,
                     views: 0,
+                    totalRecipe: 0,
                   },
                 ]);
               })
