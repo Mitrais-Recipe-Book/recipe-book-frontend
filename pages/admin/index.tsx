@@ -1,3 +1,4 @@
+import RequestManagement from "@components/Admin/RequestManagement";
 import axios from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -24,10 +25,13 @@ interface Tag {
 export default function Admin() {
   const [showTagsManagement, setShowTagsManagement] = useState(true);
   const [showUserManagement, setShowUserManagement] = useState(false);
+  const [showRequesteManagement, setShowRequestManagement] = useState(false);
   const [users, setUsers] = useState<User[]>();
   const [loadingUser, setLoadingUser] = useState(true);
   const [tags, setTags] = useState<Tag[]>([]);
   const [loadingTag, setLoadingTag] = useState(true);
+  const [requestUsers, setRequestUsers] = useState<User[]>([]);
+  const [loadingRequest, setLoadingRequest] = useState(true);
   const router = useRouter();
 
   function fetchUser(page: number) {
@@ -51,9 +55,17 @@ export default function Admin() {
     });
   }
 
+  function fetchRequest() {
+    axios.get(`${process.env.API_URL}user/role-request/`).then((res) => {
+      setRequestUsers(res.data.payload);
+      setLoadingRequest(false);
+    });
+  }
+
   useEffect(() => {
     fetchUser(0);
     fetchTags();
+    fetchRequest();
   }, []);
 
   return (
@@ -69,6 +81,7 @@ export default function Admin() {
               <button
                 onClick={() => {
                   setShowTagsManagement(true);
+                  setShowRequestManagement(false);
                   setShowUserManagement(false);
                 }}
                 className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
@@ -79,6 +92,7 @@ export default function Admin() {
               <button
                 onClick={() => {
                   setShowTagsManagement(false);
+                  setShowRequestManagement(false);
                   setShowUserManagement(true);
                 }}
                 className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
@@ -89,10 +103,12 @@ export default function Admin() {
               <button
                 className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
                 onClick={() => {
-                  router.push("/admin/request");
+                  setShowTagsManagement(false);
+                  setShowUserManagement(false);
+                  setShowRequestManagement(true);
                 }}
               >
-                Request Page
+                Request Management
               </button>
             </div>
           </section>
@@ -105,6 +121,13 @@ export default function Admin() {
                 users={users!}
                 setUsers={setUsers}
                 isLoading={loadingUser}
+              />
+            )}
+            {showRequesteManagement && (
+              <RequestManagement
+                data={requestUsers!}
+                setData={setRequestUsers}
+                loading={loadingRequest}
               />
             )}
           </section>

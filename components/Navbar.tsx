@@ -53,6 +53,7 @@ export default function Navbar() {
               `${process.env.API_URL}user/${session?.user?.username}/profile`
             )
             .then((res) => {
+              console.log(res.data.payload);
               res.data.payload.roles.includes("Request")
                 ? Swal.fire({
                     title: "Request already sent",
