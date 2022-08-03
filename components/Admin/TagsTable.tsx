@@ -22,7 +22,6 @@ export default function TagsTable(props: Props) {
 
   const [newTag, setNewTag] = useState("");
 
-
   const columns = [
     {
       name: "Tags",
@@ -118,7 +117,7 @@ export default function TagsTable(props: Props) {
                           })
                         );
                         setErrorMessage(
-                          `Failed to edit tag ${err.response.data.payload.toBeEdited} to ${err.response.data.payload.input}. ${err.response.data.message}`
+                          `Failed to edit tag. ${err.response.data.message}`
                         );
 
                         setNotif(true);
