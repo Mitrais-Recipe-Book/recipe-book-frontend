@@ -13,11 +13,13 @@ export default function SearchByTags() {
   const queryTags = useSelector((state: any) => state.query.queryTags);
   const [filteredTags, setFilteredTags] = useState("");
   return (
-    <main className="py-4 w-3/4 sm:w-full bg-yellow-500">
+    <main className="py-4 w-3/4 sm:w-full rounded sm:rounded-none bg-white shadow">
+      
+      <p className="container text-base font-medium mb-1 flex px-2 ">Search by tags</p>
       <div className="container flex place-content-center content-center px-2 ">
         <input
-          className="w-full px-5 h-8 border-2 border-zinc-800 rounded"
-          placeholder="Search By Tags..."
+          className="w-full px-3 h-8 border-2 border-gray-200 focus:outline-none focus:border-orange-600 rounded"
+          placeholder="Tag name"
           value={filteredTags}
           onChange={(event) => {
             setFilteredTags(event.currentTarget.value);
@@ -50,7 +52,7 @@ export default function SearchByTags() {
             return (
               <button
                 title={tag.name}
-                className="bg-white px-2 py-1 border-zinc-800 border-2 rounded break-all hover:scale-110 hover:bg-orange-300"
+                className="bg-white px-2 py-1 border-gray-200 hover:border-slate-800 border-2 rounded break-all hover:scale-110 hover:bg-orange-300"
                 onClick={() => {
                   dispatch(addTagsToQuery(tag));
                   //@ts-ignore
