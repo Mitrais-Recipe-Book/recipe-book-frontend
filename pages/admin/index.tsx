@@ -13,12 +13,21 @@ interface User {
   email: string;
   roles: string[];
 }
+interface Tag {
+  id: number;
+  name: string;
+  temp: string;
+  views: number;
+  totalRecipe: number;
+}
 
 export default function Admin() {
   const [showTagsManagement, setShowTagsManagement] = useState(true);
   const [showUserManagement, setShowUserManagement] = useState(false);
   const [users, setUsers] = useState<User[]>();
   const [loadingUser, setLoadingUser] = useState(true);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [loadingTag, setLoadingTag] = useState(true);
   const router = useRouter();
 
   function fetchUser(page: number) {
@@ -27,9 +36,24 @@ export default function Admin() {
       setLoadingUser(false);
     });
   }
+  function fetchTags() {
+    axios.get(`${process.env.API_URL}tag/all`).then((res) => {
+      setTags(
+        res.data.payload.map((tag: any) => ({
+          id: tag.id,
+          name: tag.name,
+          temp: tag.name,
+          views: tag.views,
+          totalRecipe: tag.totalRecipe,
+        }))
+      );
+      setLoadingTag(false);
+    });
+  }
 
   useEffect(() => {
     fetchUser(0);
+    fetchTags();
   }, []);
 
   return (
@@ -73,7 +97,9 @@ export default function Admin() {
             </div>
           </section>
           <section className="my-2 py-3 rounded-md bg-white drop-shadow-lg">
-            {showTagsManagement && <TagsTable />}
+            {showTagsManagement && (
+              <TagsTable tags={tags!} setTags={setTags!} loading={loadingTag} />
+            )}
             {showUserManagement && (
               <UserManagement
                 users={users!}
